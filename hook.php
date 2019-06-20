@@ -21,9 +21,11 @@
  --------------------------------------------------------------------------
  */
 
-function plugin_jamf_install() {
+function plugin_jamf_install()
+{
    global $DB;
 
+   // Check configuration table
    if (!$DB->tableExists('glpi_plugin_jamf_configs')) {
       $query = "CREATE TABLE `glpi_plugin_jamf_configs` (
                   `id` int(11) NOT NULL auto_increment,
@@ -32,19 +34,25 @@ function plugin_jamf_install() {
                   `jsspassword` varchar(255) NULL,
                   `audit_mode` tinyint(1) NOT NULL DEFAULT '1',
                   `sync_interval` int(11) NOT NULL DEFAULT '10',
+                  `sync_general` tinyint(1) NOT NULL DEFAULT '0',
+                  `sync_software` tinyint(1) NOT NULL DEFAULT '0',
+                  `sync_os` tinyint(1) NOT NULL DEFAULT '0',
+                  `sync_financial` tinyint(1) NOT NULL DEFAULT '0',
+                  `sync_components` tinyint(1) NOT NULL DEFAULT '0',
+                  `sync_user` tinyint(1) NOT NULL DEFAULT '0',
+                  `user_sync_mode` varchar(100) NOT NULL DEFAULT 'email',
+                  `sync_status` tinyint(1) NOT NULL DEFAULT '0',
+                  `enroll_status` tinyint(1) NOT NULL DEFAULT '0',
+                  `lost_status` tinyint(1) NOT NULL DEFAULT '0',
+                  `mobiledevice_type` int(11) DEFAULT NULL,
+                  `autoimport` tinyint(1) NOT NULL DEFAULT '0',
                 PRIMARY KEY (`id`)
                ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
       $DB->queryOrDie($query, 'Error creating JAMF plugin config table' . $DB->error());
+      $DB->queryOrDie("INSERT INTO `glpi_plugin_jamf_configs` () VALUES ()");
    }
-   if (!$DB->tableExists('glpi_plugin_jamf_hookactions')) {
-      $query = "CREATE TABLE `glpi_plugin_jamf_hookactions` (
-                  `id` int(11) NOT NULL auto_increment,
-                  `hookname` varchar(255) NOT NULL,
-                  `actions` text NOT NULL,
-                PRIMARY KEY (`id`)
-               ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
-      $DB->queryOrDie($query, 'Error creating JAMF plugin webhook actions table' . $DB->error());
-   }
+
+   // Check actions table (Used to audit actions made by the plugin)
    if (!$DB->tableExists('glpi_plugin_jamf_actions')) {
       $query = "CREATE TABLE `glpi_plugin_jamf_actions` (
                   `id` int(11) NOT NULL auto_increment,
@@ -58,6 +66,8 @@ function plugin_jamf_install() {
                ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
       $DB->queryOrDie($query, 'Error creating JAMF plugin actions table' . $DB->error());
    }
+
+   // Check imports table (Used to store newly discovered devices that haven't been imported yet)
    if (!$DB->tableExists('glpi_plugin_jamf_imports')) {
       $query = "CREATE TABLE `glpi_plugin_jamf_imports` (
                   `id` int(11) NOT NULL auto_increment,
@@ -69,15 +79,44 @@ function plugin_jamf_install() {
                ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
       $DB->queryOrDie($query, 'Error creating JAMF plugin imports table' . $DB->error());
    }
+
+   // Check mobile devices table (Extra data for mobile devices)
+   if (!$DB->tableExists('glpi_plugin_jamf_mobiledevices')) {
+      $query = "CREATE TABLE `glpi_plugin_jamf_mobiledevices` (
+                  `id` int(11) NOT NULL auto_increment,
+                  `computers_id` int(11) NOT NULL,
+                  `udid` varchar(100) NOT NULL,
+                  `last_inventory` datetime NULL,
+                  `entry_date` datetime NULL,
+                  `enroll_date` datetime NULL,
+                  `managed` tinyint(1) NOT NULL DEFAULT '0',
+                  `supervised` tinyint(1) NOT NULL DEFAULT '0',
+                  `shared` tinyint(1) NOT NULL DEFAULT '0',
+                  `cloud_backup_enabled` tinyint(1) NOT NULL DEFAULT '0',
+                  `activation_lock_enabled` tinyint(1) NOT NULL DEFAULT '0',
+                  `lost_mode_enabled` tinyint(1) NOT NULL DEFAULT '0',
+                  `lost_mode_enforced` tinyint(1) NOT NULL DEFAULT '0',
+                  `lost_mode_enable_date` datetime NULL,
+                  `lost_mode_message` varchar(255) DEFAULT NULL,
+                  `lost_mode_phone` varchar(255) DEFAULT NULL,
+                  `lost_location_latitude` decimal(5,10) NOT NULL DEFAULT '0.0',
+                  `lost_location_longitude` decimal(5,10) NOT NULL DEFAULT '0.0',
+                  `lost_location_altitude` decimal(5,10) NOT NULL DEFAULT '0.0',
+                  `lost_location_date` datetime NULL,
+                PRIMARY KEY (`id`)
+               ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
+      $DB->queryOrDie($query, 'Error creating JAMF plugin imports table' . $DB->error());
+   }
    return true;
 }
 
-function plugin_jamf_uninstall() {
+function plugin_jamf_uninstall()
+{
    global $DB;
 
    $DB->queryOrDie('DROP `glpi_plugin_jamf_configs`', $DB->error());
-   $DB->queryOrDie('DROP `glpi_plugin_jamf_hookactions`', $DB->error());
    $DB->queryOrDie('DROP `glpi_plugin_jamf_actions`', $DB->error());
    $DB->queryOrDie('DROP `glpi_plugin_jamf_imports`', $DB->error());
+   $DB->queryOrDie('DROP `glpi_plugin_jamf_mobiledevices`', $DB->error());
    return true;
 }

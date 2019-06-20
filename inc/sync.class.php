@@ -23,11 +23,72 @@
 
 /**
  * JamfSync class.
- * This class handles actively syncing data from JAMF to GLPI and GLPI to JAMF.
+ * This class handles actively syncing data from JAMF to GLPI.
  */
 class JamfSync extends CommonGLPI {
 
    public static function cronJamfSync() {
       
+   }
+
+   public static function importDevice(string $devicetype, int $jamf_items_id) : bool
+   {
+      $computer = new Computer();
+      if ($devicetype == 'ios' || $devicetype == 'mobile') {
+         $jamf_items = JamfAPIClassic::getItems('mobiledevices', ['id' => $jamf_items_id]);
+         $jamf_item = $jamf_items[0];
+         $matches = $computer->find(['uuid' => $jamf_item['udid']]);
+      }
+   }
+
+   public static function syncDevice(string $devicetype, int $device_id) : bool
+   {
+      global $DB;
+
+      $iterator = $DB->request([
+         'SELECT'    => [
+            'sync_*',
+            'audit_mode',
+            'user_sync_mode',
+            'enroll_status',
+            'lost_status',
+            'mobiledevice_type',
+            'autoimport'
+         ],
+         'FROM'      => 'glpi_plugin_jamf_configs',
+         'WHERE'     => ['id' => 1]
+      ]);
+
+      if (!count($iterator)) {
+         return false;
+      }
+      $config = $iterator->next();
+
+      if ($devicetype == 'ios' || $devicetype == 'mobile') {
+         $mobiledevice = new JamfMobileDevice();
+         if ($config['sync_general']) {
+
+         }
+
+         if ($config['sync_software']) {
+            
+         }
+
+         if ($config['sync_os']) {
+            
+         }
+
+         if ($config['sync_financial']) {
+            
+         }
+
+         if ($config['sync_components']) {
+            
+         }
+
+         if ($config['sync_user']) {
+            
+         }
+      }
    }
 }

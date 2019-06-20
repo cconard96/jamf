@@ -21,13 +21,30 @@
  --------------------------------------------------------------------------
  */
 
-/**
- * JamfComputer class.
- */
-class JamfComputer extends CommonDBTM
-{
+ class JamfAPIClassic {
+    private static $connection;
 
-   public static function getTypeName($nb = 1) {
-      return __('Jamf computer', 'Jamf computers', $nb, 'jamf');
-   }
-}
+    private static function get(string $endpoint, $raw = false)
+    {
+        if (!$connection) {
+            $connection = new JamfJamfConnection();
+        }
+        $connection->setCurlAuth();
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+    }
+
+    private static function getParamString(array $params = [])
+    {
+        $param_str = "";
+        foreach ($params as $key => $value) {
+            $param_str = "{$param_str}/{$key}/{$value}";
+        }
+        return $param_str;
+    }
+
+    public static function getItems(string $itemtype, array $params = [])
+    {
+        $param_str = self::getParamString($params);
+        $endpoint = "$itemtype/$param_str";
+    }
+ }

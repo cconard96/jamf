@@ -22,12 +22,12 @@
  */
 
 /**
- * JamfComputer class.
+ * JamfMobileDevice class.
  */
-class JamfComputer extends CommonDBTM
+class JamfMobileDevice extends CommonDBTM
 {
 
    public static function getTypeName($nb = 1) {
-      return __('Jamf computer', 'Jamf computers', $nb, 'jamf');
+      return __('Jamf mobile device', 'Jamf mobile devices', $nb, 'jamf');
    }
 }
