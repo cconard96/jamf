@@ -21,16 +21,31 @@
  --------------------------------------------------------------------------
  */
 
- class JamfAPIClassic {
+ class PluginJamfAPIClassic {
     private static $connection;
 
     private static function get(string $endpoint, $raw = false)
     {
-        if (!$connection) {
-            $connection = new JamfJamfConnection();
+        if (!self::$connection) {
+            self::$connection = new PluginJamfConnection();
         }
-        $connection->setCurlAuth();
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+        $url = (self::$connection)->getAPIUrl($endpoint);
+        $curl = curl_init($url);
+        self::$connection->setCurlAuth($curl);
+        curl_setopt($curl, CURLOPT_SSLVERSION, 6);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, [
+           'Content-Type: application/json',
+           'Accept: application/json'
+        ]);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($curl);
+        curl_close($curl);
+        if (!$response) {
+           return null;
+        }
+        return ($raw ? $response : json_decode($response, true));
     }
 
     private static function getParamString(array $params = [])
@@ -45,6 +60,10 @@
     public static function getItems(string $itemtype, array $params = [])
     {
         $param_str = self::getParamString($params);
-        $endpoint = "$itemtype/$param_str";
+        $endpoint = "$itemtype$param_str";
+        $response = self::get($endpoint);
+        // Strip first key (usually like mobile_devices or mobile_device)
+        // No other first level keys exist
+        return reset($response);
     }
  }

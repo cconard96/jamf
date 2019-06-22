@@ -22,40 +22,31 @@
  */
 
 /**
- * JamfJamfConnection class
+ * JamfConnection class
  */
-class JamfJamfConnection {
+class PluginJamfConnection {
    private $config;
 
    public function __construct()
    {
       global $DB;
 
-      $iterator = $DB->request([
-         'SELECT'    => [
-            'jssserver',
-            'jssuser',
-            'jsspassword'
-         ],
-         'FROM'      => 'glpi_plugin_jamf_configs',
-         'WHERE'     => ['id' => 1]
-      ]);
-      if (count($iterator)) {
-         $this->config = $iterator->next();
-         $this->config['jsspassword'] = Toolboox::decrypt($this->config['jsspassword', GLPI_KEY]);
-      }
+      $jamf_config = Config::getConfigurationValues('plugin:Jamf', [
+         'jssserver', 'jssuser', 'jsspassword']);
+      $this->config = $jamf_config;
+      $this->config['jsspassword'] = Toolbox::decrypt($this->config['jsspassword'], GLPIKEY);
    }
 
    public function setConnectionConfig($jssserver, $jssuser, $jsspassword)
    {
       global $DB;
 
-      $enc = Toolbox::encrypt($jsspassword, GLPI_KEY);
-      $DB->update('glpi_plugin_jamf_configs', [
+      $enc = Toolbox::encrypt($jsspassword, GLPIKEY);
+      Config::setConfigurationValues('plugin:Jamf', [
          'jssserver' => $jssserver,
          'jssuser' => $jssuser,
          'jsspassword' => $enc
-      ], ['id' => 1]);
+      ]);
    }
 
    private function getServer()
@@ -81,8 +72,10 @@ class JamfJamfConnection {
       return "{$this->config['jssserver']}/JSSResource/{$endpoint}";
    }
 
-   public function setCurlAuth()
+   public function setCurlAuth(&$curl)
    {
-      curl_setopt($ch, CURLOPT_USERPWD, $this->config['jssuser'] . ":" . $this->config['jsspassword']);
+      if (isset($this->config['jssuser']) && (strlen($this->config['jssuser']) > 0)) {
+         curl_setopt($curl, CURLOPT_USERPWD, $this->config['jssuser'] . ":" . $this->config['jsspassword']);
+      }
    }
 }

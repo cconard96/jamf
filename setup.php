@@ -30,13 +30,10 @@ function plugin_init_jamf() {
 
    $plugin = new Plugin();
    $PLUGIN_HOOKS['csrf_compliant']['jamf'] = true;
-   $PLUGIN_HOOKS['menu_entry']['jamf']   = false;
-   if ($plugin->isActivated('jamf') && Session::getLoginUserID()) {
-      if (Session::haveRight('config', UPDATE)) {
-         $PLUGIN_HOOKS['config_page']['jamf'] = "front/config.form.php";
-         $PLUGIN_HOOKS['menu_toadd']['jamf'] = ['config' => 'PluginJamfMenu'];
-      }
-   }
+   Plugin::registerClass('PluginJamfConfig', ['addtabon' => 'Config']);
+   $PLUGIN_HOOKS['post_item_form']['jamf'] = ['PluginJamfMobileDevice',
+                                                   'showForComputerMain'];
+   $PLUGIN_HOOKS['undiscloseConfigValue']['jamf'] = [PluginJamfConfig::class, 'undiscloseConfigValue'];
 }
 
 function plugin_version_jamf() {
@@ -56,8 +53,7 @@ function plugin_version_jamf() {
    ];
 }
 
-function plugin_sccm_check_prerequisites() {
-   //Requirements check is not done by core in GLPI < 9.2 but has to be delegated to core in GLPI >= 9.2.
+function plugin_jamf_check_prerequisites() {
    if (!method_exists('Plugin', 'checkGlpiVersion')) {
       $version = preg_replace('/^((\d+\.?)+).*$/', '$1', GLPI_VERSION);
       $matchMinGlpiReq = version_compare($version, PLUGIN_JAMF_MIN_GLPI, '>=');
@@ -73,5 +69,10 @@ function plugin_sccm_check_prerequisites() {
          return false;
       }
    }
+   return true;
+}
+
+function plugin_jamf_check_config()
+{
    return true;
 }
