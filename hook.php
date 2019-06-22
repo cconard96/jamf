@@ -89,10 +89,8 @@ function plugin_jamf_install()
 
 function plugin_jamf_uninstall()
 {
-   global $DB;
-
-   $DB->queryOrDie('DROP TABLE glpi_plugin_jamf_imports', $DB->error());
-   $DB->queryOrDie('DROP TABLE glpi_plugin_jamf_mobiledevices', $DB->error());
+   PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_imports');
+   PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_mobiledevices');
    return true;
 }
 

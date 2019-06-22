@@ -28,7 +28,6 @@ define('PLUGIN_JAMF_MAX_GLPI', '9.5.0');
 function plugin_init_jamf() {
    global $PLUGIN_HOOKS;
 
-   $plugin = new Plugin();
    $PLUGIN_HOOKS['csrf_compliant']['jamf'] = true;
    Plugin::registerClass('PluginJamfConfig', ['addtabon' => 'Config']);
    $PLUGIN_HOOKS['post_item_form']['jamf'] = ['PluginJamfMobileDevice',
