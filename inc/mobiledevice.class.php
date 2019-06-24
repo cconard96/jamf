@@ -24,7 +24,7 @@
 /**
  * JamfMobileDevice class.
  */
-class JamfMobileDevice extends CommonDBTM
+class MobileDevice extends CommonDBTM
 {
 
    public static function getTypeName($nb = 1) {
