@@ -131,6 +131,16 @@ class PluginJamfSync extends CommonGLPI {
                }
             }
             $model = new ComputerModel();
+            $model_matches = $model->find(['name' => $general['model'], 'product_number' => $general['model_number']]);
+            if (!count($model_matches)) {
+               $model_id = $model->add([
+                  'name'            => $general['model'],
+                  'product_number'  => $general['model_number'],
+                  'comment'         => 'Created by Jamf Plugin for GLPI',
+               ]);
+            } else {
+               $model_id = array_keys($model_matches)[0];
+            }
          }
 
          if ($config['sync_software']) {
@@ -149,6 +159,8 @@ class PluginJamfSync extends CommonGLPI {
             } else {
                $os_id = array_keys($os_matches)[0];
             }
+            $changes['Computer']['computermodels_id'] = $model_id;
+
             $osversion_matches = $os_version->find(['name' => $general['os_version']]);
             if (!count($osversion_matches)) {
                $osversion_id = $os_version->add([
