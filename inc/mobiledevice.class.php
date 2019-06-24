@@ -22,9 +22,9 @@
  */
 
 /**
- * JamfMobileDevice class.
+ * PluginJamfMobileDevice class.
  */
-class MobileDevice extends CommonDBTM
+class PluginJamfMobileDevice extends CommonDBTM
 {
 
    public static function getTypeName($nb = 1) {
