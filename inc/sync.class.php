@@ -34,31 +34,66 @@ class PluginJamfSync extends CommonGLPI {
       return $utc;
    }
 
-   public static function importDevice(string $devicetype, int $jamf_items_id) : bool
+   /**
+    * Import a mobile device from Jamf into GLPI
+    * @since 1.0.0
+    * @param string $devicetype Type of device. Only mobile is supported currently
+    * @param array $jamf_items_ids Array of Jamf item IDs to import
+    * @return bool True if the import(s) were successful
+    */
+   public static function importDevice(string $devicetype, array $jamf_items_ids = []) : bool
    {
+      global $DB;
+
       $computer = new Computer();
       $mobiledevice = new PluginJamfMobileDevice();
       if ($devicetype == 'mobile') {
-         $jamf_item = PluginJamfAPIClassic::getItems('mobiledevices', ['id' => $jamf_items_id]);
-         if (is_null($jamf_item)) {
-            // API error or device no longer exists in Jamf
-            return false;
+         $import_datas = [];
+
+         foreach ($jamf_items_ids as $jamf_items_id) {
+            $data = PluginJamfAPIPro::getMobileDevice($jamf_items_id);
+            if (is_null($jamf_item)) {
+               // API error or device no longer exists in Jamf
+               continue;
+            }
+            $import_datas[$jamf_items_id] = [
+               'data'   => $data
+            ];
+
+            $iterator = $DB->request([
+               'SELECT' => ['id'],
+               'FROM'   => Computer::getTable(),
+               'WHERE'  => [
+                  'uuid'   => $jamf_item['general']['udid']
+               ],
+               'LIMIT'  => 1
+            ]);
+            if ($iterator->count()) {
+               // Already imported
+               //TODO Support merging when a mobiledevice entry doesn't exist, but the computer does
+               \Glpi\Event::log(-1, 'Computer', 4, 'Jamf plugin', "Jamf mobile device $jamf_items_id not imported. A computer exists with the same uuid.");
+               return false;
+            }
+            $import_datas[$jamf_items_id]['computer'] = [
+               'name' => $jamf_item['general']['name'],
+               'entities_id'  => '0',
+               'is_recursive' => '1'
+            ];
          }
-         $matches = $computer->find(['uuid' => $jamf_item['general']['udid']]);
-         if (count($matches)) {
-            // Already imported
-            \Glpi\Event::log(-1, 'Computer', 4, 'Jamf plugin', "Jamf mobile device $jamf_items_id not imported. A computer exists with the same uuid.");
-            return false;
+
+         $status = [];
+         foreach ($import_datas as $jamf_id => $import_item) {
+            // Import new device
+            $computers_id = $computer->add($import_item['computer']);
+            if ($computers_id) {
+               $status[$jamf_id] = self::updateComputerFromArray($computers_id, $import_item['data']);
+            } else {
+               $status[$jamf_id] = false;
+            }
          }
-         // Import new device
-         $computers_id = $computer->add([
-            'name' => $jamf_item['general']['name'],
-            'entities_id'  => '0',
-            'is_recursive' => '1']);
-         if ($computers_id) {
-            return self::updateComputerFromArray($computers_id, $jamf_item);
-         }
-         return false;
+         return count(array_filter($status, function($s) {
+            return $s === false;
+         })) == 0;
       }
    }
 
@@ -72,7 +107,7 @@ class PluginJamfSync extends CommonGLPI {
             return false;
          }
 
-         $config = Config::getConfigurationValues('plugin:Jamf');
+         $config = PluginJamfConfig::getConfig();
          $general = $data['general'];
          $purchasing = $data['purchasing'];
          $security = $data['security'];
@@ -129,7 +164,7 @@ class PluginJamfSync extends CommonGLPI {
                'date_creation'               => $_SESSION['glpi_currenttime'],
             ], [
                'itemtype' => 'Computer',
-               'items_id' => $computer->getID()
+               'items_id' => $computers_id
             ]);
          }
 
@@ -146,7 +181,7 @@ class PluginJamfSync extends CommonGLPI {
                'order_number'       => $purchasing['po_number'],
             ], [
                'itemtype' => 'Computer',
-               'items_id' => $computer->getID()
+               'items_id' => $computers_id
             ]);
          }
 
@@ -160,7 +195,7 @@ class PluginJamfSync extends CommonGLPI {
 
          // Update extra computer data
          $mobiledevice = new PluginJamfMobileDevice();
-         $md_match = $mobiledevice->find(['computers_id' => $computer->getID()]);
+         $md_match = $mobiledevice->find(['computers_id' => $computers_id]);
          if (count($md_match)) {
             $md_id = array_keys($md_match)[0];
          } else {
@@ -192,11 +227,11 @@ class PluginJamfSync extends CommonGLPI {
             'lost_location_altitude'   => $security['lost_location_altitude'],
             'lost_location_speed'      => $security['lost_location_speed'],
             'lost_location_date'       => $lost_location_date->format("Y-m-d H:i:s"),
-         ], ['computers_id' => $computer->getID()]);
+         ], ['computers_id' => $computers_id]);
 
          // Make computer updates last in case a sub-section of syncing has other changes to make to the Computer.
          $computer->update([
-            'id' => $computer->getID()
+            'id' => $computers_id
          ] + $changes['Computer']);
 
          $DB->commit();

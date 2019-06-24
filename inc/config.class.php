@@ -32,7 +32,7 @@ class PluginJamfConfig extends CommonDBTM
       if (!Session::haveRight("config", UPDATE)) {
          return false;
       }
-      $jamf_config = Config::getConfigurationValues('plugin:Jamf');
+      $jamf_config = self::getConfig(true);
       echo "<form name='form' action=\"".Toolbox::getItemTypeFormURL('Config')."\" method='post'>";
       echo "<div class='center' id='tabsbody'>";
       echo "<table class='tab_cadre_fixe'><thead>";
@@ -121,11 +121,25 @@ class PluginJamfConfig extends CommonDBTM
       }
    }
 
-   public static function undiscloseConfigValue($fields) {
+   public static function undiscloseConfigValue($fields)
+   {
       $to_hide = ['jsspassword'];
       if ($fields['context'] == 'jamf' && in_array($fields['name'], $to_hide)) {
          unset($fields['value']);
       }
       return $fields;
+   }
+
+   public static function getConfig(bool $force_all = false) : array
+   {
+      static $config = null;
+      if (is_null($config)) {
+         $config = Config::getConfigurationValues('plugin:Jamf');
+      }
+      if (!$force_all) {
+         return self::undiscloseConfigValue($config);
+      } else {
+         return $config;
+      }
    }
 }

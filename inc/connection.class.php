@@ -49,27 +49,22 @@ class PluginJamfConnection {
       ]);
    }
 
-   private function getServer()
+   public function getServerVersion()
    {
-      if (isset($this->config['jssserver'])) {
-         return $this->config['jssserver'];
-      } else {
-         return null;
+      static $version = null;
+      if (is_null($version)) {
+         $version = PluginJamfAPIPro::getLobby()['version'];
       }
+      return $version;
    }
 
-   private function getUser()
+   public function getAPIUrl($endpoint, $pro_api = false)
    {
-      if (isset($this->config['jssuser'])) {
-         return $this->config['jssuser'];
+      if ($pro_api) {
+         return "{$this->config['jssserver']}/uapi/{$endpoint}";
       } else {
-         return null;
+         return "{$this->config['jssserver']}/JSSResource/{$endpoint}";
       }
-   }
-
-   public function getAPIUrl($endpoint)
-   {
-      return "{$this->config['jssserver']}/JSSResource/{$endpoint}";
    }
 
    public function setCurlAuth(&$curl)
