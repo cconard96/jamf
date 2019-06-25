@@ -43,7 +43,8 @@ function plugin_jamf_install()
    if (!$DB->tableExists('glpi_plugin_jamf_mobiledevices')) {
       $query = "CREATE TABLE `glpi_plugin_jamf_mobiledevices` (
                   `id` int(11) NOT NULL auto_increment,
-                  `computers_id` int(11) NOT NULL,
+                  `items_id` int(11) NOT NULL,
+                  `itemtype` varchar(100) NOT NULL,
                   `udid` varchar(100) NOT NULL,
                   `last_inventory` datetime NULL,
                   `entry_date` datetime NULL,
@@ -66,7 +67,7 @@ function plugin_jamf_install()
                   `lost_location_speed` varchar(100) DEFAULT '',
                   `lost_location_date` datetime NULL,
                 PRIMARY KEY (`id`),
-                UNIQUE KEY `unicity` (`computers_id`),
+                UNIQUE KEY `unicity` (`itemtype`, `items_id`),
                 KEY `udid` (`udid`)
                ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
       $DB->queryOrDie($query, 'Error creating JAMF plugin imports table' . $DB->error());
@@ -91,6 +92,7 @@ function plugin_jamf_uninstall()
 {
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_imports');
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_mobiledevices');
+   CronTask::unregister('jamf');
    return true;
 }
 

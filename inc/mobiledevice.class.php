@@ -32,14 +32,18 @@ class PluginJamfMobileDevice extends CommonDBTM
       return __('Jamf mobile device', 'Jamf mobile devices', $nb, 'jamf');
    }
 
-   public static function showForComputerMain($params)
+   public static function showForComputerOrPhoneMain($params)
    {
       $item = $params['item'];
-      if ($item::getType() != Computer::getType()) {
+
+      if (!($item::getType() == 'Computer') && !($item::getType() == 'Phone')) {
          return;
       }
-      $mobiledevice = new PluginJamfMobileDevice;
-      $match = $mobiledevice->find(['computers_id' => $item->getID()]);
+      $mobiledevice = new PluginJamfMobileDevice();
+      $match = $mobiledevice->find([
+         'itemtype' => $item::getType(),
+         'items_id' => $item->getID()]);
+
       if (!count($match)) {
          return;
       }

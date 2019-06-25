@@ -84,7 +84,7 @@
     {
         global $DB;
 
-        $result = $DB->rawQuery(
+        $result = $DB->query(
             $this->buildInsertBulk($table, $columns, $values),
             $values
         );
@@ -106,7 +106,7 @@
         global $DB;
 
         $insert = $this->buildInsertBulk($table, $columns, $values);
-        $res = $DB->rawQuery($insert, $values);
+        $res = $DB->query($insert, $values);
         if (!$res) {
            //TRANS: %1$s is the description, %2$s is the query, %3$s is the error message
             $message = sprintf(
@@ -129,14 +129,14 @@
     {
        global $DB;
 
-       return $DB->rawQuery('DROP TABLE'.$DB->quoteName($table));
+       return $DB->query('DROP TABLE'.$DB->quoteName($table));
     }
 
     public static function dropTableOrDie(string $table, string $message = '')
     {
         global $DB;
 
-        $res = $DB->rawQuery('DROP TABLE'.$DB->quoteName($table));
+        $res = $DB->query('DROP TABLE'.$DB->quoteName($table));
         if (!$res) {
            //TRANS: %1$s is the description, %2$s is the query, %3$s is the error message
             $message = sprintf(

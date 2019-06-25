@@ -46,7 +46,7 @@ class PluginJamfConfig extends CommonDBTM
       echo Html::input('jssuser', ['value' => $jamf_config['jssuser']]);
       echo "</td></tr><tr><td>".__('JSS Password:', 'jamf')."</td><td>";
       echo Html::input('jsspassword', ['type' => 'password']);
-      $msg = isset($jamf_config['jsspassword']) ? __('Password set') : '';
+      $msg = (isset($jamf_config['jsspassword']) && strlen($jamf_config['jsspassword'])) ? __('Password set') : '';
       echo "</td><td>{$msg}</td></tr>";
       echo "</table>";
 
@@ -102,6 +102,28 @@ class PluginJamfConfig extends CommonDBTM
       echo "<td>";
       Dropdown::showYesNo('autoimport', $jamf_config['autoimport']);
       echo "</td></tr>";
+
+      echo "<table class='tab_cadre_fixe'><thead>";
+      echo "<th colspan='4'>" . __('Default Type Settings') . "</th></thead>";
+      echo "<td>" . __('Manufacturer:', 'jamf') . "</td>";
+      echo "<td>";
+      Dropdown::show('Manufacturer', [
+         'name' => 'default_manufacturer',
+         'value' => $jamf_config['default_manufacturer']]);
+      echo "</td><td>".__('iPhone Type:', 'jamf')."</td><td>";
+      Dropdown::show('PhoneType', [
+         'name' => 'iphone_type',
+         'value' => $jamf_config['iphone_type']]);
+      echo "</td></tr><tr><td>".__('iPad Type:', 'jamf')."</td><td>";
+      Dropdown::show('ComputerType', [
+         'name' => 'ipad_type',
+         'value' => $jamf_config['ipad_type']]);
+      $msg = isset($jamf_config['jsspassword']) ? __('Password set') : '';
+      echo "</td><td>".__('AppleTV Type', 'jamf')."</td><td>";
+      Dropdown::show('ComputerType', [
+         'name' => 'appletv_type',
+         'value' => $jamf_config['appletv_type']]);
+      echo "</td></tr></table>";
 
       echo "<table class='tab_cadre_fixe'>";
       echo "<tr class='tab_bg_2'>";
