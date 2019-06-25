@@ -67,7 +67,7 @@ function plugin_jamf_install()
                   `lost_location_speed` varchar(100) DEFAULT '',
                   `lost_location_date` datetime NULL,
                 PRIMARY KEY (`id`),
-                UNIQUE KEY `unicity` (`computers_id`),
+                UNIQUE KEY `unicity` (`itemtype`, `items_id`),
                 KEY `udid` (`udid`)
                ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
       $DB->queryOrDie($query, 'Error creating JAMF plugin imports table' . $DB->error());
@@ -92,6 +92,7 @@ function plugin_jamf_uninstall()
 {
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_imports');
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_mobiledevices');
+   CronTask::unregister('jamf');
    return true;
 }
 

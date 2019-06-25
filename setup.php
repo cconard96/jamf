@@ -31,7 +31,7 @@ function plugin_init_jamf() {
    $PLUGIN_HOOKS['csrf_compliant']['jamf'] = true;
    Plugin::registerClass('PluginJamfConfig', ['addtabon' => 'Config']);
    $PLUGIN_HOOKS['post_item_form']['jamf'] = ['PluginJamfMobileDevice',
-                                                   'showForComputerMain'];
+                                                   'showForComputerOrPhoneMain'];
    $PLUGIN_HOOKS['undiscloseConfigValue']['jamf'] = [PluginJamfConfig::class, 'undiscloseConfigValue'];
    Plugin::registerClass('PluginJamfShimPhoneOS', ['addtabon' => 'Phone']);
 }

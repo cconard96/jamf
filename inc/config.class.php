@@ -111,7 +111,7 @@ class PluginJamfConfig extends CommonDBTM
          'name' => 'default_manufacturer',
          'value' => $jamf_config['default_manufacturer']]);
       echo "</td><td>".__('iPhone Type:', 'jamf')."</td><td>";
-      Dropdown::show('ComputerType', [
+      Dropdown::show('PhoneType', [
          'name' => 'iphone_type',
          'value' => $jamf_config['iphone_type']]);
       echo "</td></tr><tr><td>".__('iPad Type:', 'jamf')."</td><td>";
