@@ -33,6 +33,7 @@ function plugin_init_jamf() {
    $PLUGIN_HOOKS['post_item_form']['jamf'] = ['PluginJamfMobileDevice',
                                                    'showForComputerMain'];
    $PLUGIN_HOOKS['undiscloseConfigValue']['jamf'] = [PluginJamfConfig::class, 'undiscloseConfigValue'];
+   Plugin::registerClass('PluginJamfShimPhoneOS', ['addtabon' => 'Phone']);
 }
 
 function plugin_version_jamf() {

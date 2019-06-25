@@ -38,7 +38,7 @@ class PluginJamfMobileDevice extends CommonDBTM
       if ($item::getType() != Computer::getType()) {
          return;
       }
-      $mobiledevice = new PluginJamfMobileDevice;
+      $mobiledevice = new PluginJamfMobileDevice();
       $match = $mobiledevice->find(['computers_id' => $item->getID()]);
       if (!count($match)) {
          return;

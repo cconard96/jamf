@@ -43,7 +43,8 @@ function plugin_jamf_install()
    if (!$DB->tableExists('glpi_plugin_jamf_mobiledevices')) {
       $query = "CREATE TABLE `glpi_plugin_jamf_mobiledevices` (
                   `id` int(11) NOT NULL auto_increment,
-                  `computers_id` int(11) NOT NULL,
+                  `items_id` int(11) NOT NULL,
+                  `itemtype` varchar(100) NOT NULL,
                   `udid` varchar(100) NOT NULL,
                   `last_inventory` datetime NULL,
                   `entry_date` datetime NULL,
