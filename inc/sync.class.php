@@ -122,6 +122,8 @@ class PluginJamfSync extends CommonGLPI {
                   $changes[$itemtype][$item_field] = $general[$jamf_field];
                }
             }
+
+            // Create or match model
             if ($itemtype == 'Phone') {
                $model = new PhoneModel();
             } else {
@@ -137,12 +139,15 @@ class PluginJamfSync extends CommonGLPI {
             } else {
                $model_id = array_keys($model_matches)[0];
             }
+
+            // Set model
             if ($itemtype == 'Computer') {
                $changes[$itemtype]['computermodels_id'] = $model_id;
             } else {
                $changes[$itemtype]['phonemodels_id'] = $model_id;
             }
 
+            // Set default type
             if ($itemtype == 'Phone') {
                $preferred_type = $config['iphone_type'];
                if ($preferred_type) {
@@ -154,7 +159,12 @@ class PluginJamfSync extends CommonGLPI {
                   $changes['computertypes_id'] = $preferred_type;
                }
             }
-            
+
+            // Set default manufacturer
+            $preferred_manufacturer = $config['default_manufacturer'];
+            if ($preferred_manufacturer) {
+               $changes['manufacturers_id'] = $preferred_manufacturer;
+            }
          }
 
          if ($config['sync_software']) {
