@@ -94,15 +94,7 @@ class PluginJamfConfig extends CommonDBTM
       Dropdown::showYesNo('sync_user', isset($config['sync_user']) ? $config['sync_user'] : false);
       echo "</td>";
 
-      echo "<td>" . __('User Sync Mode:', 'jamf') . "</td>";
-      echo "<td>";
-      Dropdown::showFromArray('user_sync_mode', [
-         'email' => __('Email'),
-         'username' => __('Username')
-      ], ['value' => isset($config['user_sync_mode']) ? $config['user_sync_mode'] : 'email']);
-      echo "</td></tr>";
-
-      echo "<tr><td>" . __('Auto Import:', 'jamf') . "</td>";
+      echo "<td>" . __('Auto Import:', 'jamf') . "</td>";
       echo "<td>";
       Dropdown::showYesNo('autoimport', isset($config['autoimport']) ? $config['autoimport'] : false);
       echo "</td></tr>";
