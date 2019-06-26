@@ -98,17 +98,21 @@ class PluginJamfSync extends CommonGLPI {
          }
 
          $config = PluginJamfConfig::getConfig();
-         $general = $data['general'];
-         $purchasing = $data['purchasing'];
-         $security = $data['security'];
-         $changes = [
-            $itemtype  => []
-         ];
+         $subset = count(array_keys($data)) === 0;
+         if ($subset) {
+            $subset_name = array_keys($data)[0];
+         } else {
+            $general = $data['general'];
+            $purchasing = $data['purchasing'];
+            $security = $data['security'];
+         }
 
-         if ($config['sync_general']) {
+         $item_changes = [];
+
+         if ($config['sync_general'] && (!$subset || $subset_name == 'general')) {
             // Name has changed and it is not the default name (May be in the process of being set up)
             if (($general['name'] != $item->fields['name'])) {
-               $changes[$itemtype]['name'] = $general['name'];
+               $item_changes['name'] = $general['name'];
             }
             $othergeneral_item = [
                'asset_tag'       => 'otherserial',
@@ -119,7 +123,7 @@ class PluginJamfSync extends CommonGLPI {
             }
             foreach ($othergeneral_item as $jamf_field => $item_field) {
                if ($general[$jamf_field] != $item->fields[$item_field]) {
-                  $changes[$itemtype][$item_field] = $general[$jamf_field];
+                  $item_changes[$item_field] = $general[$jamf_field];
                }
             }
 
@@ -142,36 +146,36 @@ class PluginJamfSync extends CommonGLPI {
 
             // Set model
             if ($itemtype == 'Computer') {
-               $changes[$itemtype]['computermodels_id'] = $model_id;
+               $item_changes['computermodels_id'] = $model_id;
             } else {
-               $changes[$itemtype]['phonemodels_id'] = $model_id;
+               $item_changes['phonemodels_id'] = $model_id;
             }
 
             // Set default type
             if ($itemtype == 'Phone') {
                $preferred_type = $config['iphone_type'];
                if ($preferred_type) {
-                  $changes['phonetypes_id'] = $preferred_type;
+                  $item_changes['phonetypes_id'] = $preferred_type;
                }
             } else {
                $preferred_type = $config['ipad_type'];
                if ($preferred_type) {
-                  $changes['computertypes_id'] = $preferred_type;
+                  $item_changes['computertypes_id'] = $preferred_type;
                }
             }
 
             // Set default manufacturer
             $preferred_manufacturer = $config['default_manufacturer'];
             if ($preferred_manufacturer) {
-               $changes['manufacturers_id'] = $preferred_manufacturer;
+               $item_changes['manufacturers_id'] = $preferred_manufacturer;
             }
          }
 
-         if ($config['sync_software']) {
+         if ($config['sync_software'] && (!$subset || $subset_name == 'applications')) {
             //TODO Not supported yet
          }
 
-         if ($config['sync_os']) {
+         if ($config['sync_os'] && (!$subset || $subset_name == 'general')) {
             $os = new OperatingSystem();
             $os_version = new OperatingSystemVersion();
             $os_matches = $os->find(['name' => $general['os_type']]);
@@ -203,7 +207,7 @@ class PluginJamfSync extends CommonGLPI {
             ]);
          }
 
-         if ($config['sync_financial']) {
+         if ($config['sync_financial'] && (!$subset || $subset_name == 'purchasing')) {
             $warranty_expiration = self::utcToLocal(new DateTime($purchasing['warranty_expires_utc']));
             $purchase_date = self::utcToLocal(new DateTime($purchasing['po_date_utc']));
             $diff = date_diff($warranty_expiration, $purchase_date);
@@ -220,11 +224,11 @@ class PluginJamfSync extends CommonGLPI {
             ]);
          }
 
-         if ($config['sync_components']) {
+         if (!$subset && $config['sync_components']) {
             //TODO Not implemented yet
          }
 
-         if ($config['sync_user']) {
+         if ($config['sync_user'] && (!$subset || $subset_name == 'location')) {
             //TODO Not implemented yet
          }
 
@@ -238,38 +242,49 @@ class PluginJamfSync extends CommonGLPI {
          } else {
             $md_id = -1;
          }
-         $last_inventory = self::utcToLocal(new DateTime($general['last_inventory_update_utc']));
-         $entry_date = self::utcToLocal(new DateTime($general['initial_entry_date_utc']));
-         $enroll_date = self::utcToLocal(new DateTime($general['last_enrollment_utc']));
+
+         $mobiledevice_changes = [
+            'sync_date' => $_SESSION['glpi_currenttime']
+         ];
+         if (!$subset || $subset_name == 'general') {
+            $last_inventory = self::utcToLocal(new DateTime($general['last_inventory_update_utc']));
+            $entry_date = self::utcToLocal(new DateTime($general['initial_entry_date_utc']));
+            $enroll_date = self::utcToLocal(new DateTime($general['last_enrollment_utc']));
+            $mobiledevice_changes['udid'] = $general['udid'];
+            $mobiledevice_changes['last_inventory'] = $last_inventory->format("Y-m-d H:i:s");
+            $mobiledevice_changes['entry_date'] = $entry_date->format("Y-m-d H:i:s");
+            $mobiledevice_changes['enroll_date'] = $enroll_date->format("Y-m-d H:i:s");
+            $mobiledevice_changes['managed'] = $general['udid'];
+            $mobiledevice_changes['supervised'] = $general['udid'];
+            $mobiledevice_changes['shared'] = $general['udid'];
+            $mobiledevice_changes['cloud_backup_enabled'] = $general['udid'];
+         }
+         if (!$subset || $subset_name == 'security') {
+            $lost_mode_enable_date = self::utcToLocal(new DateTime($security['lost_mode_enable_issued_utc']));
+            $lost_location_date = self::utcToLocal(new DateTime($security['lost_location_utc']));
+            $mobiledevice_changes['activation_lock_enabled'] = $security['activation_lock_enabled'];
+            $mobiledevice_changes['lost_mode_enabled'] = $security['lost_mode_enabled'];
+            $mobiledevice_changes['lost_mode_enforced'] = $security['lost_mode_enforced'];
+            $mobiledevice_changes['lost_mode_enable_date'] = $lost_mode_enable_date->format("Y-m-d H:i:s");
+            $mobiledevice_changes['lost_mode_message'] = $security['lost_mode_message'];
+            $mobiledevice_changes['lost_mode_phone'] = $security['lost_mode_phone'];
+            $mobiledevice_changes['lost_location_latitude'] = $security['lost_location_latitude'];
+            $mobiledevice_changes['lost_location_longitude'] = $security['lost_location_longitude'];
+            $mobiledevice_changes['lost_location_altitude'] = $security['lost_location_altitude'];
+            $mobiledevice_changes['lost_location_speed'] = $security['lost_location_speed'];
+            $mobiledevice_changes['lost_location_date'] = $lost_location_date->format("Y-m-d H:i:s");
+         }
          $lost_mode_enable_date = self::utcToLocal(new DateTime($security['lost_mode_enable_issued_utc']));
          $lost_location_date = self::utcToLocal(new DateTime($security['lost_location_utc']));
-         $DB->updateOrInsert('glpi_plugin_jamf_mobiledevices', [
-            'udid'                     => $general['udid'],
-            'last_inventory'           => $last_inventory->format("Y-m-d H:i:s"),
-            'entry_date'               => $entry_date->format("Y-m-d H:i:s"),
-            'enroll_date'              => $enroll_date->format("Y-m-d H:i:s"),
-            'sync_date'                => $_SESSION['glpi_currenttime'],
-            'managed'                  => $general['managed'],
-            'supervised'               => $general['supervised'],
-            'shared'                   => $general['shared'],
-            'cloud_backup_enabled'     => $general['cloud_backup_enabled'],
-            'activation_lock_enabled'  => $security['activation_lock_enabled'],
-            'lost_mode_enabled'        => $security['lost_mode_enabled'],
-            'lost_mode_enforced'       => $security['lost_mode_enforced'],
-            'lost_mode_enable_date'    => $lost_mode_enable_date->format("Y-m-d H:i:s"),
-            'lost_mode_message'        => $security['lost_mode_message'],
-            'lost_mode_phone'          => $security['lost_mode_phone'],
-            'lost_location_latitude'   => $security['lost_location_latitude'],
-            'lost_location_longitude'  => $security['lost_location_longitude'],
-            'lost_location_altitude'   => $security['lost_location_altitude'],
-            'lost_location_speed'      => $security['lost_location_speed'],
-            'lost_location_date'       => $lost_location_date->format("Y-m-d H:i:s"),
-         ], ['itemtype' => $itemtype, 'items_id' => $items_id]);
+         $DB->updateOrInsert('glpi_plugin_jamf_mobiledevices', $mobiledevice_changes, [
+            'itemtype' => $itemtype,
+            'items_id' => $items_id
+         ]);
 
          // Make main item updates last in case a sub-section of syncing has other changes to make to the item.
          $item->update([
             'id' => $items_id
-         ] + $changes[$itemtype]);
+         ] + $item_changes);
 
          $DB->commit();
          return true;
@@ -302,11 +317,15 @@ class PluginJamfSync extends CommonGLPI {
    public static function cronSyncJamf(CronTask $task) {
       global $DB;
 
+      $config = PluginJamfConfig::getConfig();
       $mobiledevice = new PluginJamfMobileDevice();
       $all_mobiledevices = [];
       $iterator = $DB->request([
          'SELECT' => ['id', 'itemtype'],
-         'FROM'   => PluginJamfMobileDevice::getTable()
+         'FROM'   => PluginJamfMobileDevice::getTable(),
+         'WHERE'  => [
+            new QueryExpression("sync_date < NOW() - INTERVAL {$config['sync_interval']} MINUTE")
+         ]
       ]);
       if (!$iterator->count()) {
          return 0;
