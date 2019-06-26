@@ -101,10 +101,25 @@ class PluginJamfSync extends CommonGLPI {
          $subset = count(array_keys($data)) === 0;
          if ($subset) {
             $subset_name = array_keys($data)[0];
+            switch ($subset_name) {
+               case 'general':
+                  $general = $data['general'];
+                  break;
+               case 'purchasing':
+                  $general = $data['purchasing'];
+                  break;
+               case 'security':
+                  $general = $data['security'];
+                  break;
+               case 'location':
+                  $general = $data['location'];
+                  break;
+            }
          } else {
             $general = $data['general'];
             $purchasing = $data['purchasing'];
             $security = $data['security'];
+            $location = $data['location'];
          }
 
          $item_changes = [];
@@ -229,7 +244,11 @@ class PluginJamfSync extends CommonGLPI {
          }
 
          if ($config['sync_user'] && (!$subset || $subset_name == 'location')) {
-            //TODO Not implemented yet
+            $user = new User();
+            $users_id = $user->find(['name' => $location['username']]);
+            if ($users_id) {
+               $item_changes['users_id'] = $users_id;
+            }
          }
 
          // Update extra item data
