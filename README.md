@@ -4,4 +4,4 @@ Only supports mobile devices for now.
 
 ## Requirements
 - GLPI >= 9.4.0
-- Jamf Pro >= 10.13.0
+- Jamf Pro >= 10.9.0
