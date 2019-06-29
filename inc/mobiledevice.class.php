@@ -27,6 +27,8 @@
 class PluginJamfMobileDevice extends CommonDBTM
 {
 
+   static $rightname = 'plugin_jamf_mobiledevice';
+
    public static function getTypeName($nb = 1)
    {
       return __('Jamf mobile device', 'Jamf mobile devices', $nb, 'jamf');

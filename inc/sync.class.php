@@ -58,6 +58,22 @@ class PluginJamfSync extends CommonGLPI {
          return false;
       }
 
+      $rules = new PluginJamfRuleImportCollection();
+      $ruleinput = [
+         'name'            => $jamf_item['general']['name'],
+         'itemtype'        => $itemtype,
+         'last_inventory'  => $jamf_item['general']['last_inventory_update_utc'],
+         'managed'         => $jamf_item['general']['managed'],
+         'supervised'      => $jamf_item['general']['supervised'],
+      ];
+      $ruleinput = $rules->processAllRules($ruleinput, $ruleinput, ['recursive' => true]);
+      $import = isset($ruleinput['_import']) ? $ruleinput['_import'] : 'NS';
+
+      if (isset($ruleinput['_import']) && !$ruleinput['_import']) {
+         // Dropped by rules
+         return false;
+      }
+
       $iterator = $DB->request([
          'SELECT' => ['id'],
          'FROM'   => $itemtype::getTable(),
@@ -273,10 +289,10 @@ class PluginJamfSync extends CommonGLPI {
             $mobiledevice_changes['last_inventory'] = $last_inventory->format("Y-m-d H:i:s");
             $mobiledevice_changes['entry_date'] = $entry_date->format("Y-m-d H:i:s");
             $mobiledevice_changes['enroll_date'] = $enroll_date->format("Y-m-d H:i:s");
-            $mobiledevice_changes['managed'] = $general['udid'];
-            $mobiledevice_changes['supervised'] = $general['udid'];
-            $mobiledevice_changes['shared'] = $general['udid'];
-            $mobiledevice_changes['cloud_backup_enabled'] = $general['udid'];
+            $mobiledevice_changes['managed'] = $general['managed'];
+            $mobiledevice_changes['supervised'] = $general['supervised'];
+            $mobiledevice_changes['shared'] = $general['shared'];
+            $mobiledevice_changes['cloud_backup_enabled'] = $general['cloud_backup_enabled'];
          }
          if (!$subset || $subset_name == 'security') {
             $lost_mode_enable_date = self::utcToLocal(new DateTime($security['lost_mode_enable_issued_utc']));
