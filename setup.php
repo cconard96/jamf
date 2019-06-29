@@ -34,6 +34,8 @@ function plugin_init_jamf() {
                                                    'showForComputerOrPhoneMain'];
    $PLUGIN_HOOKS['undiscloseConfigValue']['jamf'] = [PluginJamfConfig::class, 'undiscloseConfigValue'];
    Plugin::registerClass('PluginJamfShimPhoneOS', ['addtabon' => 'Phone']);
+   Plugin::registerClass('PluginJamfRuleImportCollection', ['rulecollections_types' => true]);
+   Plugin::registerClass('PluginJamfProfile', ['addtabon' => ['Profile']]);
 }
 
 function plugin_version_jamf() {
