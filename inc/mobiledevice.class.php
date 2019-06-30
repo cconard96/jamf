@@ -119,4 +119,30 @@ class PluginJamfMobileDevice extends CommonDBTM
       $config = PluginJamfConfig::getConfig();
       return "{$config['jssserver']}/mobileDevices.html?udid={$udid}";
    }
+
+   private static function purgeItemCommon(CommonDBTM $item)
+   {
+      global $DB;
+
+      $DB->delete(self::getTable(), [
+         'itemtype' => $item::getType(),
+         'items_id' => $item->getID()
+      ]);
+   }
+
+   public static function plugin_jamf_purgeComputer(Computer $item)
+   {
+      self::purgeItemCommon($item);
+   }
+
+   public static function plugin_jamf_purgePhone(Phone $item)
+   {
+      global $DB;
+
+      self::purgeItemCommon($item);
+      $DB->delete(Item_OperatingSystem::getTable(), [
+         'itemtype' => $item::getType(),
+         'items_id' => $item->getID()
+      ]);
+   }
 }

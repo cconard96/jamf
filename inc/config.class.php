@@ -97,11 +97,6 @@ class PluginJamfConfig extends CommonDBTM
       Dropdown::showYesNo('sync_financial', isset($config['sync_financial']) ? $config['sync_financial'] : false);
       echo "</td></tr>";
 
-      echo "<tr><td>" . __('Sync Components:', 'jamf') . "</td>";
-      echo "<td>";
-      Dropdown::showYesNo('sync_components', isset($config['sync_components']) ? $config['sync_components'] : false);
-      echo "</td></tr>";
-
       echo "<tr><td>" . __('Sync User:', 'jamf') . "</td>";
       echo "<td>";
       Dropdown::showYesNo('sync_user', isset($config['sync_user']) ? $config['sync_user'] : false);

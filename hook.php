@@ -30,6 +30,7 @@ function plugin_jamf_install()
       $query = "CREATE TABLE `glpi_plugin_jamf_imports` (
                   `id` int(11) NOT NULL auto_increment,
                   `jamf_items_id` int(11) NOT NULL,
+                  `name` varchar(255) NOT NULL,
                   `type` varchar(100) NOT NULL,
                   `udid` varchar(100) NOT NULL,
                   `date_discover` datetime NOT NULL,
@@ -73,6 +74,18 @@ function plugin_jamf_install()
       $DB->queryOrDie($query, 'Error creating JAMF plugin imports table' . $DB->error());
    }
 
+   // Check software table (Extra data for software)
+   if (!$DB->tableExists('glpi_plugin_jamf_softwares')) {
+      $query = "CREATE TABLE `glpi_plugin_jamf_softwares` (
+                  `id` int(11) NOT NULL auto_increment,
+                  `softwares_id` int(11) NOT NULL,
+                  `bundle_id` varchar(255) NOT NULL,
+                  `itunes_store_url` varchar(255) NOT NULL,
+                PRIMARY KEY (`id`)
+               ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
+      $DB->queryOrDie($query, 'Error creating JAMF plugin software table' . $DB->error());
+   }
+
    CronTask::register('PluginJamfSync', 'syncJamf', 900, [
       'state'        => 0,
       'allowmode'    => 3,
@@ -92,6 +105,7 @@ function plugin_jamf_uninstall()
 {
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_imports');
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_mobiledevices');
+   PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_softwares');
    CronTask::unregister('jamf');
    return true;
 }
@@ -112,7 +126,8 @@ function plugin_jamf_getDatabaseRelations()
    return [];
 }
 
-function plugin_jamf_getAddSearchOptions($itemtype) {
+function plugin_jamf_getAddSearchOptions($itemtype)
+{
    $opt = [];
    $plugin = new Plugin();
    if ($plugin->isActivated('jamf')) {

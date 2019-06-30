@@ -137,13 +137,16 @@ class PluginJamfSync extends CommonGLPI {
                   $general = $data['general'];
                   break;
                case 'purchasing':
-                  $general = $data['purchasing'];
+                  $purchasing = $data['purchasing'];
                   break;
                case 'security':
-                  $general = $data['security'];
+                  $security = $data['security'];
                   break;
                case 'location':
-                  $general = $data['location'];
+                  $location = $data['location'];
+                  break;
+               case 'applications':
+                  $applications = $data['applications'];
                   break;
             }
          } else {
@@ -151,6 +154,7 @@ class PluginJamfSync extends CommonGLPI {
             $purchasing = $data['purchasing'];
             $security = $data['security'];
             $location = $data['location'];
+            $applications = $data['applications'];
          }
 
          $item_changes = [];
@@ -221,10 +225,6 @@ class PluginJamfSync extends CommonGLPI {
             }
          }
 
-         if ($config['sync_software'] && (!$subset || $subset_name == 'applications')) {
-            //TODO Not supported yet
-         }
-
          if ($config['sync_os'] && (!$subset || $subset_name == 'general')) {
             $os = new OperatingSystem();
             $os_version = new OperatingSystemVersion();
@@ -257,6 +257,68 @@ class PluginJamfSync extends CommonGLPI {
             ]);
          }
 
+         if ($config['sync_software'] && !$subset && ($itemtype == 'Computer')) {
+            $software = new Software();
+            $softwareversion = new SoftwareVersion();
+            $jamf_software = new PluginJamfSoftware();
+            foreach ($applications as $application) {
+               $jamfsoftware_matches = $jamf_software->find(['bundle_id' => $application['identifier']]);
+               if (!count($jamfsoftware_matches)) {
+                  $software_data = PluginJamfAPIClassic::getItems('mobiledeviceapplications', [
+                     'bundleid'  => $application['identifier'],
+                     'version'   => $application['application_version']
+                  ]);
+                  if (is_null($software_data)) {
+                     continue;
+                  }
+                  $software_id = $software->add([
+                     'name'            => $software_data['general']['name'],
+                     'comment'         => $DB->escape($software_data['general']['description']),
+                     'entities_id'     => $item->fields['entities_id'],
+                     'is_recursive'    => $item->fields['is_recursive']
+                  ]);
+                  $jamf_software->add([
+                     'softwares_id'       => $software_id,
+                     'bundle_id'          => $application['identifier'],
+                     'itunes_store_url'   => $software_data['general']['itunes_store_url']
+                  ]);
+               } else {
+                  $software_id = array_values($jamfsoftware_matches)[0]['softwares_id'];
+               }
+               $softwareversion_matches = $softwareversion->find([
+                  'softwares_id' => $software_id,
+                  'name'         => $application['application_version']
+               ]);
+               if (!count($softwareversion_matches)) {
+                  $version_input = [
+                     'softwares_id'    => $software_id,
+                     'name'            => $application['application_version'],
+                     'entities_id'        => $item->fields['entities_id'],
+                     'is_recursive'       => $item->fields['is_recursive']
+                  ];
+                  if (isset($os_id)) {
+                     $version_input['operatingsystems_id'] = $os_id;
+                  }
+                  $softwareversion_id = $softwareversion->add($version_input);
+               } else {
+                  $softwareversion_id = array_keys($softwareversion_matches)[0];
+               }
+               $computer_softwareversion = new Computer_SoftwareVersion();
+               $computer_softwareversion_matches = $computer_softwareversion->find([
+                  'computers_id'       => $items_id,
+                  'softwareversions_id' => $softwareversion_id
+               ]);
+               if (!count($computer_softwareversion_matches)) {
+                  $computer_softwareversion_id = $computer_softwareversion->add([
+                     'computers_id'       => $items_id,
+                     'softwareversions_id' => $softwareversion_id,
+                     'entities_id'        => $item->fields['entities_id'],
+                     'is_recursive'       => $item->fields['is_recursive']
+                  ]);
+               }
+            }
+         }
+
          if ($config['sync_financial'] && (!$subset || $subset_name == 'purchasing')) {
             $warranty_expiration = self::utcToLocal(new DateTime($purchasing['warranty_expires_utc']));
             $purchase_date = self::utcToLocal(new DateTime($purchasing['po_date_utc']));
@@ -274,9 +336,7 @@ class PluginJamfSync extends CommonGLPI {
             ]);
          }
 
-         if (!$subset && $config['sync_components']) {
-            //TODO Not implemented yet
-         }
+         //TODO Sync components
 
          if ($config['sync_user'] && (!$subset || $subset_name == 'location')) {
             $user = new User();

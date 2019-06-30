@@ -21,7 +21,7 @@
  --------------------------------------------------------------------------
  */
 
- class PluginJamfAPIClassic {
+ class PluginJamfAPIPro {
     private static $connection;
 
     private static function get(string $endpoint, $raw = false)
@@ -29,7 +29,7 @@
         if (!self::$connection) {
             self::$connection = new PluginJamfConnection();
         }
-        $url = (self::$connection)->getAPIUrl($endpoint);
+        $url = (self::$connection)->getAPIUrl($endpoint, true);
         $curl = curl_init($url);
         self::$connection->setCurlAuth($curl);
         curl_setopt($curl, CURLOPT_SSLVERSION, 6);
@@ -40,7 +40,12 @@
            'Accept: application/json'
         ]);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        $start = microtime(true);
         $response = curl_exec($curl);
+        $api_time = microtime(true) - $start;
+        if ($api_time > 1) {
+            Toolbox::logDebug("Jamf Pro API call took > 1 second. Expect slowdowns.");
+        }
         curl_close($curl);
         if (!$response) {
            return null;
@@ -48,22 +53,35 @@
         return ($raw ? $response : json_decode($response, true));
     }
 
-    private static function getParamString(array $params = [])
+    public static function getLobby()
     {
-        $param_str = "";
-        foreach ($params as $key => $value) {
-            $param_str = "{$param_str}/{$key}/{$value}";
-        }
-        return $param_str;
+       return self::get('/');
     }
 
-    public static function getItems(string $itemtype, array $params = [])
+    public static function getAllMobileDevices()
     {
-        $param_str = self::getParamString($params);
-        $endpoint = "$itemtype$param_str";
-        $response = self::get($endpoint);
-        // Strip first key (usually like mobile_devices or mobile_device)
-        // No other first level keys exist
-        return (!is_null($response) && count($response)) ? reset($response) : null;
+       if (!self::$connection) {
+          self::$connection = new PluginJamfConnection();
+       }
+       $connection = self::$connection;
+       if (version_compare($connection->getServerVersion(), '10.14.0', '>=')) {
+          return self::get('/v1/mobile-devices');
+       } else {
+          return self::get('/inventory/obj/mobileDevice');
+       } 
+    }
+
+    public static function getMobileDevice(int $id, bool $detailed = false)
+    {
+       if (!self::$connection) {
+          self::$connection = new PluginJamfConnection();
+       }
+       $connection = self::$connection;
+       if (version_compare($connection->getServerVersion(), '10.14.0', '>=')) {
+          $endpoint = $endpoint = "/v1/mobile-devices/{$id}".($detailed ? '/detail' : '');
+       } else {
+          $endpoint = "/inventory/obj/mobileDevice/{$id}".($detailed ? '/detail' : '');
+       }
+       return self::get($endpoint);
     }
  }

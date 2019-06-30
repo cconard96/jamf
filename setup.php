@@ -39,6 +39,12 @@ function plugin_init_jamf() {
    if (Session::haveRight('plugin_jamf_mobiledevice', READ)) {
       $PLUGIN_HOOKS['menu_toadd']['jamf'] = ['tools' => 'PluginJamfMenu'];
    }
+   $PLUGIN_HOOKS['post_init']['jamf'] = 'plugin_jamf_postinit';
+   $PLUGIN_HOOKS['item_purge']['jamf'] = [
+      'Computer'  => ['PluginJamfMobileDevice', 'plugin_jamf_purgeComputer'],
+      'Phone'     => ['PluginJamfMobileDevice', 'plugin_jamf_purgePhone'],
+      'Software'  => ['PluginJamfSoftware', 'plugin_jamf_purgeSoftware']
+   ];
 }
 
 function plugin_version_jamf() {
