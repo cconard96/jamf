@@ -88,13 +88,13 @@ function plugin_jamf_install()
 
    CronTask::register('PluginJamfSync', 'syncJamf', 900, [
       'state'        => 0,
-      'allowmode'    => 3,
+      'allowmode'    => 2,
       'logslifetime' => 30,
       'comment'      => "Sync devices with Jamf that are already imported"
    ]);
    CronTask::register('PluginJamfSync', 'importJamf', 900, [
       'state'        => 0,
-      'allowmode'    => 3,
+      'allowmode'    => 2,
       'logslifetime' => 30,
       'comment'      => "Import or discover devices in Jamf that are not already imported"
    ]);
