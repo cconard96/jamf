@@ -15,6 +15,8 @@
    </description>
    <homepage>https://github.com/cconard96/jamf</homepage>
    <download>https://github.com/cconard96/jamf/releases</download>
+   <issues>https://github.com/cconard96/jamf/issues</issues>
+   <readme>https://github.com/cconard96/jamf/blob/master/README.md</readme>
    <authors>
       <author>Curtis Conard</author>
    </authors>
@@ -28,7 +30,7 @@
       <lang>en_GB</lang>
       <lang>en_US</lang>
    </langs>
-   <license>GPLv2+</license>
+   <license>GPL v2+</license>
    <tags>
       <en>
          <tag>mdm</tag>
@@ -37,4 +39,8 @@
          <tag>sync</tag>
       </en>
    </tags>
+   <screenshots>
+      <screenshot>https://github.com/cconard96/jamf/blob/master/screenshots/imports.png</screenshot>
+      <screenshot>https://github.com/cconard96/jamf/blob/master/screenshots/mobiledevice.png</screenshot>
+   </screenshots>
 </root>
