@@ -92,7 +92,7 @@ class PluginJamfSync extends CommonGLPI {
       $DB->beginTransaction();
       // Import new device
       $items_id = $item->add([
-         'name' => $jamf_item['general']['name'],
+         'name' => $DB->escape($jamf_item['general']['name']),
          'entities_id'  => '0',
          'is_recursive' => '1'
       ]);
@@ -498,7 +498,7 @@ class PluginJamfSync extends CommonGLPI {
                } else {
                   $DB->insert('glpi_plugin_jamf_imports', [
                      'jamf_items_id'   => $jamf_device['id'],
-                     'name'            => $jamf_device['name'],
+                     'name'            => $DB->escape($jamf_device['name']),
                      'type'            => $phone ? 'Phone' : 'Computer',
                      'udid'            => $jamf_device['udid'],
                      'date_discover'   => $_SESSION['glpi_currenttime']
