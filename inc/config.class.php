@@ -115,7 +115,7 @@ class PluginJamfConfig extends CommonDBTM
       echo "</td></tr><tr><td>".__('iPad Type:', 'jamf')."</td><td>";
       Dropdown::show('ComputerType', [
          'name' => 'ipad_type',
-         'value' => isset($config['ipad_type']) ? $config['autoimport'] : false
+         'value' => isset($config['ipad_type']) ? $config['ipad_type'] : false
       ]);
       echo "</td><td>".__('AppleTV Type', 'jamf')."</td><td>";
       Dropdown::show('ComputerType', [
