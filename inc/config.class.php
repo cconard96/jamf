@@ -1,15 +1,28 @@
 <?php
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ -------------------------------------------------------------------------
+ JAMF plugin for GLPI
+ Copyright (C) 2019 by Curtis Conard
+ https://github.com/cconard96/jamf
+ -------------------------------------------------------------------------
+ LICENSE
+ This file is part of JAMF plugin for GLPI.
+ JAMF plugin for GLPI is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ JAMF plugin for GLPI is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ You should have received a copy of the GNU General Public License
+ along with JAMF plugin for GLPI. If not, see <http://www.gnu.org/licenses/>.
+ --------------------------------------------------------------------------
  */
 
 /**
- * Description of config
- *
- * @author Curtis Conard <cconard@cjdevstudios.com>
+ * PluginJamfConfig class
  */
 class PluginJamfConfig extends CommonDBTM
 {
@@ -115,7 +128,7 @@ class PluginJamfConfig extends CommonDBTM
       echo "</td></tr><tr><td>".__('iPad Type:', 'jamf')."</td><td>";
       Dropdown::show('ComputerType', [
          'name' => 'ipad_type',
-         'value' => isset($config['ipad_type']) ? $config['autoimport'] : false
+         'value' => isset($config['ipad_type']) ? $config['ipad_type'] : false
       ]);
       echo "</td><td>".__('AppleTV Type', 'jamf')."</td><td>";
       Dropdown::show('ComputerType', [

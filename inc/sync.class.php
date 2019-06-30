@@ -204,7 +204,11 @@ class PluginJamfSync extends CommonGLPI {
                   $item_changes['phonetypes_id'] = $preferred_type;
                }
             } else {
-               $preferred_type = $config['ipad_type'];
+               if (strpos($general['model'], 'Apple TV') !== false) {
+                  $preferred_type = $config['ipad_type'];
+               } else {
+                  $preferred_type = $config['appletv_type'];
+               }
                if ($preferred_type) {
                   $item_changes['computertypes_id'] = $preferred_type;
                }

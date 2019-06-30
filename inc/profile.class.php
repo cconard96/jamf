@@ -67,8 +67,7 @@ class PluginJamfProfile extends Profile {
 
       $rights = [['itemtype'  => 'PluginJamfMobileDevice',
                             'label'     => PluginJamfMobileDevice::getTypeName(Session::getPluralNumber()),
-                            'field'     => 'plugin_jamf_mobiledevice',
-                            'rights'    => [READ => __('Read')]],
+                            'field'     => 'plugin_jamf_mobiledevice'],
                       ['itemtype'  => 'PluginJamfRuleImport',
                             'label'     => _n('Import rule', 'Import rules', Session::getPluralNumber(), 'jamf'),
                             'field'     => 'plugin_jamf_ruleimport']];
