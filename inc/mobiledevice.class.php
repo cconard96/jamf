@@ -113,4 +113,10 @@ class PluginJamfMobileDevice extends CommonDBTM
 
       echo $out;
    }
+
+   public static function getJamfDeviceURL($udid)
+   {
+      $config = PluginJamfConfig::getConfig();
+      return "{$config['jssserver']}/mobileDevices.html?udid={$udid}";
+   }
 }
