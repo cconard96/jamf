@@ -24,9 +24,11 @@
 /**
  * JamfMobileDevice class.
  */
-class PluginJamfMobileDevice extends CommonDBTM
+class PluginJamfMobileDevice extends CommonDBChild
 {
 
+   static public $itemtype = 'itemtype';
+   static public $items_id = 'items_id';
    static $rightname = 'plugin_jamf_mobiledevice';
 
    public static function getTypeName($nb = 1)
@@ -83,8 +85,8 @@ class PluginJamfMobileDevice extends CommonDBTM
 
       $out .= "<th colspan='4'>".__('Jamf Lost Mode Information', 'jamf')."</th>";
       $enabled = $match['lost_mode_enabled'];
-      if (!$enabled) {
-         $out .= "<tr><td colspan='4'>".__('Lost mode is not enabled')."</td><tr>";
+      if (!$enabled || ($enabled != 'true')) {
+         $out .= "<tr class='center'><td colspan='4'>".__('Lost mode is not enabled')."</td></tr>";
       } else {
          $out .= "<tr><td>".__('Enabled', 'jamf')."</td>";
          $out .= "<td>".$enabled."</td>";
@@ -99,15 +101,18 @@ class PluginJamfMobileDevice extends CommonDBTM
          $out .= "<td>".__('Phone', 'jamf')."</td>";
          $out .= "<td>".$match['lost_mode_phone']."</td></tr>";
 
-         $out .= "<td>".__('Latitude')."</td>";
-         $out .= "<td>".$match['lost_location_latitude']."</td>";
-         $out .= "<td>".__('Longitude')."</td>";
-         $out .= "<td>".$match['lost_location_longitude']."</td></tr>";
-
-         $out .= "<tr><td>".__('Altitude')."</td>";
+         $lat = $match['lost_location_latitude'];
+         $long = $match['lost_location_longitude'];
+         $out .= "<td>".__('GPS')."</td><td>";
+         //TODO Use leaflet
+         $out .= Html::link("$lat, $long", "https://www.google.com/maps/place/$lat,$long", [
+            'display'   => false
+         ]);
+         $out .= "</td><td>".__('Altitude')."</td>";
          $out .= "<td>".$match['lost_location_altitude']."</td>";
-         $out .= "<td>".__('Speed', 'jamf')."</td>";
-         $out .= "<td>".$match['lost_location_speed']."</td></tr>";
+         $out .= "<tr><td>".__('Speed', 'jamf')."</td>";
+         $out .= "<td>".$match['lost_location_speed']."</td>";
+         $out .= "<td>".__('Lost location date')."</td>";
          $out .= "<td>".Html::convDateTime($match['lost_location_date'])."</td></tr>";
       }
 

@@ -139,7 +139,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
                'name'            => __('Jamf', 'jamf'). ' - ' .__('Last inventory', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
-               'joinparams'      => ['jointype' => 'child']
+               'joinparams'      => ['jointype' => 'itemtype_item']
             ],
             '22003' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
@@ -147,7 +147,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
                'name'            => __('Jamf', 'jamf'). ' - ' .__('Import date', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
-               'joinparams'      => ['jointype' => 'child']
+               'joinparams'      => ['jointype' => 'itemtype_item']
             ],
             '22004' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
@@ -155,7 +155,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
                'name'            => __('Jamf', 'jamf'). ' - ' .__('Enrollment date', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
-               'joinparams'      => ['jointype' => 'child']
+               'joinparams'      => ['jointype' => 'itemtype_item']
             ],
             '22005' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
@@ -163,7 +163,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
                'name'            => __('Jamf', 'jamf'). ' - ' .__('Managed', 'jamf'),
                'datatype'        => 'bool',
                'massiveaction'   => false,
-               'joinparams'      => ['jointype' => 'child']
+               'joinparams'      => ['jointype' => 'itemtype_item']
             ],
             '22006' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
@@ -171,7 +171,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
                'name'            => __('Jamf', 'jamf'). ' - ' .__('Supervised', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
-               'joinparams'      => ['jointype' => 'child']
+               'joinparams'      => ['jointype' => 'itemtype_item']
             ],
             '22007' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
@@ -179,7 +179,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
                'name'            => __('Jamf', 'jamf'). ' - ' .__('Cloud backup enabled', 'jamf'),
                'datatype'        => 'bool',
                'massiveaction'   => false,
-               'joinparams'      => ['jointype' => 'child']
+               'joinparams'      => ['jointype' => 'itemtype_item']
             ],
             '22008' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
@@ -187,7 +187,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
                'name'            => __('Jamf', 'jamf'). ' - ' .__('Activation lock enabled', 'jamf'),
                'datatype'        => 'bool',
                'massiveaction'   => false,
-               'joinparams'      => ['jointype' => 'child']
+               'joinparams'      => ['jointype' => 'itemtype_item']
             ],
             '22009' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
@@ -195,7 +195,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
                'name'            => __('Jamf', 'jamf'). ' - ' .__('Lost mode enabled', 'jamf'),
                'datatype'        => 'text',
                'massiveaction'   => false,
-               'joinparams'      => ['jointype' => 'child']
+               'joinparams'      => ['jointype' => 'itemtype_item']
             ],
             '22010' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
@@ -203,7 +203,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
                'name'            => __('Jamf', 'jamf'). ' - ' .__('Lost mode enforced', 'jamf'),
                'datatype'        => 'bool',
                'massiveaction'   => false,
-               'joinparams'      => ['jointype' => 'child']
+               'joinparams'      => ['jointype' => 'itemtype_item']
             ],
             '22011' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
@@ -211,7 +211,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
                'name'            => __('Jamf', 'jamf'). ' - ' .__('Lost mode enable date', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
-               'joinparams'      => ['jointype' => 'child']
+               'joinparams'      => ['jointype' => 'itemtype_item']
             ],
             '22012' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
@@ -219,7 +219,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
                'name'            => __('Jamf', 'jamf'). ' - ' .__('Lost mode message', 'jamf'),
                'datatype'        => 'text',
                'massiveaction'   => false,
-               'joinparams'      => ['jointype' => 'child']
+               'joinparams'      => ['jointype' => 'itemtype_item']
             ],
             '22013' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
@@ -227,7 +227,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
                'name'            => __('Jamf', 'jamf'). ' - ' .__('Lost mode phone', 'jamf'),
                'datatype'        => 'text',
                'massiveaction'   => false,
-               'joinparams'      => ['jointype' => 'child']
+               'joinparams'      => ['jointype' => 'itemtype_item']
             ],
             '22014' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
@@ -235,7 +235,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
                'name'            => __('Jamf', 'jamf'). ' - ' .__('Lost mode latitude', 'jamf'),
                'datatype'        => 'text',
                'massiveaction'   => false,
-               'joinparams'      => ['jointype' => 'child']
+               'joinparams'      => ['jointype' => 'itemtype_item']
             ],
             '22015' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
@@ -243,7 +243,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
                'name'            => __('Jamf', 'jamf'). ' - ' .__('Lost mode longitude', 'jamf'),
                'datatype'        => 'text',
                'massiveaction'   => false,
-               'joinparams'      => ['jointype' => 'child']
+               'joinparams'      => ['jointype' => 'itemtype_item']
             ],
             '22016' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
@@ -251,7 +251,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
                'name'            => __('Jamf', 'jamf'). ' - ' .__('Lost mode altitude', 'jamf'),
                'datatype'        => 'text',
                'massiveaction'   => false,
-               'joinparams'      => ['jointype' => 'child']
+               'joinparams'      => ['jointype' => 'itemtype_item']
             ],
             '22017' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
@@ -259,7 +259,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
                'name'            => __('Jamf', 'jamf'). ' - ' .__('Lost mode speed', 'jamf'),
                'datatype'        => 'text',
                'massiveaction'   => false,
-               'joinparams'      => ['jointype' => 'child']
+               'joinparams'      => ['jointype' => 'itemtype_item']
             ],
             '22018' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
@@ -267,7 +267,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
                'name'            => __('Jamf', 'jamf'). ' - ' .__('Lost mode location date', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
-               'joinparams'      => ['jointype' => 'child']
+               'joinparams'      => ['jointype' => 'itemtype_item']
             ]
          ];
       }
