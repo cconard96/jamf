@@ -89,6 +89,7 @@ class PluginJamfSync extends CommonGLPI {
          return false;
       }
 
+      $DB->beginTransaction();
       // Import new device
       $items_id = $item->add([
          'name' => $jamf_item['general']['name'],
@@ -96,18 +97,32 @@ class PluginJamfSync extends CommonGLPI {
          'is_recursive' => '1'
       ]);
       if ($items_id) {
-         self::updateComputerOrPhoneFromArray($itemtype, $items_id, $jamf_item);
+         if (self::updateComputerOrPhoneFromArray($itemtype, $items_id, $jamf_item, false)) {
+            $DB->update('glpi_plugin_jamf_mobiledevices', [
+               'import_date'  => $_SESSION['glpi_currenttime']
+            ], [
+               'itemtype' => $itemtype,
+               'items_id' => $items_id
+            ]);
+            $DB->delete(PluginJamfImport::getTable(), ['jamf_items_id' => $jamf_items_id]);
+            $DB->commit();
+         } else {
+            $DB->rollBack();
+         }
       } else {
-        return false;
+         $DB->rollBack();
+         return false;
       }
       return true;
    }
 
-   private static function updateComputerOrPhoneFromArray($itemtype, $items_id, $data) {
+   private static function updateComputerOrPhoneFromArray($itemtype, $items_id, $data, $use_transaction = true) {
       global $DB;
 
       try {
-         $DB->beginTransaction();
+         if ($use_transaction) {
+            $DB->beginTransaction();
+         }
          $item = new $itemtype();
          if (!$item->getFromDB($items_id)) {
             return false;
@@ -321,11 +336,15 @@ class PluginJamfSync extends CommonGLPI {
             'id' => $items_id
          ] + $item_changes);
 
-         $DB->commit();
+         if ($use_transaction) {
+            $DB->commit();
+         }
          return true;
       } catch (Exception $e) {
          Toolbox::logError($e->getMessage());
-         $DB->rollBack();
+         if ($use_transaction) {
+            $DB->rollBack();
+         }
          return false;
       }
    }
@@ -415,6 +434,7 @@ class PluginJamfSync extends CommonGLPI {
                } else {
                   $DB->insert('glpi_plugin_jamf_imports', [
                      'jamf_items_id'   => $jamf_device['id'],
+                     'name'            => $jamf_device['name'],
                      'type'            => $phone ? 'Phone' : 'Computer',
                      'udid'            => $jamf_device['udid'],
                      'date_discover'   => $_SESSION['glpi_currenttime']

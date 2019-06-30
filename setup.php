@@ -36,6 +36,9 @@ function plugin_init_jamf() {
    Plugin::registerClass('PluginJamfShimPhoneOS', ['addtabon' => 'Phone']);
    Plugin::registerClass('PluginJamfRuleImportCollection', ['rulecollections_types' => true]);
    Plugin::registerClass('PluginJamfProfile', ['addtabon' => ['Profile']]);
+   if (Session::haveRight('plugin_jamf_mobiledevice', READ)) {
+      $PLUGIN_HOOKS['menu_toadd']['jamf'] = ['tools' => 'PluginJamfMenu'];
+   }
 }
 
 function plugin_version_jamf() {
