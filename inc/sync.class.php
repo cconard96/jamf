@@ -173,7 +173,7 @@ class PluginJamfSync extends CommonGLPI {
             }
             foreach ($othergeneral_item as $jamf_field => $item_field) {
                if ($general[$jamf_field] != $item->fields[$item_field]) {
-                  $item_changes[$item_field] = $general[$jamf_field];
+                  $item_changes[$item_field] = $DB->escape($general[$jamf_field]);
                }
             }
 
@@ -186,8 +186,8 @@ class PluginJamfSync extends CommonGLPI {
             $model_matches = $model->find(['name' => $general['model'], 'product_number' => $general['model_number']]);
             if (!count($model_matches)) {
                $model_id = $model->add([
-                  'name'            => $general['model'],
-                  'product_number'  => $general['model_number'],
+                  'name'            => $DB->escape($general['model']),
+                  'product_number'  => $DB->escape($general['model_number']),
                   'comment'         => 'Created by Jamf Plugin for GLPI',
                ]);
             } else {
@@ -272,7 +272,7 @@ class PluginJamfSync extends CommonGLPI {
                      continue;
                   }
                   $software_id = $software->add([
-                     'name'            => $software_data['general']['name'],
+                     'name'            => $DB->escape($software_data['general']['name']),
                      'comment'         => $DB->escape($software_data['general']['description']),
                      'entities_id'     => $item->fields['entities_id'],
                      'is_recursive'    => $item->fields['is_recursive']
@@ -280,7 +280,7 @@ class PluginJamfSync extends CommonGLPI {
                   $jamf_software->add([
                      'softwares_id'       => $software_id,
                      'bundle_id'          => $application['identifier'],
-                     'itunes_store_url'   => $software_data['general']['itunes_store_url']
+                     'itunes_store_url'   => $DB->escape($software_data['general']['itunes_store_url'])
                   ]);
                } else {
                   $software_id = array_values($jamfsoftware_matches)[0]['softwares_id'];
