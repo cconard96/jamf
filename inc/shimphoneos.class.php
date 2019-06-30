@@ -25,4 +25,10 @@
  * Wrapper for Item_OperatingSystem tab for phones since GLPI only shows this tab for Computers, and plugins cannot register a core class to add tabs to items.
  * @since 1.0.0
  */
-class PluginJamfShimPhoneOS extends \Item_OperatingSystem {}
+class PluginJamfShimPhoneOS extends \Item_OperatingSystem {
+
+   public static function getTable($classname = null)
+   {
+      return Item_OperatingSystem::getTable($classname);
+   }
+}
