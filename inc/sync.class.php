@@ -84,7 +84,6 @@ class PluginJamfSync extends CommonGLPI {
       ]);
       if ($iterator->count()) {
          // Already imported
-         //TODO Support merging when a mobiledevice entry doesn't exist, but the GLPI item does
          \Glpi\Event::log(-1, $itemtype, 4, 'Jamf plugin', "Jamf mobile device $jamf_items_id not imported. A {$itemtype::getTypeName(1)} exists with the same uuid.");
          return false;
       }

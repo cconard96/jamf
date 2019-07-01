@@ -68,10 +68,7 @@ while ($data = $pending->next()) {
    echo "</tr>";
 }
 echo "</tbody></table><br>";
-//echo Html::submit(__('Import'), [
-//   'confirm'   => __('Are you sure you want to import these items?<br>They will be imported as new devices, and not merged with existing ones.'),
-//   'onclick'   => 'importDevices();'
-//]);
+
 echo "<a class='vsubmit' onclick='importDevices(); return false;'>".__('Import')."</a>";
 echo "</div>";
 $ajax_url = $CFG_GLPI['root_doc']."/plugins/jamf/ajax/import.php";
@@ -81,7 +78,6 @@ $js = <<<JAVASCRIPT
          var post_data = [];
          post_data['action'] = "import";
          post_data['item_ids'] = ids;
-         console.log(ids);
 
          $.ajax({
             type: "POST",
