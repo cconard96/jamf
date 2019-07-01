@@ -1,0 +1,100 @@
+<?php
+
+/*
+ -------------------------------------------------------------------------
+ JAMF plugin for GLPI
+ Copyright (C) 2019 by Curtis Conard
+ https://github.com/cconard96/jamf
+ -------------------------------------------------------------------------
+ LICENSE
+ This file is part of JAMF plugin for GLPI.
+ JAMF plugin for GLPI is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ JAMF plugin for GLPI is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ You should have received a copy of the GNU General Public License
+ along with JAMF plugin for GLPI. If not, see <http://www.gnu.org/licenses/>.
+ --------------------------------------------------------------------------
+ */
+
+include ('../../../inc/includes.php');
+Html::header_nocache();
+
+Session::checkLoginUser();
+
+global $DB;
+
+$input = file_get_contents('php://input');
+parse_str($input, $_REQUEST);
+
+if (!isset($_REQUEST['action'])) {
+   throw new \RuntimeException('Required argument missing!');
+}
+if ($_REQUEST['action'] == 'merge') {
+   if (isset($_REQUEST['item_ids']) && is_array($_REQUEST['item_ids'])) {
+      foreach ($_REQUEST['item_ids'] as $glpi_id => $data) {
+         $glpi_id = $glpi_id;
+         if (!isset($data['jamf_id']) || !isset($data['itemtype'])) {
+            continue;
+         }
+         $jamf_id = $data['jamf_id'];
+         $itemtype = $data['itemtype'];
+
+         if (($itemtype != 'Computer') && ($itemtype != 'Phone')) {
+            // Invalid itemtype for a mobile device
+            throw new \RuntimeException('Invalid itemtype!');
+         }
+         $item = new $itemtype();
+         $mobiledevice = new PluginJamfMobileDevice();
+
+         $jamf_item = PluginJamfAPIClassic::getItems('mobiledevices', ['id' => $jamf_id]);
+         if (is_null($jamf_item)) {
+            // API error or device no longer exists in Jamf
+            throw new \RuntimeException('Jamf API error or item no logner exists!');
+         }
+
+         $rules = new PluginJamfRuleImportCollection();
+         $ruleinput = [
+            'name'            => $jamf_item['general']['name'],
+            'itemtype'        => $itemtype,
+            'last_inventory'  => $jamf_item['general']['last_inventory_update_utc'],
+            'managed'         => $jamf_item['general']['managed'],
+            'supervised'      => $jamf_item['general']['supervised'],
+         ];
+         $ruleinput = $rules->processAllRules($ruleinput, $ruleinput, ['recursive' => true]);
+         $import = isset($ruleinput['_import']) ? $ruleinput['_import'] : 'NS';
+
+         if (isset($ruleinput['_import']) && !$ruleinput['_import']) {
+            // Dropped by rules
+            continue;
+         }
+
+         $DB->beginTransaction();
+         try {
+            if (PluginJamfSync::updateComputerOrPhoneFromArray($itemtype, $glpi_id, $jamf_item, false)) {
+               $DB->update('glpi_plugin_jamf_mobiledevices', [
+                  'import_date'  => $_SESSION['glpi_currenttime']
+               ], [
+                  'itemtype' => $itemtype,
+                  'items_id' => $glpi_id
+               ]);
+               $DB->delete(PluginJamfImport::getTable(), ['jamf_items_id' => $jamf_id]);
+               $DB->commit();
+            } else {
+               $DB->rollBack();
+            }
+         } catch (Exception $e) {
+            $DB->rollBack();
+         }
+         
+      }
+   } else {
+      throw new \RuntimeException('Required argument missing!');
+   }
+} else {
+   throw new \RuntimeException('Invalid action!');
+}

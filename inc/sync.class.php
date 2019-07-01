@@ -116,7 +116,7 @@ class PluginJamfSync extends CommonGLPI {
       return true;
    }
 
-   private static function updateComputerOrPhoneFromArray($itemtype, $items_id, $data, $use_transaction = true) {
+   public static function updateComputerOrPhoneFromArray($itemtype, $items_id, $data, $use_transaction = true) {
       global $DB;
 
       try {

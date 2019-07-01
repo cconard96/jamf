@@ -25,9 +25,12 @@ include('../../../inc/includes.php');
 
 Html::header('Jamf Plugin', '', 'tools', 'PluginJamfMenu', 'import');
 
+global $CFG_GLPI;
+
 $links = [];
 if (Session::haveRight('plugin_jamf_mobiledevice', CREATE)) {
    $links[] = Html::link(__('Import devices', 'jamf'), PluginJamfImport::getSearchURL());
+   $links[] = Html::link(__('Merge existing devices', 'jamf'), "{$CFG_GLPI['root_doc']}/plugins/jamf/front/merge.php");
 }
 if (Session::haveRight('config', UPDATE)) {
    $links[] = Html::link(__('Configure plugin', 'jamf'), Config::getFormURL()."?forcetab=PluginJamfConfig$1");

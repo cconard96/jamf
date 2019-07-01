@@ -27,13 +27,4 @@ class PluginJamfMenu extends CommonGLPI {
    {
       return __('Jamf plugin');
    }
-
-//   static function getMenuContent() {
-//      $menu                    = [];
-//      $menu['title']           = self::getMenuName();
-//      $menu['page']            = "/plugins/jamf/front/import.php";
-//      $menu['links']['search'] = "/plugins/jamf/front/import.php";
-//
-//      return $menu;
-//   }
 }
