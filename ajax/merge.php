@@ -28,13 +28,16 @@ Session::checkLoginUser();
 
 global $DB;
 
+// Get AJAX input and load it into $_REQUEST
 $input = file_get_contents('php://input');
 parse_str($input, $_REQUEST);
 
+// An action must be specified
 if (!isset($_REQUEST['action'])) {
    throw new \RuntimeException('Required argument missing!');
 }
 if ($_REQUEST['action'] == 'merge') {
+   // An array of item IDs is required
    if (isset($_REQUEST['item_ids']) && is_array($_REQUEST['item_ids'])) {
       foreach ($_REQUEST['item_ids'] as $glpi_id => $data) {
          $glpi_id = $glpi_id;
@@ -57,6 +60,7 @@ if ($_REQUEST['action'] == 'merge') {
             throw new \RuntimeException('Jamf API error or item no logner exists!');
          }
 
+         // Run import rules on merged devices manually since this doesn't go through the usual import process
          $rules = new PluginJamfRuleImportCollection();
          $ruleinput = [
             'name'            => $jamf_item['general']['name'],
@@ -75,6 +79,7 @@ if ($_REQUEST['action'] == 'merge') {
 
          $DB->beginTransaction();
          try {
+            // Update merged device and then delete the pending import
             if (PluginJamfSync::updateComputerOrPhoneFromArray($itemtype, $glpi_id, $jamf_item, false)) {
                $DB->update('glpi_plugin_jamf_mobiledevices', [
                   'import_date'  => $_SESSION['glpi_currenttime']

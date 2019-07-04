@@ -21,6 +21,11 @@
  --------------------------------------------------------------------------
  */
 
+/**
+ * PluginJamfRuleImport class. Represents a rule for importing devices into GLPI.
+ * Determines if the import happens or if it is dropped.
+ * @since 1.0.0
+ */
  class PluginJamfRuleImport extends Rule {
 
    static public $rightname = 'plugin_jamf_ruleimport';

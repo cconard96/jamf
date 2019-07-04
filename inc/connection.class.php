@@ -23,10 +23,15 @@
 
 /**
  * JamfConnection class
+ * @since 1.0.0
  */
 class PluginJamfConnection {
    private $config;
 
+   /**
+    * Load connection details from the DB and store them in the $config array.
+    * @since 1.0.0
+    */
    public function __construct()
    {
       global $DB;
@@ -37,6 +42,13 @@ class PluginJamfConnection {
       $this->config['jsspassword'] = Toolbox::decrypt($this->config['jsspassword'], GLPIKEY);
    }
 
+   /**
+    * Set or change the connection details in the DB.
+    * @since 1.0.0
+    * @param string $jssserver The URL (and port) or the JSS server.
+    * @param string $jssuser The user to connect to the JSS with.
+    * @param string $jsspassword The password for $jssuser.
+    */
    public function setConnectionConfig($jssserver, $jssuser, $jsspassword)
    {
       global $DB;
@@ -49,6 +61,11 @@ class PluginJamfConnection {
       ]);
    }
 
+   /**
+    * Get the version of the JSS server and caches it for future function calls.
+    * @since 1.0.0
+    * @return string The JSS version.
+    */
    public function getServerVersion()
    {
       static $version = null;
@@ -58,6 +75,12 @@ class PluginJamfConnection {
       return $version;
    }
 
+   /**
+    * Gets the API endpoint URL based on if it is using the classic or pro API.
+    * @param string $endpoint The API endpoint.
+    * @param bool $pro_api True if using the pro API.
+    * @return string The full API endpoint URL.
+    */
    public function getAPIUrl($endpoint, $pro_api = false)
    {
       if ($pro_api) {
@@ -67,6 +90,10 @@ class PluginJamfConnection {
       }
    }
 
+   /**
+    * Set the username and password for the specified curl connection.
+    * @param resource $curl The curl handle.
+    */
    public function setCurlAuth(&$curl)
    {
       if (isset($this->config['jssuser']) && (strlen($this->config['jssuser']) > 0)) {

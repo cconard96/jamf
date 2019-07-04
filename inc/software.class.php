@@ -23,6 +23,7 @@
 
 /**
  * PluginJamfSoftware class.
+ * @since 1.0.0
  */
 class PluginJamfSoftware extends CommonDBTM
 {
@@ -32,6 +33,11 @@ class PluginJamfSoftware extends CommonDBTM
       return Software::getTypeName($nb);
    }
 
+   /**
+    * Cleanup relations when an item is purged.
+    * @global type $DB
+    * @param type $item
+    */
    public static function plugin_jamf_purgeSoftware($item)
    {
       global $DB;

@@ -21,6 +21,11 @@
  --------------------------------------------------------------------------
  */
 
+/**
+ * PluginJamfImport class which represents a Jamf device waiting to be imported.
+ * This class is only used when devices are not automatically imported.
+ * @since 1.0.0
+ */
 class PluginJamfImport extends CommonDBTM {
 
    public static function getTypeName($nb = 0)

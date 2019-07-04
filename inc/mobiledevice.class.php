@@ -22,7 +22,8 @@
  */
 
 /**
- * JamfMobileDevice class.
+ * JamfMobileDevice class. This represents a mobile device from Jamf.
+ * This is mainly used to store extra fields that are not already in Computer or Phone classes.
  */
 class PluginJamfMobileDevice extends CommonDBChild
 {
@@ -36,6 +37,11 @@ class PluginJamfMobileDevice extends CommonDBChild
       return __('Jamf mobile device', 'Jamf mobile devices', $nb, 'jamf');
    }
 
+   /**
+    * Display the extra information for mobile devices on the main Computer or Phone tab.
+    * @param type $params
+    * @return type
+    */
    public static function showForComputerOrPhoneMain($params)
    {
       $item = $params['item'];
@@ -119,12 +125,22 @@ class PluginJamfMobileDevice extends CommonDBChild
       echo $out;
    }
 
+   /**
+    * Get a direct link to the mobile device on the Jamf server.
+    * @param string $udid The UDID/UUID of the device.
+    * @return string Jamf URL for the mobile device.
+    */
    public static function getJamfDeviceURL($udid)
    {
       $config = PluginJamfConfig::getConfig();
       return "{$config['jssserver']}/mobileDevices.html?udid={$udid}";
    }
 
+   /**
+    * Cleanup relations when an item is purged.
+    * @global type $DB
+    * @param CommonDBTM $item
+    */
    private static function purgeItemCommon(CommonDBTM $item)
    {
       global $DB;
@@ -135,11 +151,21 @@ class PluginJamfMobileDevice extends CommonDBChild
       ]);
    }
 
+   /**
+    * Cleanup relations when a Computer is purged.
+    * @global type $DB
+    * @param CommonDBTM $item
+    */
    public static function plugin_jamf_purgeComputer(Computer $item)
    {
       self::purgeItemCommon($item);
    }
 
+   /**
+    * Cleanup relations when a Phone is purged.
+    * @global type $DB
+    * @param CommonDBTM $item
+    */
    public static function plugin_jamf_purgePhone(Phone $item)
    {
       global $DB;

@@ -21,6 +21,10 @@
  --------------------------------------------------------------------------
  */
 
+/**
+ * PluginJamfMenu class. This class adds a menu which contains links to pages related to this plugin.
+ * See /front/menu.php file for the menu content.
+ */
 class PluginJamfMenu extends CommonGLPI {
 
    static function getMenuName()

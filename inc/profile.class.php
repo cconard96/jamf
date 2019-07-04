@@ -25,6 +25,10 @@ if (!defined('GLPI_ROOT')) {
    die("Sorry. You can't access this file directly");
 }
 
+/**
+ * PluginJamfProfile class. Adds plugin related rights tab to Profiles.
+ * @since 1.0.0
+ */
 class PluginJamfProfile extends Profile {
 
    static $rightname = "config";
@@ -70,7 +74,10 @@ class PluginJamfProfile extends Profile {
                             'field'     => 'plugin_jamf_mobiledevice'],
                       ['itemtype'  => 'PluginJamfRuleImport',
                             'label'     => _n('Import rule', 'Import rules', Session::getPluralNumber(), 'jamf'),
-                            'field'     => 'plugin_jamf_ruleimport']];
+                            'field'     => 'plugin_jamf_ruleimport'],
+                      ['itemtype'  => 'PluginJamfRuleSync',
+                            'label'     => _n('Sync rule', 'Sync rules', Session::getPluralNumber(), 'jamf'),
+                            'field'     => 'plugin_jamf_rulesync']];
       $matrix_options['title'] = __('Jamf Plugin');
       $profile->displayRightsChoiceMatrix($rights, $matrix_options);
 

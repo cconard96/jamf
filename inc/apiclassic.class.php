@@ -21,9 +21,21 @@
  --------------------------------------------------------------------------
  */
 
+/**
+ * JSS Classic API interface class
+ * @since 1.0.0
+ */
  class PluginJamfAPIClassic {
+    /** PluginJamfConnection object representing the connection to a JSS server */
     private static $connection;
 
+    /**
+     * Get data from a JSS Classic API endpoint.
+     * @since 1.0.0
+     * @param string  $endpoint The API endpoint.
+     * @param bool    $raw If true, data is returned as JSON instead of decoded into an array.
+     * @return mixed JSON string or associative array depending on the value of $raw.
+     */
     private static function get(string $endpoint, $raw = false)
     {
         if (!self::$connection) {
@@ -31,6 +43,7 @@
         }
         $url = (self::$connection)->getAPIUrl($endpoint);
         $curl = curl_init($url);
+        // Set the username and password in an authentication header
         self::$connection->setCurlAuth($curl);
         curl_setopt($curl, CURLOPT_SSLVERSION, 6);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
@@ -48,6 +61,12 @@
         return ($raw ? $response : json_decode($response, true));
     }
 
+    /**
+     * Construct a parameter query string for an API endpoint.
+     * @since 1.0.0
+     * @param array $params API inputs.
+     * @return string The constructed parameter string.
+     */
     private static function getParamString(array $params = [])
     {
         $param_str = "";
@@ -57,6 +76,13 @@
         return $param_str;
     }
 
+    /**
+     * Get data for a specified JSS itemtype and parameters.
+     * @since 1.0.0
+     * @param string $itemtype The type of data to fetch. This matches up with endpoint names.
+     * @param array $params API input parameters such as udid, name, or subset.
+     * @return array Associative array of the decoded JSON response.
+     */
     public static function getItems(string $itemtype, array $params = [])
     {
         $param_str = self::getParamString($params);
