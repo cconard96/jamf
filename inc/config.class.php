@@ -62,9 +62,8 @@ class PluginJamfConfig extends CommonDBTM
          'value' => $config['jssuser']
       ]);
       echo "</td></tr><tr><td>".__('JSS Password:', 'jamf')."</td><td>";
-      echo Html::input('jsspassword', ['type' => 'password']);
-      $msg = (isset($config['jsspassword']) && strlen($config['jsspassword'])) ? __('Password set') : '';
-      echo "</td><td>{$msg}</td></tr>";
+      echo Html::input('jsspassword', ['type' => 'password', 'value' => $config['jsspassword']]);
+      echo "</td></tr>";
       echo "</table>";
 
       echo "<table class='tab_cadre_fixe'><thead>";
