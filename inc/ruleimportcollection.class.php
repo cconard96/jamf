@@ -21,6 +21,9 @@
  --------------------------------------------------------------------------
  */
 
+/**
+ * PluginJamfRuleImportCollection class.
+ */
  class PluginJamfRuleImportCollection extends RuleCollection {
 
    public $stop_on_first_match = true;

@@ -28,15 +28,19 @@ Session::checkLoginUser();
 
 global $DB;
 
+// Get AJAX input and load it into $_REQUEST
 $input = file_get_contents('php://input');
 parse_str($input, $_REQUEST);
 
+// An action must be specified
 if (!isset($_REQUEST['action'])) {
    throw new \RuntimeException('Required argument missing!');
 }
 
 if ($_REQUEST['action'] == 'import') {
+   // An array of item IDs is required
    if (isset($_REQUEST['item_ids']) && is_array($_REQUEST['item_ids'])) {
+      // Get data for each item to import
       $toimport = $DB->request([
          'SELECT' => ['type', 'jamf_items_id'],
          'FROM'   => PluginJamfImport::getTable(),
@@ -44,6 +48,7 @@ if ($_REQUEST['action'] == 'import') {
             'jamf_items_id'  => $_REQUEST['item_ids']
          ]
       ]);
+      // Import the requested device(s)
       while ($data = $toimport->next()) {
          PluginJamfSync::importMobileDevice($data['type'], $data['jamf_items_id']);
       }

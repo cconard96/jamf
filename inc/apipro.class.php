@@ -21,9 +21,21 @@
  --------------------------------------------------------------------------
  */
 
+/**
+ * JSS Pro API interface class
+ * @since 1.0.0
+ */
  class PluginJamfAPIPro {
+    /** PluginJamfConnection object representing the connection to a JSS server */
     private static $connection;
 
+    /**
+     * Get data from a JSS Pro API endpoint.
+     * @since 1.0.0
+     * @param string  $endpoint The API endpoint.
+     * @param bool    $raw If true, data is returned as JSON instead of decoded into an array.
+     * @return mixed JSON string or associative array depending on the value of $raw.
+     */
     private static function get(string $endpoint, $raw = false)
     {
         if (!self::$connection) {
@@ -31,6 +43,7 @@
         }
         $url = (self::$connection)->getAPIUrl($endpoint, true);
         $curl = curl_init($url);
+        // Set the username and password in an authentication header
         self::$connection->setCurlAuth($curl);
         curl_setopt($curl, CURLOPT_SSLVERSION, 6);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
@@ -40,12 +53,7 @@
            'Accept: application/json'
         ]);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        $start = microtime(true);
         $response = curl_exec($curl);
-        $api_time = microtime(true) - $start;
-        if ($api_time > 1) {
-            Toolbox::logDebug("Jamf Pro API call took > 1 second. Expect slowdowns.");
-        }
         curl_close($curl);
         if (!$response) {
            return null;
@@ -53,11 +61,21 @@
         return ($raw ? $response : json_decode($response, true));
     }
 
+    /**
+     * Get data from the lobby endpoint. This should only contain the JSS version.
+     * @return array Associative array of the data from the lobby endpoint.
+     */
     public static function getLobby()
     {
        return self::get('/');
     }
 
+    /**
+     * Get an array of all mobile devices. The returned data includes only some fields.
+     * To get all data for a mobile device, use PluginJamfProAPI::getMobileDevice().
+     * @since 1.0.0
+     * @return array Array of mobile devices and some basic fields for each.
+     */
     public static function getAllMobileDevices()
     {
        if (!self::$connection) {
@@ -71,6 +89,12 @@
        } 
     }
 
+    /**
+     * Get data for a specific mobile device by its id.
+     * @param int $id The ID of the device.
+     * @param bool $detailed If true, all fields are returned. Otherwise, only a basic subset of fields are returned.
+     * @return array Associative array of fields for the specified device.
+     */
     public static function getMobileDevice(int $id, bool $detailed = false)
     {
        if (!self::$connection) {
