@@ -478,7 +478,7 @@ class PluginJamfSync extends CommonGLPI {
       while ($data = $iterator->next()) {
          array_push($imported, $data['udid']);
       }
-      $pending_iterator = $DB->request('glpi_plugin_jamf_imports', [
+      $pending_iterator = $DB->request([
          'FROM'   => 'glpi_plugin_jamf_imports'
       ]);
       $pending_import = [];

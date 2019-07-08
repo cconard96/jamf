@@ -45,6 +45,9 @@ function plugin_init_jamf() {
       'Phone'     => ['PluginJamfMobileDevice', 'plugin_jamf_purgePhone'],
       'Software'  => ['PluginJamfSoftware', 'plugin_jamf_purgeSoftware']
    ];
+   $PLUGIN_HOOKS['pre_item_update']['jamf'] = [
+      'Config' => ['PluginJamfConfig', 'plugin_jamf_preitemupdate']
+   ];
 }
 
 function plugin_version_jamf() {

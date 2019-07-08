@@ -39,6 +39,16 @@ class PluginJamfConfig extends CommonDBTM
       return '';
    }
 
+   public static function plugin_jamf_preitemupdate($item) {
+      if (isset($item->input['jsspassword'])) {
+         $config = Config::getConfigurationValues('plugin:Jamf', ['jsspassword']);
+         if ($config['jsspassword'] !== $item->input['jsspassword']) {
+            // Hashed value from form does not match existing hash. User must have updated the password.
+            $item->input['jsspassword'] = Toolbox::encrypt($item->input['jsspassword'], GLPIKEY);
+         }
+      }
+   }
+
    function showForm()
    {
       global $CFG_GLPI;
@@ -46,6 +56,7 @@ class PluginJamfConfig extends CommonDBTM
          return false;
       }
       $config = self::getConfig(true);
+
       echo "<form name='form' action=\"".Toolbox::getItemTypeFormURL('Config')."\" method='post'>";
       echo "<div class='center' id='tabsbody'>";
       echo "<table class='tab_cadre_fixe'><thead>";
