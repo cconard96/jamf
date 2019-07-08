@@ -325,17 +325,28 @@ class PluginJamfSync extends CommonGLPI {
          }
 
          if ($config['sync_financial'] && (!$subset || $subset_name == 'purchasing')) {
-            $warranty_expiration = self::utcToLocal(new DateTime($purchasing['warranty_expires_utc']));
-            $purchase_date = self::utcToLocal(new DateTime($purchasing['po_date_utc']));
-            $diff = date_diff($warranty_expiration, $purchase_date);
-            $warranty_length = $diff->m + ($diff->y * 12);
-            $DB->updateOrInsert(Infocom::getTable(), [
-               'buy_date'           => $purchase_date->format("Y-m-d H:i:s"),
-               'warranty_date'      => $purchase_date->format("Y-m-d H:i:s"),
-               'warranty_duration'  => $warranty_length,
-               'warranty_info'      => "AppleCare ID: {$purchasing['applecare_id']}",
-               'order_number'       => $purchasing['po_number'],
-            ], [
+            $infocom_changes = [];
+            if (!empty($purchasing['po_date_utc'])) {
+               $purchase_date = self::utcToLocal(new DateTime($purchasing['po_date_utc']));
+               $purchase_date_str = $purchase_date->format("Y-m-d H:i:s");
+               $infocom_changes['buy_date'] = $purchase_date_str;
+               if (!empty($purchasing['warranty_expires_utc'])) {
+                  error_log($purchasing['warranty_expires_utc']);
+                  $infocom_changes['warranty_date'] = $purchase_date_str;
+                  $warranty_expiration = self::utcToLocal(new DateTime($purchasing['warranty_expires_utc']));
+                  $diff = date_diff($warranty_expiration, $purchase_date);
+                  $warranty_length = $diff->m + ($diff->y * 12);
+                  $infocom_changes['warranty_duration'] = $warranty_length;
+               }
+            }
+            if (!empty($purchasing['applecare_id'])) {
+               $infocom_changes['warranty_info'] = "AppleCare ID: {$purchasing['applecare_id']}";
+            }
+            if (!empty($purchasing['po_number'])) {
+               $infocom_changes['order_number'] = $purchasing['po_number'];
+            }
+            
+            $DB->updateOrInsert(Infocom::getTable(), $infocom_changes, [
                'itemtype' => $itemtype,
                'items_id' => $items_id
             ]);
@@ -366,35 +377,44 @@ class PluginJamfSync extends CommonGLPI {
             'sync_date' => $_SESSION['glpi_currenttime']
          ];
          if (!$subset || $subset_name == 'general') {
-            $last_inventory = self::utcToLocal(new DateTime($general['last_inventory_update_utc']));
-            $entry_date = self::utcToLocal(new DateTime($general['initial_entry_date_utc']));
-            $enroll_date = self::utcToLocal(new DateTime($general['last_enrollment_utc']));
+            if (!empty($general['last_inventory_update_utc'])) {
+               $last_inventory = self::utcToLocal(new DateTime($general['last_inventory_update_utc']));
+               $mobiledevice_changes['last_inventory'] = $last_inventory->format("Y-m-d H:i:s");
+            }
+            if (!empty($general['initial_entry_date_utc'])) {
+               $entry_date = self::utcToLocal(new DateTime($general['initial_entry_date_utc']));
+               $mobiledevice_changes['entry_date'] = $entry_date->format("Y-m-d H:i:s");
+            }
+            if (!empty($general['last_enrollment_utc'])) {
+               $enroll_date = self::utcToLocal(new DateTime($general['last_enrollment_utc']));
+               $mobiledevice_changes['enroll_date'] = $enroll_date->format("Y-m-d H:i:s");
+            }
             $mobiledevice_changes['udid'] = $general['udid'];
-            $mobiledevice_changes['last_inventory'] = $last_inventory->format("Y-m-d H:i:s");
-            $mobiledevice_changes['entry_date'] = $entry_date->format("Y-m-d H:i:s");
-            $mobiledevice_changes['enroll_date'] = $enroll_date->format("Y-m-d H:i:s");
             $mobiledevice_changes['managed'] = $general['managed'];
             $mobiledevice_changes['supervised'] = $general['supervised'];
             $mobiledevice_changes['shared'] = $general['shared'];
             $mobiledevice_changes['cloud_backup_enabled'] = $general['cloud_backup_enabled'];
          }
          if (!$subset || $subset_name == 'security') {
-            $lost_mode_enable_date = self::utcToLocal(new DateTime($security['lost_mode_enable_issued_utc']));
-            $lost_location_date = self::utcToLocal(new DateTime($security['lost_location_utc']));
+            if (!empty($security['lost_mode_enable_issued_utc'])) {
+               $lost_mode_enable_date = self::utcToLocal(new DateTime($security['lost_mode_enable_issued_utc']));
+               $mobiledevice_changes['lost_mode_enable_date'] = $lost_mode_enable_date->format("Y-m-d H:i:s");
+            }
+            if (!empty($security['lost_location_utc'])) {
+               $lost_location_date = self::utcToLocal(new DateTime($security['lost_location_utc']));
+               $mobiledevice_changes['lost_location_date'] = $lost_location_date->format("Y-m-d H:i:s");
+            }
             $mobiledevice_changes['activation_lock_enabled'] = $security['activation_lock_enabled'];
             $mobiledevice_changes['lost_mode_enabled'] = $security['lost_mode_enabled'];
             $mobiledevice_changes['lost_mode_enforced'] = $security['lost_mode_enforced'];
-            $mobiledevice_changes['lost_mode_enable_date'] = $lost_mode_enable_date->format("Y-m-d H:i:s");
             $mobiledevice_changes['lost_mode_message'] = $security['lost_mode_message'];
             $mobiledevice_changes['lost_mode_phone'] = $security['lost_mode_phone'];
             $mobiledevice_changes['lost_location_latitude'] = $security['lost_location_latitude'];
             $mobiledevice_changes['lost_location_longitude'] = $security['lost_location_longitude'];
             $mobiledevice_changes['lost_location_altitude'] = $security['lost_location_altitude'];
             $mobiledevice_changes['lost_location_speed'] = $security['lost_location_speed'];
-            $mobiledevice_changes['lost_location_date'] = $lost_location_date->format("Y-m-d H:i:s");
          }
-         $lost_mode_enable_date = self::utcToLocal(new DateTime($security['lost_mode_enable_issued_utc']));
-         $lost_location_date = self::utcToLocal(new DateTime($security['lost_location_utc']));
+
          $DB->updateOrInsert('glpi_plugin_jamf_mobiledevices', $mobiledevice_changes, [
             'itemtype' => $itemtype,
             'items_id' => $items_id
