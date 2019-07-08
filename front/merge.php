@@ -45,6 +45,14 @@ $linked_phones = $mobiledevice->find([
    'itemtype'  => 'Phone'
 ]);
 
+$computer_ids = array_map(function($a) {
+   return $a['items_id'];
+}, $linked_computers);
+
+$phone_ids = array_map(function($a) {
+   return $a['items_id'];
+}, $linked_phones);
+
 Html::printPager($start, $importcount, "{$CFG_GLPI['root_doc']}/plugins/jamf/front/merge.php", '');
 echo "<form>";
 echo "<div class='center'><table id='merge_table' class='tab_cadre' style='width: 50%'>";
@@ -70,11 +78,11 @@ while ($data = $pending->next()) {
    echo "<td>{$date_discover}</td><td>";
    if ($itemtype === 'Computer') {
       $itemtype::dropdown([
-         'used'   => array_keys($linked_computers)
+         'used'   => array_values($computer_ids)
       ]);
    } else {
       $itemtype::dropdown([
-         'used'   => array_keys($linked_phones)
+         'used'   => array_values($phone_ids)
       ]);
    }
    echo "</td></tr>";
