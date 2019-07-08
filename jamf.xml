@@ -39,7 +39,7 @@
       </en>
    </tags>
    <screenshots>
-      <screenshot>https://github.com/cconard96/jamf/blob/master/screenshots/imports.png</screenshot>
-      <screenshot>https://github.com/cconard96/jamf/blob/master/screenshots/mobiledevice.png</screenshot>
+      <screenshot>https://github.com/cconard96/jamf/blob/master/screenshots/imports.png/?raw=true</screenshot>
+      <screenshot>https://github.com/cconard96/jamf/blob/master/screenshots/mobiledevice.png/?raw=true</screenshot>
    </screenshots>
 </root>
