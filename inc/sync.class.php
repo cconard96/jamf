@@ -155,6 +155,18 @@ class PluginJamfSync extends CommonGLPI {
                   break;
             }
          } else {
+            $required = ['general', 'purchasing', 'security', 'location', 'applications'];
+            $invalid = false;
+            foreach ($required as $k) {
+               if (!isset($data[$k])) {
+                  // Invalid API response
+                  $invalid = true;
+                  break;
+               }
+            }
+            if ($invalid) {
+               return false;
+            }
             $general = $data['general'];
             $purchasing = $data['purchasing'];
             $security = $data['security'];
@@ -273,7 +285,7 @@ class PluginJamfSync extends CommonGLPI {
                      'bundleid'  => $application['identifier'],
                      'version'   => $application['application_version']
                   ]);
-                  if (is_null($software_data)) {
+                  if (is_null($software_data) || !isset($software_data['general'])) {
                      continue;
                   }
                   $software_id = $software->add([
@@ -331,7 +343,6 @@ class PluginJamfSync extends CommonGLPI {
                $purchase_date_str = $purchase_date->format("Y-m-d H:i:s");
                $infocom_changes['buy_date'] = $purchase_date_str;
                if (!empty($purchasing['warranty_expires_utc'])) {
-                  error_log($purchasing['warranty_expires_utc']);
                   $infocom_changes['warranty_date'] = $purchase_date_str;
                   $warranty_expiration = self::utcToLocal(new DateTime($purchasing['warranty_expires_utc']));
                   $diff = date_diff($warranty_expiration, $purchase_date);
@@ -434,7 +445,7 @@ class PluginJamfSync extends CommonGLPI {
          if ($use_transaction) {
             $DB->rollBack();
          }
-         return false;
+         throw $e;
       }
    }
 
@@ -454,7 +465,7 @@ class PluginJamfSync extends CommonGLPI {
          // API error or device no longer exists in Jamf
          return false;
       }
-      return self::updateComputerFromArray($itemtype, $item->getID(), $data);
+      return self::updateComputerOrPhoneFromArray($itemtype, $item->getID(), $data);
    }
 
    public static function cronSyncJamf(CronTask $task) {
@@ -474,9 +485,16 @@ class PluginJamfSync extends CommonGLPI {
          return 0;
       }
       while ($data = $iterator->next()) {
-         $result = self::syncMobileDevice($data['itemtype'], $data['id']);
-         if ($result) {
-            $task->addVolume(1);
+         try {
+            $result = self::syncMobileDevice($data['itemtype'], $data['id']);
+            if ($result) {
+               $task->addVolume(1);
+            }
+         } catch (RateLimitException $e1) {
+            // We are making API calls too fast. Sleep for a bit, and we will re-sync this item on the next round.
+            sleep(5);
+         } catch (Exception $e2) {
+            // Some other error
          }
       }
       return 1;
@@ -513,9 +531,16 @@ class PluginJamfSync extends CommonGLPI {
          } else {
             $phone = strpos($jamf_device['model_identifier'], 'iPhone') !== false;
             if (isset($config['autoimport']) && $config['autoimport']) {
-               $result = self::importMobileDevice($phone ? 'Phone' : 'Computer', $jamf_device['id']);
-               if ($result) {
-                  $task->addVolume(1);
+               try {
+                  $result = self::importMobileDevice($phone ? 'Phone' : 'Computer', $jamf_device['id']);
+                  if ($result) {
+                     $task->addVolume(1);
+                  }
+               } catch (RateLimitException $e1) {
+                  // We are making API calls too fast. Sleep for a bit, and we will import this item on the next round.
+                  sleep(5);
+               } catch (Exception $e2) {
+                  // Some other error
                }
             } else {
                if (array_key_exists($jamf_device['udid'], $pending_import)) {

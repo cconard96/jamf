@@ -268,6 +268,22 @@ function plugin_jamf_getAddSearchOptions($itemtype)
                'datatype'        => 'datetime',
                'massiveaction'   => false,
                'joinparams'      => ['jointype' => 'itemtype_item']
+            ],
+            '22019' => [
+               'table'           => 'glpi_plugin_jamf_mobiledevices',
+               'field'           => 'import_date',
+               'name'            => __('Jamf', 'jamf'). ' - ' .__('Import date', 'jamf'),
+               'datatype'        => 'datetime',
+               'massiveaction'   => false,
+               'joinparams'      => ['jointype' => 'itemtype_item']
+            ],
+            '22020' => [
+               'table'           => 'glpi_plugin_jamf_mobiledevices',
+               'field'           => 'sync_date',
+               'name'            => __('Jamf', 'jamf'). ' - ' .__('Sync date', 'jamf'),
+               'datatype'        => 'datetime',
+               'massiveaction'   => false,
+               'joinparams'      => ['jointype' => 'itemtype_item']
             ]
          ];
       }
