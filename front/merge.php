@@ -106,7 +106,6 @@ $js = <<<JAVASCRIPT
                post_data[glpi_id] = {'itemtype': itemtype, 'jamf_id': jamf_id};
             }
          }
-         console.log(post_data);
          $.ajax({
             type: "POST",
             url: "{$ajax_url}",

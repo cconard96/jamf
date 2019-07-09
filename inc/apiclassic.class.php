@@ -66,7 +66,7 @@
               switch ($fault['detail']['errorcode']) {
                  case 'policies.ratelimit.QuotaViolation':
                     // We are making too many API calls in a short time.
-                    throw new RateLimitException($fault['faultstring']);
+                    throw new PluginJamfRateLimitException($fault['faultstring']);
               }
            }
            throw new RuntimeException(__("Unknown JSS API Error"));
@@ -106,4 +106,4 @@
         // No other first level keys exist
         return (!is_null($response) && count($response)) ? reset($response) : null;
     }
- }
+}

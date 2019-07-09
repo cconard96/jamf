@@ -86,14 +86,72 @@ function plugin_jamf_install()
       $DB->queryOrDie($query, 'Error creating JAMF plugin software table' . $DB->error());
    }
 
-   CronTask::register('PluginJamfSync', 'syncJamf', 900, [
-      'state'        => 0,
+   $jamfconfig = Config::getConfigurationValues('plugin:Jamf');
+   if (!count($jamfconfig)) {
+      $DB->insert('glpi_configs', [
+         'context'   => 'plugin:Jamf',
+         'name'      => 'jssserver',
+         'value'     => ''
+      ]);
+      $DB->insert('glpi_configs', [
+         'context'   => 'plugin:Jamf',
+         'name'      => 'jssuser',
+         'value'     => ''
+      ]);
+      $DB->insert('glpi_configs', [
+         'context'   => 'plugin:Jamf',
+         'name'      => 'jsspassword',
+         'value'     => ''
+      ]);
+      $DB->insert('glpi_configs', [
+         'context'   => 'plugin:Jamf',
+         'name'      => 'sync_interval',
+         'value'     => '120' // Sync devices every two hours
+      ]);
+      $DB->insert('glpi_configs', [
+         'context'   => 'plugin:Jamf',
+         'name'      => 'sync_general',
+         'value'     => '0'
+      ]);
+      $DB->insert('glpi_configs', [
+         'context'   => 'plugin:Jamf',
+         'name'      => 'sync_os',
+         'value'     => '0'
+      ]);
+      $DB->insert('glpi_configs', [
+         'context'   => 'plugin:Jamf',
+         'name'      => 'sync_software',
+         'value'     => '0'
+      ]);
+      $DB->insert('glpi_configs', [
+         'context'   => 'plugin:Jamf',
+         'name'      => 'sync_financial',
+         'value'     => '0'
+      ]);
+      $DB->insert('glpi_configs', [
+         'context'   => 'plugin:Jamf',
+         'name'      => 'sync_user',
+         'value'     => '0'
+      ]);
+      $DB->insert('glpi_configs', [
+         'context'   => 'plugin:Jamf',
+         'name'      => 'user_sync_mode',
+         'value'     => 'email'
+      ]);
+      $DB->insert('glpi_configs', [
+         'context'   => 'plugin:Jamf',
+         'name'      => 'autoimport',
+         'value'     => '0'
+      ]);
+   }
+   CronTask::register('PluginJamfSync', 'syncJamf', 300, [
+      'state'        => 1,
       'allowmode'    => 2,
       'logslifetime' => 30,
       'comment'      => "Sync devices with Jamf that are already imported"
    ]);
    CronTask::register('PluginJamfSync', 'importJamf', 900, [
-      'state'        => 0,
+      'state'        => 1,
       'allowmode'    => 2,
       'logslifetime' => 30,
       'comment'      => "Import or discover devices in Jamf that are not already imported"
@@ -106,6 +164,7 @@ function plugin_jamf_uninstall()
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_imports');
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_mobiledevices');
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_softwares');
+   Config::deleteConfigurationValues('plugin:Jamf');
    CronTask::unregister('jamf');
    return true;
 }

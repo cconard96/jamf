@@ -490,7 +490,7 @@ class PluginJamfSync extends CommonGLPI {
             if ($result) {
                $task->addVolume(1);
             }
-         } catch (RateLimitException $e1) {
+         } catch (PluginJamfRateLimitException $e1) {
             // We are making API calls too fast. Sleep for a bit, and we will re-sync this item on the next round.
             sleep(5);
          } catch (Exception $e2) {
@@ -536,7 +536,7 @@ class PluginJamfSync extends CommonGLPI {
                   if ($result) {
                      $task->addVolume(1);
                   }
-               } catch (RateLimitException $e1) {
+               } catch (PluginJamfRateLimitException $e1) {
                   // We are making API calls too fast. Sleep for a bit, and we will import this item on the next round.
                   sleep(5);
                } catch (Exception $e2) {
