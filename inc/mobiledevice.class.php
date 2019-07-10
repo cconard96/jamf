@@ -44,6 +44,8 @@ class PluginJamfMobileDevice extends CommonDBChild
     */
    public static function showForComputerOrPhoneMain($params)
    {
+      global $CFG_GLPI;
+
       $item = $params['item'];
 
       if (!($item::getType() == 'Computer') && !($item::getType() == 'Phone')) {
@@ -88,6 +90,27 @@ class PluginJamfMobileDevice extends CommonDBChild
       $out .= "<td>".$getYesNo($match['cloud_backup_enabled'])."</td>";
       $out .= "<td>".__('Activation locked', 'jamf')."</td>";
       $out .= "<td>".$getYesNo($match['activation_lock_enabled'])."</td></tr>";
+
+      if ($item->canUpdate()) {
+         $out .= "<tr><td colspan='4' class='center'>";
+         $out .= "<a class='vsubmit' onclick='syncDevice(&quot;{$item::getType()}&quot;, {$item->getID()}); return false;'>".__('Sync now', 'jamf')."</a>";
+         $out .= "</td></tr>";
+         $ajax_url = $CFG_GLPI['root_doc']."/plugins/jamf/ajax/sync.php";
+         $js = <<<JAVASCRIPT
+               function syncDevice(itemtype, items_id) {
+                  $.ajax({
+                     type: "POST",
+                     url: "{$ajax_url}",
+                     data: {"itemtype": itemtype, "items_id": items_id},
+                     contentType: 'application/json',
+                     success: function() {
+                        location.reload();
+                     }
+                  });
+               }
+JAVASCRIPT;
+         $out .= Html::scriptBlock($js);
+      }
 
       $out .= "<th colspan='4'>".__('Jamf Lost Mode Information', 'jamf')."</th>";
       $enabled = $match['lost_mode_enabled'];

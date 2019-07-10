@@ -21,39 +21,10 @@
  --------------------------------------------------------------------------
  */
 
-/**
- * DB utilities for Jamf plugin.
- * Contains several methods not yet available in the core for interacting with the DB and tables.
- */
- class PluginJamfDBUtil {
+use Exception;
 
-    public static function dropTable(string $table)
-    {
-       global $DB;
+if (!defined('GLPI_ROOT')) {
+   die("Sorry. You can't access this file directly");
+}
 
-       return $DB->query('DROP TABLE'.$DB->quoteName($table));
-    }
-
-    public static function dropTableOrDie(string $table, string $message = '')
-    {
-        global $DB;
-
-        $res = $DB->query('DROP TABLE'.$DB->quoteName($table));
-        if (!$res) {
-           //TRANS: %1$s is the description, %2$s is the query, %3$s is the error message
-            $message = sprintf(
-                __('%1$s - Error during the database query: %2$s - Error is %3$s'),
-                $message,
-                $insert,
-                $DB->error()
-            );
-            if (isCommandLine()) {
-                throw new \RuntimeException($message);
-            } else {
-                echo $message . "\n";
-                die(1);
-            }
-        }
-        return $res;
-    }
- }
+class PluginJamfRateLimitException extends Exception {};

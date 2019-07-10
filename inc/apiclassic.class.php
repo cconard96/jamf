@@ -54,11 +54,25 @@
         ]);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($curl);
+        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
         if (!$response) {
            return null;
         }
-        return ($raw ? $response : json_decode($response, true));
+        if ($httpcode == 500) {
+           $response = json_decode($response, true);
+           if (isset($response['fault'])) {
+              $fault = $response['fault'];
+              switch ($fault['detail']['errorcode']) {
+                 case 'policies.ratelimit.QuotaViolation':
+                    // We are making too many API calls in a short time.
+                    throw new PluginJamfRateLimitException($fault['faultstring']);
+              }
+           }
+           throw new RuntimeException(__("Unknown JSS API Error"));
+        } else {
+           return ($raw ? $response : json_decode($response, true));
+        }
     }
 
     /**
@@ -225,4 +239,4 @@
         $response = self::delete($endpoint);
         return $response;
     }
- }
+}
