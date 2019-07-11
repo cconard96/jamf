@@ -19,3 +19,6 @@ Only supports mobile devices for now.
 - Each bugfix release will increment the patch version number.
 - Bugfixes for the current and previous major versions of the plugin will be supported at least. Older versions may be supported depending on community interest and my own company's need. This plugin will not be backported to support versions older than 9.4.0.
 - I will strive to have at least a beta release for the latest major version of GLPi within a week of the full release.
+
+## Have a feature suggestion?
+I have set up a UserEcho page where you can make feature suggestions for future versions. Additionally, I welcome any contributions from the community weather they be bug fixes or new features. For new feature that aren't already included in a milestone, you should open an issue so that the new feature can be discussed.
