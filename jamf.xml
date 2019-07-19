@@ -21,6 +21,10 @@
    </authors>
    <versions>
       <version>
+        <num>1.0.0</num>
+        <compatibility>9.4</compatibility>
+      </version>
+      <version>
         <num>1.0.0-BETA</num>
         <compatibility>9.4</compatibility>
       </version>
