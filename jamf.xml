@@ -2,7 +2,7 @@
 <root>
    <name>JAMF Plugin for GLPI</name>
    <key>jamf</key>
-   <state>beta</state>
+   <state>stable</state>
    <logo>https://img.icons8.com/metro/40/000000/multiple-devices.png</logo>
    <description>
       <short>
