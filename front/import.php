@@ -84,7 +84,10 @@ $js = <<<JAVASCRIPT
             url: "{$ajax_url}",
             data: {action: "import", item_ids: ids},
             contentType: 'application/json',
-            success: function() {
+            beforeSend: function() {
+               $('#loading-overlay').show();
+            },
+            complete: function() {
                location.reload();
             }
          });
@@ -93,4 +96,11 @@ JAVASCRIPT;
 Html::closeForm();
 Html::printPager($start, $importcount, PluginJamfImport::getSearchURL(), '');
 echo Html::scriptBlock($js);
+
+// Create loading indicator
+$position = "position: fixed; top: 0; left: 0; right: 0; bottom: 0;";
+$style = "display: none; {$position} width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 2; cursor: progress;";
+echo "<div id='loading-overlay' style='{$style}'><table class='tab_cadre' style='margin-top: 10%;'>";
+echo "<thead><tr><th class='center'><h3>".__('Importing devices...', 'jamf')."</h3></th></tr></thead>";
+echo "</table></div>";
 Html::footer();
