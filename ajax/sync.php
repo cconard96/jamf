@@ -38,7 +38,13 @@ if (!isset($_REQUEST['itemtype']) || !isset($_REQUEST['items_id'])) {
 }
 
 try {
-   PluginJamfSync::syncMobileDevice($_REQUEST['itemtype'], $_REQUEST['items_id']);
+   $mobiledevice = new PluginJamfMobileDevice();
+   $mobiledevice->getFromDBByCrit([
+      'itemtype'  => $_REQUEST['itemtype'],
+      'items_id'  => $_REQUEST['items_id']
+   ]);
+   PluginJamfSync::syncMobileDevice($mobiledevice);
 } catch (Exception $e) {
+   Toolbox::logError($e->getMessage());
    return;
 }

@@ -449,13 +449,9 @@ class PluginJamfSync extends CommonGLPI {
       }
    }
 
-   public static function syncMobileDevice(string $itemtype, int $device_id) : bool
+   public static function syncMobileDevice(PluginJamfMobileDevice $mobiledevice) : bool
    {
-      $mobiledevice = new PluginJamfMobileDevice();
-      if (!$mobiledevice->getFromDB($device_id)) {
-         return false;
-      }
-
+      $itemtype = $mobiledevice->fields['itemtype'];
       $item = new $itemtype();
       if (!$item->getFromDB($mobiledevice->fields['items_id'])) {
          return false;
@@ -473,9 +469,9 @@ class PluginJamfSync extends CommonGLPI {
 
       $config = PluginJamfConfig::getConfig();
       $mobiledevice = new PluginJamfMobileDevice();
-      $all_mobiledevices = [];
+
       $iterator = $DB->request([
-         'SELECT' => ['id', 'itemtype'],
+         'SELECT' => ['id'],
          'FROM'   => PluginJamfMobileDevice::getTable(),
          'WHERE'  => [
             new QueryExpression("sync_date < NOW() - INTERVAL {$config['sync_interval']} MINUTE")
@@ -486,7 +482,8 @@ class PluginJamfSync extends CommonGLPI {
       }
       while ($data = $iterator->next()) {
          try {
-            $result = self::syncMobileDevice($data['itemtype'], $data['id']);
+            $mobiledevice->getFromDB($data['id']);
+            $result = self::syncMobileDevice($mobiledevice);
             if ($result) {
                $task->addVolume(1);
             }
