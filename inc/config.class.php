@@ -33,7 +33,7 @@ class PluginJamfConfig extends CommonDBTM
    {
       if (!$withtemplate) {
          if ($item->getType() == 'Config') {
-            return __('JAMF Plugin');
+            return __('JAMF plugin');
          }
       }
       return '';
@@ -61,18 +61,18 @@ class PluginJamfConfig extends CommonDBTM
       echo "<div class='center' id='tabsbody'>";
       echo "<table class='tab_cadre_fixe'><thead>";
       echo "<th colspan='4'>" . __('Server Settings') . "</th></thead>";
-      echo "<td>" . __('JSS Server:', 'jamf') . "</td>";
+      echo "<td>" . __('JSS Server', 'jamf') . "</td>";
       echo "<td>";
       echo "<input type='hidden' name='config_class' value='".__CLASS__."'>";
       echo "<input type='hidden' name='config_context' value='plugin:Jamf'>";
       echo Html::input('jssserver', [
          'value' => $config['jssserver']
       ]);
-      echo "</td><td>".__('JSS User:', 'jamf')."</td><td>";
+      echo "</td><td>".__('JSS User', 'jamf')."</td><td>";
       echo Html::input('jssuser', [
          'value' => $config['jssuser']
       ]);
-      echo "</td></tr><tr><td>".__('JSS Password:', 'jamf')."</td><td>";
+      echo "</td></tr><tr><td>".__('JSS Password', 'jamf')."</td><td>";
       echo Html::input('jsspassword', ['type' => 'password', 'value' => $config['jsspassword']]);
       echo "</td></tr>";
       echo "</table>";
@@ -80,57 +80,57 @@ class PluginJamfConfig extends CommonDBTM
       echo "<table class='tab_cadre_fixe'><thead>";
       echo "<th colspan='4'>" . __('Sync Settings') . "</th></thead>";
 
-      echo "<tr><td>" . __('Sync Interval (minutes):', 'jamf') . "</td>";
+      echo "<tr><td>" . __('Sync Interval (minutes)', 'jamf') . "</td>";
       echo "<td>";
       Dropdown::showNumber('sync_interval', [
          'value'  => isset($config['sync_interval']) ? $config['sync_interval'] : 15
       ]);
       echo "</td></tr>";
 
-      echo "<tr><td>" . __('Sync General:', 'jamf') . "</td>";
+      echo "<tr><td>" . __('Sync General', 'jamf') . "</td>";
       echo "<td>";
       Dropdown::showYesNo('sync_general', isset($config['sync_general']) ? $config['sync_general'] : false);
       echo "</td>";
 
-      echo "<td>" . __('Sync OS:', 'jamf') . "</td>";
+      echo "<td>" . __('Sync OS', 'jamf') . "</td>";
       echo "<td>";
       Dropdown::showYesNo('sync_os', isset($config['sync_os']) ? $config['sync_os'] : false);
       echo "</td></tr>";
 
-      echo "<tr><td>" . __('Sync Software:', 'jamf') . "</td>";
+      echo "<tr><td>" . __('Sync Software', 'jamf') . "</td>";
       echo "<td>";
       Dropdown::showYesNo('sync_software', isset($config['sync_software']) ? $config['sync_software'] : false);
       echo "</td>";
 
-      echo "<td>" . __('Sync Financial:', 'jamf') . "</td>";
+      echo "<td>" . __('Sync Financial', 'jamf') . "</td>";
       echo "<td>";
       Dropdown::showYesNo('sync_financial', isset($config['sync_financial']) ? $config['sync_financial'] : false);
       echo "</td></tr>";
 
-      echo "<tr><td>" . __('Sync User:', 'jamf') . "</td>";
+      echo "<tr><td>" . __('Sync User', 'jamf') . "</td>";
       echo "<td>";
       Dropdown::showYesNo('sync_user', isset($config['sync_user']) ? $config['sync_user'] : false);
       echo "</td>";
 
-      echo "<td>" . __('Auto Import:', 'jamf') . "</td>";
+      echo "<td>" . __('Auto Import', 'jamf') . "</td>";
       echo "<td>";
       Dropdown::showYesNo('autoimport', isset($config['autoimport']) ? $config['autoimport'] : false);
       echo "</td></tr>";
 
       echo "<table class='tab_cadre_fixe'><thead>";
       echo "<th colspan='4'>" . __('Default Type Settings') . "</th></thead>";
-      echo "<td>" . __('Manufacturer:', 'jamf') . "</td>";
+      echo "<td>" . __('Manufacturer', 'jamf') . "</td>";
       echo "<td>";
       Dropdown::show('Manufacturer', [
          'name' => 'default_manufacturer',
          'value' => isset($config['default_manufacturer']) ? $config['default_manufacturer'] : false
       ]);
-      echo "</td><td>".__('iPhone Type:', 'jamf')."</td><td>";
+      echo "</td><td>".__('iPhone Type', 'jamf')."</td><td>";
       Dropdown::show('PhoneType', [
          'name' => 'iphone_type',
          'value' => isset($config['iphone_type']) ? $config['iphone_type'] : false
       ]);
-      echo "</td></tr><tr><td>".__('iPad Type:', 'jamf')."</td><td>";
+      echo "</td></tr><tr><td>".__('iPad Type', 'jamf')."</td><td>";
       Dropdown::show('ComputerType', [
          'name' => 'ipad_type',
          'value' => isset($config['ipad_type']) ? $config['ipad_type'] : false

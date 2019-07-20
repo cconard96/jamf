@@ -93,8 +93,6 @@
         self::$connection->setCurlAuth($curl);
         curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
         curl_setopt($curl, CURLOPT_SSLVERSION, 6);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($curl, CURLOPT_HTTPHEADER, [
            'Content-Type: application/json',
            'Accept: application/json'
