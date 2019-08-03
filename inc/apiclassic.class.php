@@ -21,6 +21,8 @@
  --------------------------------------------------------------------------
  */
 
+use mageekguy\atoum\writers\std\err;
+
 /**
  * JSS Classic API interface class
  * @since 1.0.0
@@ -79,11 +81,11 @@ class PluginJamfAPIClassic
    /**
     * Add a new item through a JSS Classic API endpoint.
     * @param string $endpoint The API endpoint.
-    * @param array $data Associative array of data to post to the endpoint.
+    * @param string $payload XML payload of data to post to the endpoint.
     * @return int|bool True if successful, or the HTTP return code if it is not 201.
     * @since 1.1.0
     */
-   private static function add(string $endpoint, array $data)
+   private static function add(string $endpoint, string $payload)
    {
       if (!self::$connection) {
          self::$connection = new PluginJamfConnection();
@@ -92,10 +94,10 @@ class PluginJamfAPIClassic
       $curl = curl_init($url);
       // Set the username and password in an authentication header
       self::$connection->setCurlAuth($curl);
-      curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
+      curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
       curl_setopt($curl, CURLOPT_SSLVERSION, 6);
       curl_setopt($curl, CURLOPT_HTTPHEADER, [
-         'Content-Type: application/json',
+         'Content-Type: application/xml',
          'Accept: application/json'
       ]);
       curl_exec($curl);
@@ -199,20 +201,26 @@ class PluginJamfAPIClassic
    /**
     * Add an item of the specified JSS itemtype and parameters.
     * @param string $itemtype The type of data to fetch. This matches up with endpoint names.
-    * @param array $params API input parameters such as udid, name, or subset.
-    * @param array $fields Associative array of item fields.
+    * @param string $payload XML payload of data to post to the endpoint.
     * @param bool $user_auth True if the user's linked JSS account privileges should be checked for requested resource.
     * @return array Associative array of the decoded JSON response.
     * @since 1.1.0
     */
-   public static function addItem(string $itemtype, array $params = [], array $fields = [], $user_auth = false)
+   public static function addItem(string $itemtype, string $payload, $user_auth = false)
    {
-      if ($user_auth && !PluginJamfUser_JSSAccount::canCreateJSSItem($itemtype)) {
+      if ($itemtype == 'mobiledevicecommands') {
+         $param_str = '/command';
+         $meta = (string) simplexml_load_string($payload)->general->command;
+      } else {
+         $param_str = '';
+         $meta = null;
+      }
+      if ($user_auth && !PluginJamfUser_JSSAccount::canCreateJSSItem($itemtype, $meta)) {
          return null;
       }
-      $param_str = self::getParamString($params);
+
       $endpoint = "$itemtype$param_str";
-      $response = self::add($endpoint, $fields);
+      $response = self::add($endpoint, $payload);
       return $response;
    }
 
@@ -255,3 +263,4 @@ class PluginJamfAPIClassic
       return $response;
    }
 }
+

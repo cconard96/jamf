@@ -7,7 +7,7 @@
 - When merging items, a GLPI item will be preselected if the UDID/UUID matches (or if the name matches as a backup check)
 - View and sync Extension Attributes
 - Link GLPI users to JSS accounts for privilege checks. This is mandatory for certain actions/sections such as sending MDM commands.
-
+- Issue commands from GLPI
 
 ## [1.0.1]
 

@@ -29,6 +29,8 @@ function plugin_init_jamf() {
    global $PLUGIN_HOOKS;
 
    $PLUGIN_HOOKS['csrf_compliant']['jamf'] = true;
+   $PLUGIN_HOOKS['add_css']['jamf'][] = 'css/jamf.css';
+   $PLUGIN_HOOKS['add_javascript']['jamf'][] = 'js/jamf.min.js';
    Plugin::registerClass('PluginJamfConfig', ['addtabon' => 'Config']);
    $PLUGIN_HOOKS['post_item_form']['jamf'] = ['PluginJamfMobileDevice', 'showForComputerOrPhoneMain'];
    $PLUGIN_HOOKS['pre_item_update']['jamf']['Phone'] = ['PluginJamfMobileDevice', 'preUpdatePhone'];
@@ -39,6 +41,10 @@ function plugin_init_jamf() {
    Plugin::registerClass('PluginJamfItem_ExtensionAttribute', ['addtabon' => [
        'Computer',
        'Phone'
+   ]]);
+   Plugin::registerClass('PluginJamfItem_MDMCommand', ['addtabon' => [
+      'Computer',
+      'Phone'
    ]]);
    Plugin::registerClass('PluginJamfUser_JSSAccount', ['addtabon' => ['User']]);
    if (Session::haveRight('plugin_jamf_mobiledevice', READ)) {
