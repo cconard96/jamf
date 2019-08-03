@@ -18,7 +18,7 @@ Only supports mobile devices for now.
 - iPads and AppleTVs are imported as Computers, while iPhones are imported as Phones.
 
 ## Locale Support
-- Contribute to French and Spanish localizations on (POEditor)[https://poeditor.com/join/project/BepTgrM7ab].
+- Contribute to French and Spanish localizations on [POEditor](https://poeditor.com/join/project/BepTgrM7ab).
 - To request new languages, please open a GitHub issue.
 
 ## Versioning/Support

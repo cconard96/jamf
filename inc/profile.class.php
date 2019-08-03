@@ -29,15 +29,18 @@ if (!defined('GLPI_ROOT')) {
  * PluginJamfProfile class. Adds plugin related rights tab to Profiles.
  * @since 1.0.0
  */
-class PluginJamfProfile extends Profile {
+class PluginJamfProfile extends Profile
+{
 
    static $rightname = "config";
 
-   function getTabNameForItem(CommonGLPI $item, $withtemplate = 0) {
+   function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
+   {
       return self::createTabEntry('Jamf');
    }
 
-   static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0) {
+   static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
+   {
       $jamfprofile = new self();
       if ($item->fields['interface'] == 'central') {
          $jamfprofile->showForm($item->getID());
@@ -50,11 +53,12 @@ class PluginJamfProfile extends Profile {
    /**
     * Print the Jamf plugin right form for the current profile
     *
-    * @param int  $profiles_id  Current profile ID
-    * @param bool $openform     Open the form (true by default)
-    * @param bool $closeform    Close the form (true by default)
-   **/
-   function showForm($profiles_id = 0, $openform = true, $closeform = true) {
+    * @param int $profiles_id Current profile ID
+    * @param bool $openform Open the form (true by default)
+    * @param bool $closeform Close the form (true by default)
+    **/
+   function showForm($profiles_id = 0, $openform = true, $closeform = true)
+   {
       global $CFG_GLPI;
 
       if (!self::canView()) {
@@ -65,24 +69,30 @@ class PluginJamfProfile extends Profile {
       $profile = new Profile();
       $profile->getFromDB($profiles_id);
       if (($canedit = Session::haveRightsOr(self::$rightname, [CREATE, UPDATE, PURGE]))
-          && $openform) {
-         echo "<form method='post' action='".$profile->getFormURL()."'>";
+         && $openform) {
+         echo "<form method='post' action='" . $profile->getFormURL() . "'>";
       }
 
-      $rights = [['itemtype'  => 'PluginJamfMobileDevice',
-                            'label'     => PluginJamfMobileDevice::getTypeName(Session::getPluralNumber()),
-                            'field'     => 'plugin_jamf_mobiledevice'],
-                      ['itemtype'  => 'PluginJamfRuleImport',
-                            'label'     => _n('Import rule', 'Import rules', Session::getPluralNumber(), 'jamf'),
-                            'field'     => 'plugin_jamf_ruleimport'],
-                      ['itemtype'  => 'PluginJamfUser_JSSAccount',
-                         'label'     => PluginJamfUser_JSSAccount::getTypeName(Session::getPluralNumber()),
-                         'field'     => PluginJamfUser_JSSAccount::$rightname]];
-      $matrix_options['title'] = __('Jamf Plugin');
+      $rights = [['itemtype' => 'PluginJamfMobileDevice',
+         'label' => PluginJamfMobileDevice::getTypeName(Session::getPluralNumber()),
+         'field' => 'plugin_jamf_mobiledevice'],
+         ['itemtype' => 'PluginJamfRuleImport',
+            'label' => _n('Import rule', 'Import rules', Session::getPluralNumber(), 'jamf'),
+            'field' => 'plugin_jamf_ruleimport'],
+         ['itemtype' => 'PluginJamfRuleSync',
+            'label' => _n('Sync rule', 'Sync rules', Session::getPluralNumber(), 'jamf'),
+            'field' => 'plugin_jamf_rulesync'],
+         ['itemtype' => 'PluginJamfUser_JSSAccount',
+            'label' => PluginJamfUser_JSSAccount::getTypeName(Session::getPluralNumber()),
+            'field' => PluginJamfUser_JSSAccount::$rightname],
+         ['itemtype' => 'PluginJamfItem_MDMCommand',
+            'label' => PluginJamfItem_MDMCommand::getTypeName(Session::getPluralNumber()),
+            'field' => PluginJamfItem_MDMCommand::$rightname]];
+      $matrix_options['title'] = __('Jamf plugin');
       $profile->displayRightsChoiceMatrix($rights, $matrix_options);
 
       if ($canedit
-          && $closeform) {
+         && $closeform) {
          echo "<div class='center'>";
          echo Html::hidden('id', ['value' => $profiles_id]);
          echo Html::submit(_sx('button', 'Save'), ['name' => 'update']);
@@ -95,11 +105,12 @@ class PluginJamfProfile extends Profile {
    /**
     * Print the Jamf plugin helpdesk right form for the current profile
     *
-    * @param int  $profiles_id  Current profile ID
-    * @param bool $openform     Open the form (true by default)
-    * @param bool $closeform    Close the form (true by default)
-   **/
-   function showFormHelpdesk($profiles_id = 0, $openform = true, $closeform = true) {
+    * @param int $profiles_id Current profile ID
+    * @param bool $openform Open the form (true by default)
+    * @param bool $closeform Close the form (true by default)
+    **/
+   function showFormHelpdesk($profiles_id = 0, $openform = true, $closeform = true)
+   {
       global $CFG_GLPI;
 
       if (!self::canView()) {
@@ -110,16 +121,16 @@ class PluginJamfProfile extends Profile {
       $profile->getFromDB($profiles_id);
       echo "<div class='spaced'>";
       if ($canedit = Session::haveRightsOr(self::$rightname, [CREATE, UPDATE, PURGE])) {
-         echo "<form method='post' action='".$profile->getFormURL()."'>";
+         echo "<form method='post' action='" . $profile->getFormURL() . "'>";
       }
 
-      $matrix_options = ['canedit'       => $canedit,
-                              'default_class' => 'tab_bg_2'];
+      $matrix_options = ['canedit' => $canedit,
+         'default_class' => 'tab_bg_2'];
 
-      $rights = [['itemtype'  => 'PluginJamfMobileDevice',
-                            'label'     => PluginJamfMobileDevice::getTypeName(Session::getPluralNumber()),
-                            'field'     => 'plugin_jamf_mobiledevice',
-                            'rights'    => [READ => __('Read')]]];
+      $rights = [['itemtype' => 'PluginJamfMobileDevice',
+         'label' => PluginJamfMobileDevice::getTypeName(Session::getPluralNumber()),
+         'field' => 'plugin_jamf_mobiledevice',
+         'rights' => [READ => __('Read')]]];
       $matrix_options['title'] = __('Jamf plugin');
       $profile->displayRightsChoiceMatrix($rights, $matrix_options);
 

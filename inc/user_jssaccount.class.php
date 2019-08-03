@@ -58,10 +58,10 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
       // Cache JSS account information to avoid extra, costly API calls.
       static $jssaccount = [];
 
-      if (!isset($jssaccount[$this->fields['jssusers_id']]) === null) {
-         $jssaccount[$this->fields['jssusers_id']] = PluginJamfAPIClassic::getItems('accounts', ['userid' => $this->fields['jssusers_id']]);
+      if (!isset($jssaccount[$this->fields['jssaccounts_id']])) {
+         $jssaccount[$this->fields['jssaccounts_id']] = PluginJamfAPIClassic::getItems('accounts', ['userid' => $this->fields['jssaccounts_id']]);
       }
-      return $jssaccount[$this->fields['jssusers_id']]['privileges'] ?? [];
+      return $jssaccount[$this->fields['jssaccounts_id']]['privileges'] ?? [];
    }
 
    private static function getItemRightMap() {
@@ -86,7 +86,11 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
       return $map;
    }
 
-   public static function canCreateJSSItem($itemtype) {
+   public static function canCreateJSSItem($itemtype, $meta) {
+      if ($itemtype == 'mobiledevicecommands') {
+         $commands = PluginJamfMDMCommand::getAvailableCommands();
+         return self::haveJSSRight('jss_actions', $commands[$meta]['jss_right']);
+      }
       $map = self::getItemRightMap();
       if (!isset($map[$itemtype])) {
          return false;
@@ -153,14 +157,16 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
       }
       if (count($matches) === 0) {
          // No JSS account link
+         Toolbox::logError("Attempt to use JSS user rights without a linked account");
          return false;
       }
       $user_jssaccount->getFromDB(reset($matches)['id']);
       $type_rights = $user_jssaccount->getJSSPrivileges()[$type] ?? [];
       if (count($type_rights) === 0) {
+         Toolbox::logError("Linked JSS account has no rights of type $type");
          return false;
       }
-      return in_array($jss_right, $type_rights[$jss_right]);
+      return in_array($jss_right, $type_rights);
    }
 
    public static function showForUser($item) {

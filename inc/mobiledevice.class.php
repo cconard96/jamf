@@ -215,10 +215,11 @@ JAVASCRIPT;
       ]);
    }
 
-    /**
-     * @param CommonDBTM $item
-     * @return PluginJamfMobileDevice
-     */
+
+   /**
+    * @param CommonDBTM $item
+    * @return PluginJamfMobileDevice
+    */
    public static function getJamfItemForGLPIItem(CommonDBTM $item)
    {
        $mobiledevice = new PluginJamfMobileDevice();
@@ -271,5 +272,48 @@ JAVASCRIPT;
       if (isset($item->input['_plugin_jamf_uuid'])) {
          PluginJamfExtField::setValue($item::getType(), $item->getID(), 'uuid', $item->input['_plugin_jamf_uuid']);
       }
+   }
+
+   public function getGLPIItem() {
+      $itemtype = $this->fields['itemtype'];
+      $item = new $itemtype();
+      $item->getFromDB($this->fields['items_id']);
+      return $item;
+   }
+
+   public function getMDMCommands()
+   {
+      $commandhistory = PluginJamfAPIClassic::getItems('mobiledevicehistory', [
+         'id' => $this->fields['jamf_items_id'],
+         'subset' => 'ManagementCommands'
+      ]);
+      return $commandhistory['management_commands'] ?? [
+         'completed' => [],
+         'pending'   => [],
+         'failed'    => []
+      ];
+   }
+
+   public function getSpecificType()
+   {
+      $item = $this->getGLPIItem();
+      $modelclass = $this->fields['itemtype'].'Model';
+      if ($item->fields[getForeignKeyFieldForItemType($modelclass)] > 0) {
+         /** @var CommonDropdown $model */
+         $model = new $modelclass();
+         $model->getFromDB($item->fields[getForeignKeyFieldForItemType($modelclass)]);
+         $modelname = $model->fields['name'];
+         switch ($modelname) {
+            case strpos($modelname, 'iPad') !== false:
+               return 'ipad';
+            case strpos($modelname, 'iPhone') !== false:
+               return 'iphone';
+            case strpos($modelname, 'Apple TV') !== false:
+               return 'appletv';
+            default:
+               return null;
+         }
+      }
+      return null;
    }
 }
