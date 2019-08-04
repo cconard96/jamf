@@ -3,7 +3,7 @@
    <name>JAMF Plugin for GLPI</name>
    <key>jamf</key>
    <state>stable</state>
-   <logo>https://img.icons8.com/metro/40/000000/multiple-devices.png</logo>
+   <logo>https://raw.githubusercontent.com/cconard96/jamf/master/Logo.png</logo>
    <description>
       <short>
          <en>Sync devices and data from Jamf to GLPI</en>
@@ -22,10 +22,6 @@
    <versions>
       <version>
         <num>1.0.0</num>
-        <compatibility>9.4</compatibility>
-      </version>
-      <version>
-        <num>1.0.0-BETA</num>
         <compatibility>9.4</compatibility>
       </version>
    </versions>
