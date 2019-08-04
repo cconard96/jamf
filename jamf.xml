@@ -9,7 +9,7 @@
          <en>Sync devices and data from Jamf to GLPI</en>
       </short>
       <long>
-         <en><![CDATA[This plugin allows you to sync iPads, iPhones and AppleTVs from Jamf to GLPI along with their associated data.<br><a href="https://icons8.com/icon/2168/multiple-devices">Multiple Devices icon by Icons8</a>]]></en>
+         <en><![CDATA[This plugin allows you to sync iPads, iPhones and AppleTVs from Jamf to GLPI along with their associated data.]]></en>
       </long>
    </description>
    <homepage>https://github.com/cconard96/jamf</homepage>
