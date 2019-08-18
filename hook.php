@@ -86,6 +86,32 @@ function plugin_jamf_install()
       $DB->queryOrDie($query, 'Error creating JAMF plugin software table' . $DB->error());
    }
 
+    // Check extension attribute tables
+    if (!$DB->tableExists('glpi_plugin_jamf_extensionattributes')) {
+        $query = "CREATE TABLE `glpi_plugin_jamf_extensionattributes` (
+                  `id` int(11) NOT NULL auto_increment,
+                  `name` varchar(255) NOT NULL,
+                  `description` varchar(255) NOT NULL,
+                  `data_type` varchar(255) NOT NULL,
+                PRIMARY KEY (`id`),
+                KEY `name` (`name`)
+               ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
+        $DB->queryOrDie($query, 'Error creating JAMF plugin extension attribute table' . $DB->error());
+    }
+    if (!$DB->tableExists('glpi_plugin_jamf_items_extensionattributes')) {
+        $query = "CREATE TABLE `glpi_plugin_jamf_items_extensionattributes` (
+                  `id` int(11) NOT NULL auto_increment,
+                  `itemtype` varchar(100) NOT NULL,
+                  `items_id` int(11) NOT NULL,
+                  `glpi_plugin_jamf_extensionattributes_id` int(11) NOT NULL,
+                  `value` varchar(255) NOT NULL,
+                PRIMARY KEY (`id`),
+                KEY `item` (`itemtype`, `items_id`),
+                UNIQUE `unicity` (`itemtype`, `items_id`, `glpi_plugin_jamf_extensionattributes_id`)
+               ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
+        $DB->queryOrDie($query, 'Error creating JAMF plugin item extension attribute table' . $DB->error());
+    }
+
    $jamfconfig = Config::getConfigurationValues('plugin:Jamf');
    if (!count($jamfconfig)) {
       $DB->insert('glpi_configs', [
