@@ -154,13 +154,13 @@ JAVASCRIPT;
 
    /**
     * Get a direct link to the mobile device on the Jamf server.
-    * @param string $udid The UDID/UUID of the device.
+    * @param string $jamf_id The Jamf ID of the device.
     * @return string Jamf URL for the mobile device.
     */
-   public static function getJamfDeviceURL($udid)
+   public static function getJamfDeviceURL($jamf_id)
    {
       $config = PluginJamfConfig::getConfig();
-      return "{$config['jssserver']}/mobileDevices.html?udid={$udid}";
+      return "{$config['jssserver']}/mobileDevices.html?udid={$jamf_id}";
    }
 
    /**
