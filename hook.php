@@ -25,6 +25,7 @@ function plugin_jamf_install()
 {
    global $DB;
 
+   $migration = new Migration(PLUGIN_JAMF_VERSION);
    // Check imports table (Used to store newly discovered devices that haven't been imported yet)
    if (!$DB->tableExists('glpi_plugin_jamf_imports')) {
       $query = "CREATE TABLE `glpi_plugin_jamf_imports` (
@@ -156,6 +157,23 @@ function plugin_jamf_install()
       'logslifetime' => 30,
       'comment'      => "Import or discover devices in Jamf that are not already imported"
    ]);
+
+   if (!$DB->fieldExists('glpi_plugin_jamf_mobiledevices', 'jamf_items_id', false)) {
+      $migration->addField('glpi_plugin_jamf_mobiledevices', 'jamf_items_id', 'integer', ['default' => -1]);
+      $migration->migrationOneTable('glpi_plugin_jamf_mobiledevices');
+      $mobiledevice = new PluginJamfMobileDevice();
+      $unassigned = $mobiledevice->find(['jamf_items_id' => -1]);
+      foreach ($unassigned as $item) {
+         $jamf_item = PluginJamfAPIClassic::getItems('mobiledevices', ['udid' => $item['udid'], 'subset' => 'General']);
+         if ($jamf_item !== null && count($jamf_item) === 1) {
+            $mobiledevice->update([
+               'id'              => $item['id'],
+               'jamf_items_id'   => $jamf_item['general']['id']
+            ]);
+         }
+      }
+   }
+   $migration->executeMigration();
    return true;
 }
 

@@ -91,10 +91,13 @@ class PluginJamfMobileDevice extends CommonDBChild
       $out .= "<td>".__('Activation locked', 'jamf')."</td>";
       $out .= "<td>".$getYesNo($match['activation_lock_enabled'])."</td></tr>";
 
+      $link = self::getJamfDeviceURL($match['jamf_items_id']);
+      $view_msg = __('View in Jamf', 'jamf');
+      $out .= "<tr><td colspan='4' class='center'>";
+      $out .= "<a class='vsubmit' href='{$link}' target='_blank'>{$view_msg}</a>";
+
       if ($item->canUpdate()) {
-         $out .= "<tr><td colspan='4' class='center'>";
-         $out .= "<a class='vsubmit' onclick='syncDevice(&quot;{$item::getType()}&quot;, {$item->getID()}); return false;'>".__('Sync now', 'jamf')."</a>";
-         $out .= "</td></tr>";
+         $out .= "&nbsp;&nbsp;<a class='vsubmit' onclick='syncDevice(&quot;{$item::getType()}&quot;, {$item->getID()}); return false;'>".__('Sync now', 'jamf')."</a>";
          $ajax_url = $CFG_GLPI['root_doc']."/plugins/jamf/ajax/sync.php";
          $js = <<<JAVASCRIPT
                function syncDevice(itemtype, items_id) {
@@ -111,6 +114,7 @@ class PluginJamfMobileDevice extends CommonDBChild
 JAVASCRIPT;
          $out .= Html::scriptBlock($js);
       }
+      $out .= "</td></tr>";
 
       $out .= "<th colspan='4'>".__('Jamf Lost Mode Information', 'jamf')."</th>";
       $enabled = $match['lost_mode_enabled'];
