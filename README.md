@@ -1,4 +1,6 @@
 # JAMF Plugin for GLPI
+[![CodeFactor](https://www.codefactor.io/repository/github/cconard96/jamf/badge/1.0.0/fixes)](https://www.codefactor.io/repository/github/cconard96/jamf/overview/1.0.0/fixes)
+
 Syncs data from JAMF Pro to GLPI.
 Only supports mobile devices for now.
 
