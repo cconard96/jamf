@@ -48,8 +48,8 @@ class PluginJamfMobileDevice extends CommonDBChild
 
       $item = $params['item'];
 
-      if (!($item::getType() == 'Computer') && !($item::getType() == 'Phone')) {
-         return;
+      if (!self::canView() || (!($item::getType() == 'Computer') && !($item::getType() == 'Phone'))) {
+         return false;
       }
       $mobiledevice = new PluginJamfMobileDevice();
       $match = $mobiledevice->find([
