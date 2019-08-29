@@ -25,6 +25,7 @@ function plugin_jamf_install()
 {
    global $DB;
 
+   $migration = new Migration(PLUGIN_JAMF_VERSION);
    // Check imports table (Used to store newly discovered devices that haven't been imported yet)
    if (!$DB->tableExists('glpi_plugin_jamf_imports')) {
       $query = "CREATE TABLE `glpi_plugin_jamf_imports` (
@@ -85,6 +86,35 @@ function plugin_jamf_install()
                ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
       $DB->queryOrDie($query, 'Error creating JAMF plugin software table' . $DB->error());
    }
+
+    // Check extension attribute tables
+    if (!$DB->tableExists('glpi_plugin_jamf_extensionattributes')) {
+        $query = "CREATE TABLE `glpi_plugin_jamf_extensionattributes` (
+                  `id` int(11) NOT NULL auto_increment,
+                  `itemtype` varchar(100) NOT NULL,
+                  `jamf_id` int(11) NOT NULL,
+                  `name` varchar(255) NOT NULL,
+                  `description` varchar(255) NOT NULL,
+                  `data_type` varchar(255) NOT NULL,
+                PRIMARY KEY (`id`),
+                KEY `name` (`name`),
+                UNIQUE KEY `jamf_id` (`jamf_id`, `itemtype`)
+               ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
+        $DB->queryOrDie($query, 'Error creating JAMF plugin extension attribute table' . $DB->error());
+    }
+    if (!$DB->tableExists('glpi_plugin_jamf_items_extensionattributes')) {
+        $query = "CREATE TABLE `glpi_plugin_jamf_items_extensionattributes` (
+                  `id` int(11) NOT NULL auto_increment,
+                  `itemtype` varchar(100) NOT NULL,
+                  `items_id` int(11) NOT NULL,
+                  `glpi_plugin_jamf_extensionattributes_id` int(11) NOT NULL,
+                  `value` varchar(255) NOT NULL,
+                PRIMARY KEY (`id`),
+                KEY `item` (`itemtype`, `items_id`),
+                UNIQUE `unicity` (`itemtype`, `items_id`, `glpi_plugin_jamf_extensionattributes_id`)
+               ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
+        $DB->queryOrDie($query, 'Error creating JAMF plugin item extension attribute table' . $DB->error());
+    }
 
    $jamfconfig = Config::getConfigurationValues('plugin:Jamf');
    if (!count($jamfconfig)) {
@@ -156,6 +186,23 @@ function plugin_jamf_install()
       'logslifetime' => 30,
       'comment'      => "Import or discover devices in Jamf that are not already imported"
    ]);
+
+   if (!$DB->fieldExists('glpi_plugin_jamf_mobiledevices', 'jamf_items_id', false)) {
+      $migration->addField('glpi_plugin_jamf_mobiledevices', 'jamf_items_id', 'integer', ['default' => -1]);
+      $migration->migrationOneTable('glpi_plugin_jamf_mobiledevices');
+      $mobiledevice = new PluginJamfMobileDevice();
+      $unassigned = $mobiledevice->find(['jamf_items_id' => -1]);
+      foreach ($unassigned as $item) {
+         $jamf_item = PluginJamfAPIClassic::getItems('mobiledevices', ['udid' => $item['udid'], 'subset' => 'General']);
+         if ($jamf_item !== null && count($jamf_item) === 1) {
+            $mobiledevice->update([
+               'id'              => $item['id'],
+               'jamf_items_id'   => $jamf_item['general']['id']
+            ]);
+         }
+      }
+   }
+   $migration->executeMigration();
    return true;
 }
 
@@ -195,7 +242,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22002' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'last_inventory',
-               'name'            => __('Jamf', 'jamf'). ' - ' .__('Last inventory', 'jamf'),
+               'name'            => 'Jamf - ' .__('Last inventory', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
                'joinparams'      => ['jointype' => 'itemtype_item']
@@ -203,7 +250,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22003' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'entry_date',
-               'name'            => __('Jamf', 'jamf'). ' - ' .__('Import date', 'jamf'),
+               'name'            => 'Jamf - ' .__('Import date', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
                'joinparams'      => ['jointype' => 'itemtype_item']
@@ -211,7 +258,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22004' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'enroll_date',
-               'name'            => __('Jamf', 'jamf'). ' - ' .__('Enrollment date', 'jamf'),
+               'name'            => 'Jamf - ' .__('Enrollment date', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
                'joinparams'      => ['jointype' => 'itemtype_item']
@@ -219,7 +266,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22005' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'managed',
-               'name'            => __('Jamf', 'jamf'). ' - ' .__('Managed', 'jamf'),
+               'name'            => 'Jamf - ' .__('Managed', 'jamf'),
                'datatype'        => 'bool',
                'massiveaction'   => false,
                'joinparams'      => ['jointype' => 'itemtype_item']
@@ -227,7 +274,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22006' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'supervised',
-               'name'            => __('Jamf', 'jamf'). ' - ' .__('Supervised', 'jamf'),
+               'name'            => 'Jamf - ' .__('Supervised', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
                'joinparams'      => ['jointype' => 'itemtype_item']
@@ -235,7 +282,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22007' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'cloud_backup_enabled',
-               'name'            => __('Jamf', 'jamf'). ' - ' .__('Cloud backup enabled', 'jamf'),
+               'name'            => 'Jamf - ' .__('Cloud backup enabled', 'jamf'),
                'datatype'        => 'bool',
                'massiveaction'   => false,
                'joinparams'      => ['jointype' => 'itemtype_item']
@@ -243,7 +290,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22008' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'activation_lock_enabled',
-               'name'            => __('Jamf', 'jamf'). ' - ' .__('Activation lock enabled', 'jamf'),
+               'name'            => 'Jamf - ' .__('Activation lock enabled', 'jamf'),
                'datatype'        => 'bool',
                'massiveaction'   => false,
                'joinparams'      => ['jointype' => 'itemtype_item']
@@ -251,7 +298,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22009' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'lost_mode_enabled',
-               'name'            => __('Jamf', 'jamf'). ' - ' .__('Lost mode enabled', 'jamf'),
+               'name'            => 'Jamf - ' .__('Lost mode enabled', 'jamf'),
                'datatype'        => 'text',
                'massiveaction'   => false,
                'joinparams'      => ['jointype' => 'itemtype_item']
@@ -259,7 +306,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22010' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'lost_mode_enforced',
-               'name'            => __('Jamf', 'jamf'). ' - ' .__('Lost mode enforced', 'jamf'),
+               'name'            => 'Jamf - ' .__('Lost mode enforced', 'jamf'),
                'datatype'        => 'bool',
                'massiveaction'   => false,
                'joinparams'      => ['jointype' => 'itemtype_item']
@@ -267,7 +314,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22011' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'lost_mode_enable_date',
-               'name'            => __('Jamf', 'jamf'). ' - ' .__('Lost mode enable date', 'jamf'),
+               'name'            => 'Jamf - ' .__('Lost mode enable date', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
                'joinparams'      => ['jointype' => 'itemtype_item']
@@ -275,7 +322,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22012' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'lost_mode_message',
-               'name'            => __('Jamf', 'jamf'). ' - ' .__('Lost mode message', 'jamf'),
+               'name'            => 'Jamf - ' .__('Lost mode message', 'jamf'),
                'datatype'        => 'text',
                'massiveaction'   => false,
                'joinparams'      => ['jointype' => 'itemtype_item']
@@ -283,7 +330,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22013' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'lost_mode_phone',
-               'name'            => __('Jamf', 'jamf'). ' - ' .__('Lost mode phone', 'jamf'),
+               'name'            => 'Jamf - ' .__('Lost mode phone', 'jamf'),
                'datatype'        => 'text',
                'massiveaction'   => false,
                'joinparams'      => ['jointype' => 'itemtype_item']
@@ -291,7 +338,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22014' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'lost_location_latitude',
-               'name'            => __('Jamf', 'jamf'). ' - ' .__('Lost mode latitude', 'jamf'),
+               'name'            => 'Jamf - ' .__('Lost mode latitude', 'jamf'),
                'datatype'        => 'text',
                'massiveaction'   => false,
                'joinparams'      => ['jointype' => 'itemtype_item']
@@ -299,7 +346,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22015' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'lost_location_longitude',
-               'name'            => __('Jamf', 'jamf'). ' - ' .__('Lost mode longitude', 'jamf'),
+               'name'            => 'Jamf - ' .__('Lost mode longitude', 'jamf'),
                'datatype'        => 'text',
                'massiveaction'   => false,
                'joinparams'      => ['jointype' => 'itemtype_item']
@@ -307,7 +354,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22016' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'lost_location_altitude',
-               'name'            => __('Jamf', 'jamf'). ' - ' .__('Lost mode altitude', 'jamf'),
+               'name'            => 'Jamf - ' .__('Lost mode altitude', 'jamf'),
                'datatype'        => 'text',
                'massiveaction'   => false,
                'joinparams'      => ['jointype' => 'itemtype_item']
@@ -315,7 +362,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22017' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'lost_location_speed',
-               'name'            => __('Jamf', 'jamf'). ' - ' .__('Lost mode speed', 'jamf'),
+               'name'            => 'Jamf - ' .__('Lost mode speed', 'jamf'),
                'datatype'        => 'text',
                'massiveaction'   => false,
                'joinparams'      => ['jointype' => 'itemtype_item']
@@ -323,7 +370,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22018' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'lost_location_date',
-               'name'            => __('Jamf', 'jamf'). ' - ' .__('Lost mode location date', 'jamf'),
+               'name'            => 'Jamf - ' .__('Lost mode location date', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
                'joinparams'      => ['jointype' => 'itemtype_item']
@@ -331,7 +378,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22019' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'import_date',
-               'name'            => __('Jamf', 'jamf'). ' - ' .__('Import date', 'jamf'),
+               'name'            => 'Jamf - ' .__('Import date', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
                'joinparams'      => ['jointype' => 'itemtype_item']
@@ -339,7 +386,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22020' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'sync_date',
-               'name'            => __('Jamf', 'jamf'). ' - ' .__('Sync date', 'jamf'),
+               'name'            => 'Jamf - ' .__('Sync date', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
                'joinparams'      => ['jointype' => 'itemtype_item']

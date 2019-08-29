@@ -117,7 +117,7 @@ class PluginJamfProfile extends Profile {
                             'label'     => PluginJamfMobileDevice::getTypeName(Session::getPluralNumber()),
                             'field'     => 'plugin_jamf_mobiledevice',
                             'rights'    => [READ => __('Read')]]];
-      $matrix_options['title'] = __('Jamf Plugin');
+      $matrix_options['title'] = __('Jamf plugin');
       $profile->displayRightsChoiceMatrix($rights, $matrix_options);
 
       if ($canedit) {

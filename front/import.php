@@ -70,8 +70,11 @@ while ($data = $pending->next()) {
 echo "</tbody></table><br>";
 
 echo "<a class='vsubmit' onclick='importDevices(); return false;'>".__('Import')."</a>";
+echo "&nbsp;<a class='vsubmit' onclick='discoverNow(); return false;'>".__('Discover now')."</a>";
 echo "</div>";
-$ajax_url = $CFG_GLPI['root_doc']."/plugins/jamf/ajax/import.php";
+$ajax_root = $CFG_GLPI['root_doc']."/plugins/jamf/ajax/";
+$import_msg = __('Importing...');
+$discover_msg = __('Discovering...');
 $js = <<<JAVASCRIPT
       function importDevices() {
          var ids = $(':checkbox:checked').map(function(){ return this.name.replace("import",""); }).toArray();
@@ -81,16 +84,34 @@ $js = <<<JAVASCRIPT
 
          $.ajax({
             type: "POST",
-            url: "{$ajax_url}",
+            url: "{$ajax_root}import.php",
             data: {action: "import", item_ids: ids},
             contentType: 'application/json',
             beforeSend: function() {
-               $('#loading-overlay').show();
+              showLoading("{$import_msg}");
             },
             complete: function() {
                location.reload();
             }
          });
+      }
+      function discoverNow() {
+         $.ajax({
+            type: "POST",
+            url: "{$ajax_root}cron.php",
+            data: {crontask: "importJamf"},
+            contentType: 'application/json',
+            beforeSend: function() {
+               showLoading("{$discover_msg}");
+            },
+            complete: function() {
+               location.reload();
+            }
+         });
+      }
+      function showLoading(msg) {
+         $('#loading-overlay h3').text(msg);
+         $('#loading-overlay').show();
       }
 JAVASCRIPT;
 Html::closeForm();

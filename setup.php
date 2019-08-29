@@ -21,7 +21,7 @@
  --------------------------------------------------------------------------
  */
 
-define('PLUGIN_JAMF_VERSION', '1.0.0');
+define('PLUGIN_JAMF_VERSION', '1.1.0');
 define('PLUGIN_JAMF_MIN_GLPI', '9.4.0');
 define('PLUGIN_JAMF_MAX_GLPI', '9.5.0');
 
@@ -36,6 +36,10 @@ function plugin_init_jamf() {
    Plugin::registerClass('PluginJamfShimPhoneOS', ['addtabon' => 'Phone']);
    Plugin::registerClass('PluginJamfRuleImportCollection', ['rulecollections_types' => true]);
    Plugin::registerClass('PluginJamfProfile', ['addtabon' => ['Profile']]);
+   Plugin::registerClass('PluginJamfItem_ExtensionAttribute', ['addtabon' => [
+       'Computer',
+       'Phone'
+   ]]);
    if (Session::haveRight('plugin_jamf_mobiledevice', READ)) {
       $PLUGIN_HOOKS['menu_toadd']['jamf'] = ['tools' => 'PluginJamfMenu'];
    }
