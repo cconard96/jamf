@@ -22,7 +22,7 @@
  */
 
 /**
- * JSS MDM Command class
+ * JSS Extension Attribute class
  *
  * @since 1.1.0
  */
@@ -31,5 +31,21 @@ class PluginJamfExtensionAttribute extends CommonDBTM {
     public static function getTypeName($nb = 1)
     {
         return __('Extension attribute', 'Extension attributes', $nb, 'jamf');
+    }
+
+    public function addOrUpdate($input)
+    {
+       global $DB;
+
+       if (!isset($input['jamf_id'])) {
+          return false;
+       }
+       $jamf_id = $input['jamf_id'];
+       unset($input['jamf_id']);
+       return $DB->updateOrInsert(PluginJamfExtensionAttribute::getTable(), $input, ['jamf_id' => $jamf_id]);
+    }
+
+    public function showForm() {
+
     }
 }

@@ -90,11 +90,14 @@ function plugin_jamf_install()
     if (!$DB->tableExists('glpi_plugin_jamf_extensionattributes')) {
         $query = "CREATE TABLE `glpi_plugin_jamf_extensionattributes` (
                   `id` int(11) NOT NULL auto_increment,
+                  `itemtype` varchar(100) NOT NULL,
+                  `jamf_id` int(11) NOT NULL,
                   `name` varchar(255) NOT NULL,
                   `description` varchar(255) NOT NULL,
                   `data_type` varchar(255) NOT NULL,
                 PRIMARY KEY (`id`),
-                KEY `name` (`name`)
+                KEY `name` (`name`),
+                UNIQUE KEY `jamf_id` (`jamf_id`, `itemtype`)
                ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
         $DB->queryOrDie($query, 'Error creating JAMF plugin extension attribute table' . $DB->error());
     }
