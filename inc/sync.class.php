@@ -373,6 +373,28 @@ class PluginJamfSync extends CommonGLPI {
             }
          }
 
+         // Sync extension attributes
+         if ($config['sync_general'] && (!$subset || $subset_name == 'extension_attributes')) {
+             $ext_attribute = new PluginJamfExtensionAttribute();
+             $item_ext_attribute = new PluginJamfItem_ExtensionAttribute();
+
+             foreach ($ext_attributes as $attr) {
+                 $attr_match = $ext_attribute->find([
+                     'jamf_id' => $attr['id'],
+                     'itemtype' => PluginJamfMobileDevice::getType()
+                 ], [], 1);
+
+                 if ($attr_match !== null) {
+                     $attr_match = reset($attr_match);
+                     $DB->updateOrInsert(PluginJamfItem_ExtensionAttribute::getTable(), ['value' => $attr['value']], [
+                         'glpi_plugin_jamf_extensionattributes_id' => $attr_match['id'],
+                         'items_id' => $items_id,
+                         'itemtype' => PluginJamfMobileDevice::getType()
+                     ]);
+                 }
+             }
+         }
+
          // Update extra item data
          $mobiledevice = new PluginJamfMobileDevice();
          $md_match = $mobiledevice->find([
@@ -462,6 +484,25 @@ class PluginJamfSync extends CommonGLPI {
          return false;
       }
       return self::updateComputerOrPhoneFromArray($itemtype, $item->getID(), $data);
+   }
+
+   public static function syncExtensionAttributes()
+   {
+       $ext_attr = new PluginJamfExtensionAttribute();
+       $all_attributes = PluginJamfAPIClassic::getItems('mobiledeviceextensionattributes');
+       if (is_array($all_attributes)) {
+           foreach ($all_attributes as $attribute) {
+               $attr = PluginJamfAPIClassic::getItems('mobiledeviceextensionattributes', ['id' => $attribute['id']]);
+               $input = [
+                   'jamf_id' => $attr['id'],
+                   'itemtype' => PluginJamfMobileDevice::getType(),
+                   'name' => $attr['name'],
+                   'description' => $attr['description'],
+                   'data_type' => $attr['data_type']
+                ];
+                $ext_attr->addOrUpdate($input);
+           }
+       }
    }
 
    public static function cronSyncJamf(CronTask $task) {
