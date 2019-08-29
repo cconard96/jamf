@@ -91,10 +91,13 @@ class PluginJamfMobileDevice extends CommonDBChild
       $out .= "<td>".__('Activation locked', 'jamf')."</td>";
       $out .= "<td>".$getYesNo($match['activation_lock_enabled'])."</td></tr>";
 
+      $link = self::getJamfDeviceURL($match['jamf_items_id']);
+      $view_msg = __('View in Jamf', 'jamf');
+      $out .= "<tr><td colspan='4' class='center'>";
+      $out .= "<a class='vsubmit' href='{$link}' target='_blank'>{$view_msg}</a>";
+
       if ($item->canUpdate()) {
-         $out .= "<tr><td colspan='4' class='center'>";
-         $out .= "<a class='vsubmit' onclick='syncDevice(&quot;{$item::getType()}&quot;, {$item->getID()}); return false;'>".__('Sync now', 'jamf')."</a>";
-         $out .= "</td></tr>";
+         $out .= "&nbsp;&nbsp;<a class='vsubmit' onclick='syncDevice(&quot;{$item::getType()}&quot;, {$item->getID()}); return false;'>".__('Sync now', 'jamf')."</a>";
          $ajax_url = $CFG_GLPI['root_doc']."/plugins/jamf/ajax/sync.php";
          $js = <<<JAVASCRIPT
                function syncDevice(itemtype, items_id) {
@@ -111,6 +114,7 @@ class PluginJamfMobileDevice extends CommonDBChild
 JAVASCRIPT;
          $out .= Html::scriptBlock($js);
       }
+      $out .= "</td></tr>";
 
       $out .= "<th colspan='4'>".__('Jamf Lost Mode Information', 'jamf')."</th>";
       $enabled = $match['lost_mode_enabled'];
@@ -150,13 +154,13 @@ JAVASCRIPT;
 
    /**
     * Get a direct link to the mobile device on the Jamf server.
-    * @param string $udid The UDID/UUID of the device.
+    * @param string $jamf_id The Jamf ID of the device.
     * @return string Jamf URL for the mobile device.
     */
-   public static function getJamfDeviceURL($udid)
+   public static function getJamfDeviceURL($jamf_id)
    {
       $config = PluginJamfConfig::getConfig();
-      return "{$config['jssserver']}/mobileDevices.html?udid={$udid}";
+      return "{$config['jssserver']}/mobileDevices.html?udid={$jamf_id}";
    }
 
    /**
@@ -200,10 +204,10 @@ JAVASCRIPT;
       ]);
    }
 
-    /**
-     * @param CommonDBTM $item
-     * @return PluginJamfMobileDevice
-     */
+   /**
+    * @param CommonDBTM $item
+    * @return PluginJamfMobileDevice
+    */
    public static function getJamfItemForGLPIItem(CommonDBTM $item)
    {
        $mobiledevice = new PluginJamfMobileDevice();

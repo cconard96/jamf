@@ -1,9 +1,12 @@
 # JAMF Plugin for GLPI
+[![CodeFactor](https://www.codefactor.io/repository/github/cconard96/jamf/badge/master)](https://www.codefactor.io/repository/github/cconard96/jamf/overview/master)
+
 Syncs data from JAMF Pro to GLPI.
 Only supports mobile devices for now.
 
 ## Requirements
 - GLPI >= 9.4.0
+- PHP >= 7.0.0 (Notice this differs from GLPI requirements)
 - Jamf Pro >= 10.9.0
 
 ## Usage

@@ -70,7 +70,7 @@ while ($data = $pending->next()) {
 
    echo "<tr>";
    echo "<td>{$data['jamf_items_id']}</td>";
-   $jamf_link = Html::link($data['name'], PluginJamfMobileDevice::getJamfDeviceURL($data['udid']));
+   $jamf_link = Html::link($data['name'], PluginJamfMobileDevice::getJamfDeviceURL($data['jamf_items_id']));
    echo "<td>{$jamf_link}</td>";
    echo "<td>{$data['type']}</td>";
    echo "<td>{$data['udid']}</td>";
