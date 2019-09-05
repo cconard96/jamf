@@ -67,6 +67,8 @@ echo "</thead><tbody>";
 while ($data = $pending->next()) {
    $rowid = $data['jamf_items_id'];
    $itemtype = $data['type'];
+   /** @var CommonDBTM $item */
+   $item = new $itemtype();
 
    echo "<tr>";
    echo "<td>{$data['jamf_items_id']}</td>";
@@ -77,10 +79,33 @@ while ($data = $pending->next()) {
    $date_discover = Html::convDateTime($data['date_discover']);
    echo "<td>{$date_discover}</td><td>";
    if ($itemtype === 'Computer') {
-      $itemtype::dropdown([
+      $guess = $item->find([
+         'OR' => [
+            'uuid' => $data['udid'],
+            'name' => $data['name']
+         ]
+      ], [new QueryExpression("CASE WHEN uuid='".$data['udid']."' THEN 0 ELSE 1 END")], 1);
+
+      $params = [
          'used'   => array_values($computer_ids)
-      ]);
+      ];
+      if (count($guess)) {
+         $params['value'] = reset($guess)['id'];
+      }
+      $itemtype::dropdown($params);
    } else {
+      $guess = $item->find([
+         'OR' => [
+            'uuid' => $data['udid'],
+            'name' => $data['name']
+         ]
+      ], [new QueryExpression("CASE WHEN uuid='".$data['udid']."' THEN 0 ELSE 1 END")], 1);
+      $params = [
+         'used'   => array_values($phone_ids)
+      ];
+      if (count($guess)) {
+         $params['value'] = reset($guess)['id'];
+      }
       $itemtype::dropdown([
          'used'   => array_values($phone_ids)
       ]);

@@ -160,7 +160,7 @@ JAVASCRIPT;
    public static function getJamfDeviceURL($jamf_id)
    {
       $config = PluginJamfConfig::getConfig();
-      return "{$config['jssserver']}/mobileDevices.html?udid={$jamf_id}";
+      return "{$config['jssserver']}/mobileDevices.html?id={$jamf_id}";
    }
 
    /**
