@@ -74,11 +74,8 @@ class PluginJamfProfile extends Profile {
                             'field'     => 'plugin_jamf_mobiledevice'],
                       ['itemtype'  => 'PluginJamfRuleImport',
                             'label'     => _n('Import rule', 'Import rules', Session::getPluralNumber(), 'jamf'),
-                            'field'     => 'plugin_jamf_ruleimport'],
-                      ['itemtype'  => 'PluginJamfRuleSync',
-                            'label'     => _n('Sync rule', 'Sync rules', Session::getPluralNumber(), 'jamf'),
-                            'field'     => 'plugin_jamf_rulesync']];
-      $matrix_options['title'] = __('Jamf plugin');
+                            'field'     => 'plugin_jamf_ruleimport']];
+      $matrix_options['title'] = __('Jamf Plugin');
       $profile->displayRightsChoiceMatrix($rights, $matrix_options);
 
       if ($canedit

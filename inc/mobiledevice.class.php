@@ -48,8 +48,8 @@ class PluginJamfMobileDevice extends CommonDBChild
 
       $item = $params['item'];
 
-      if (!($item::getType() == 'Computer') && !($item::getType() == 'Phone')) {
-         return;
+      if (!self::canView() || (!($item::getType() == 'Computer') && !($item::getType() == 'Phone'))) {
+         return false;
       }
       $mobiledevice = new PluginJamfMobileDevice();
       $match = $mobiledevice->find([
@@ -202,5 +202,57 @@ JAVASCRIPT;
          'itemtype' => $item::getType(),
          'items_id' => $item->getID()
       ]);
+   }
+
+   /**
+    * @param CommonDBTM $item
+    * @return PluginJamfMobileDevice
+    */
+   public static function getJamfItemForGLPIItem(CommonDBTM $item)
+   {
+       $mobiledevice = new PluginJamfMobileDevice();
+       $matches = $mobiledevice->find([
+           'itemtype'   => $item::getType(),
+           'items_id'   => $item->getID()
+       ], [], 1);
+       if (count($matches)) {
+           $id = reset($matches)['id'];
+           $mobiledevice->getFromDB($id);
+           return $mobiledevice;
+       }
+       return null;
+   }
+
+   public function getExtensionAttributes()
+   {
+       global $DB;
+
+       $ext_table = PluginJamfExtensionAttribute::getTable();
+       $item_ext_table = PluginJamfItem_ExtensionAttribute::getTable();
+
+       $iterator = $DB->request([
+           'SELECT' => [
+               'name', 'data_type', 'value'
+           ],
+           'FROM'   => $ext_table,
+           'LEFT JOIN'  => [
+               $item_ext_table => [
+                   'FKEY'   => [
+                       $ext_table       => 'id',
+                       $item_ext_table  => 'glpi_plugin_jamf_extensionattributes_id'
+                   ]
+               ]
+           ],
+           'WHERE'  => [
+               $item_ext_table.'.itemtype'   => self::getType(),
+               'items_id'   => $this->getID()
+           ]
+       ]);
+
+       $attributes = [];
+       while ($data = $iterator->next()) {
+           $attributes[] = $data;
+       }
+       return $attributes;
    }
 }
