@@ -192,11 +192,14 @@ class PluginJamfSync extends CommonGLPI
       $this->item = $item;
       $this->data = $data;
       $jamfitem = new $jamf_itemtype();
+      $this->jamfitemtype = $jamf_itemtype;
       $jamf_match = $jamfitem->find([
          'itemtype' => $item::getType(),
          'items_id' => $item->getID()], [], 1);
       if (count($jamf_match)) {
-         $this->jamfdevice = reset($jamf_match);
+         $jamf_id = reset($jamf_match)['id'];
+         $jamfitem->getFromDB($jamf_id);
+         $this->jamfdevice = $jamfitem;
       }
    }
 
@@ -530,16 +533,18 @@ class PluginJamfSync extends CommonGLPI
          $this->status['syncExtensionAttributes'] = self::STATUS_ERROR;
          return $this;
       }
-      if (!$this->config['sync_general'] || ($this->jamfdevice !== null || !isset($this->data['extension_attributes']))) {
+      if (!$this->config['sync_general'] || !isset($this->data['extension_attributes'])) {
          $this->status['syncExtensionAttributes'] = self::STATUS_SKIPPED;
          return $this;
       } else if ($this->config['sync_general'] && $this->jamfdevice === null) {
+         error_log("Deferred extension attribute sync");
          $this->status['syncExtensionAttributes'] = self::STATUS_DEFERRED;
          return $this;
       }
       try {
          $extension_attributes = $this->data['extension_attributes'];
          $ext_attribute = new PluginJamfExtensionAttribute();
+         error_log("Running extension attribute sync");
 
          foreach ($extension_attributes as $attr) {
             $attr_match = $ext_attribute->find([
@@ -574,11 +579,12 @@ class PluginJamfSync extends CommonGLPI
          $this->status['syncSecurity'] = self::STATUS_ERROR;
          return $this;
       }
-      if ($this->item === null || !isset($this->data['location'])) {
+      if ($this->item === null || !isset($this->data['security'])) {
          $this->status['syncSecurity'] = self::STATUS_SKIPPED;
          return $this;
       }
       try {
+         $security = $this->data['security'];
          if (!empty($security['lost_mode_enable_issued_utc'])) {
             $lost_mode_enable_date = self::utcToLocal(new DateTime($security['lost_mode_enable_issued_utc']));
             $this->mobiledevice_changes['lost_mode_enable_date'] = $lost_mode_enable_date->format("Y-m-d H:i:s");
