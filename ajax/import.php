@@ -34,7 +34,7 @@ parse_str($input, $_REQUEST);
 
 // An action must be specified
 if (!isset($_REQUEST['action'])) {
-   throw new \RuntimeException('Required argument missing!');
+   throw new RuntimeException('Required argument missing!');
 }
 
 if ($_REQUEST['action'] == 'import') {
@@ -53,8 +53,8 @@ if ($_REQUEST['action'] == 'import') {
          PluginJamfSync::importMobileDevice($data['type'], $data['jamf_items_id']);
       }
    } else {
-      throw new \RuntimeException('Required argument missing!');
+      throw new RuntimeException('Required argument missing!');
    }
 } else {
-   throw new \RuntimeException('Invalid action!');
+   throw new RuntimeException('Invalid action!');
 }

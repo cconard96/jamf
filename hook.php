@@ -115,6 +115,19 @@ function plugin_jamf_install()
                ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
         $DB->queryOrDie($query, 'Error creating JAMF plugin item extension attribute table' . $DB->error());
     }
+    if (!$DB->tableExists('glpi_plugin_jamf_ext_fields')) {
+        $query = "CREATE TABLE `glpi_plugin_jamf_ext_fields` (
+                  `id` int(11) NOT NULL auto_increment,
+                  `itemtype` varchar(100) NOT NULL,
+                  `items_id` int(11) NOT NULL,
+                  `name` varchar(100) NOT NULL,
+                  `value` varchar(255) DEFAULT '',
+                PRIMARY KEY (`id`),
+                KEY `item` (`itemtype`, `items_id`),
+                UNIQUE `unicity` (`itemtype`, `items_id`)
+               ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
+        $DB->queryOrDie($query, 'Error creating JAMF plugin item extension field table' . $DB->error());
+    }
 
    $jamfconfig = Config::getConfigurationValues('plugin:Jamf');
    if (!count($jamfconfig)) {
@@ -191,6 +204,7 @@ function plugin_jamf_install()
       $migration->addField('glpi_plugin_jamf_mobiledevices', 'jamf_items_id', 'integer', ['default' => -1]);
       $migration->migrationOneTable('glpi_plugin_jamf_mobiledevices');
       $mobiledevice = new PluginJamfMobileDevice();
+      // Find all devices that don't have the jamf id recorded, and retrieve it.
       $unassigned = $mobiledevice->find(['jamf_items_id' => -1]);
       foreach ($unassigned as $item) {
          $jamf_item = PluginJamfAPIClassic::getItems('mobiledevices', ['udid' => $item['udid'], 'subset' => 'General']);
@@ -211,6 +225,9 @@ function plugin_jamf_uninstall()
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_imports');
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_mobiledevices');
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_softwares');
+   PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_extensionattributes');
+   PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_items_extensionattributes');
+   PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_ext_fields');
    Config::deleteConfigurationValues('plugin:Jamf');
    CronTask::unregister('jamf');
    return true;

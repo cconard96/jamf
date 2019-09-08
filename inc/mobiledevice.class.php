@@ -51,21 +51,32 @@ class PluginJamfMobileDevice extends CommonDBChild
       if (!self::canView() || (!($item::getType() == 'Computer') && !($item::getType() == 'Phone'))) {
          return false;
       }
+
+      $getYesNo = function($value) {
+         return $value ? __('Yes') : __('No');
+      };
+
+      $out = '';
+      if ($item::getType() == 'Phone') {
+         $uuid = PluginJamfExtField::getValue('Phone', $item->getID(), 'uuid');
+         $out .= "<tr><td>" . __('UUID', 'jamf') . "</td><td>";
+         $out .= Html::input('_plugin_jamf_uuid', [
+            'value' => $uuid
+         ]);
+         $out .= "</td></tr>";
+      }
       $mobiledevice = new PluginJamfMobileDevice();
       $match = $mobiledevice->find([
          'itemtype' => $item::getType(),
          'items_id' => $item->getID()]);
 
       if (!count($match)) {
+         echo $out;
          return;
       }
-
-      $getYesNo = function($value) {
-         return $value ? __('Yes') : __('No');
-      };
-
       $match = reset($match);
-      $out = "<th colspan='4'>".__('Jamf General Information', 'jamf')."</th>";
+
+      $out .= "<tr><th colspan='4'>".__('Jamf General Information', 'jamf')."</th></tr>";
       $out .= "<tr><td>".__('Import date', 'jamf')."</td>";
       $out .= "<td>".Html::convDateTime($match['import_date'])."</td>";
       $out .= "<td>".__('Last sync', 'jamf')."</td>";
@@ -82,7 +93,7 @@ class PluginJamfMobileDevice extends CommonDBChild
       $out .= "<td>".$match['shared']."</td></tr>";
 
       $out .= "<tr><td>".__('Supervised', 'jamf')."</td>";
-      $out .= "<<td>".$getYesNo($match['supervised'])."</td>";
+      $out .= "<td>".$getYesNo($match['supervised'])."</td>";
       $out .= "<td>".__('Managed', 'jamf')."</td>";
       $out .= "<td>".$getYesNo($match['managed'])."</td></tr>";
 
@@ -116,7 +127,7 @@ JAVASCRIPT;
       }
       $out .= "</td></tr>";
 
-      $out .= "<th colspan='4'>".__('Jamf Lost Mode Information', 'jamf')."</th>";
+      $out .= "<tr><th colspan='4'>".__('Jamf Lost Mode Information', 'jamf')."</th></tr>";
       $enabled = $match['lost_mode_enabled'];
       if (!$enabled || ($enabled != 'true')) {
          $out .= "<tr class='center'><td colspan='4'>".__('Lost mode is not enabled')."</td></tr>";
@@ -204,10 +215,10 @@ JAVASCRIPT;
       ]);
    }
 
-   /**
-    * @param CommonDBTM $item
-    * @return PluginJamfMobileDevice
-    */
+    /**
+     * @param CommonDBTM $item
+     * @return PluginJamfMobileDevice
+     */
    public static function getJamfItemForGLPIItem(CommonDBTM $item)
    {
        $mobiledevice = new PluginJamfMobileDevice();
@@ -254,5 +265,11 @@ JAVASCRIPT;
            $attributes[] = $data;
        }
        return $attributes;
+   }
+
+   static function preUpdatePhone($item) {
+      if (isset($item->input['_plugin_jamf_uuid'])) {
+         PluginJamfExtField::setValue($item::getType(), $item->getID(), 'uuid', $item->input['_plugin_jamf_uuid']);
+      }
    }
 }

@@ -34,13 +34,12 @@ parse_str($input, $_REQUEST);
 
 // An action must be specified
 if (!isset($_REQUEST['action'])) {
-   throw new \RuntimeException('Required argument missing!');
+   throw new RuntimeException('Required argument missing!');
 }
 if ($_REQUEST['action'] == 'merge') {
    // An array of item IDs is required
    if (isset($_REQUEST['item_ids']) && is_array($_REQUEST['item_ids'])) {
       foreach ($_REQUEST['item_ids'] as $glpi_id => $data) {
-         $glpi_id = $glpi_id;
          if (!isset($data['jamf_id']) || !isset($data['itemtype'])) {
             continue;
          }
@@ -49,7 +48,7 @@ if ($_REQUEST['action'] == 'merge') {
 
          if (($itemtype != 'Computer') && ($itemtype != 'Phone')) {
             // Invalid itemtype for a mobile device
-            throw new \RuntimeException('Invalid itemtype!');
+            throw new RuntimeException('Invalid itemtype!');
          }
          $item = new $itemtype();
          $mobiledevice = new PluginJamfMobileDevice();
@@ -57,7 +56,7 @@ if ($_REQUEST['action'] == 'merge') {
          $jamf_item = PluginJamfAPIClassic::getItems('mobiledevices', ['id' => $jamf_id]);
          if (is_null($jamf_item)) {
             // API error or device no longer exists in Jamf
-            throw new \RuntimeException('Jamf API error or item no logner exists!');
+            throw new RuntimeException('Jamf API error or item no logner exists!');
          }
 
          // Run import rules on merged devices manually since this doesn't go through the usual import process
@@ -98,8 +97,8 @@ if ($_REQUEST['action'] == 'merge') {
          
       }
    } else {
-      throw new \RuntimeException('Required argument missing!');
+      throw new RuntimeException('Required argument missing!');
    }
 } else {
-   throw new \RuntimeException('Invalid action!');
+   throw new RuntimeException('Invalid action!');
 }

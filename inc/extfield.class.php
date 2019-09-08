@@ -21,32 +21,35 @@
  --------------------------------------------------------------------------
  */
 
-include ('../../../inc/includes.php');
-Html::header_nocache();
+/**
+ * PluginJamfExtField class. This represents an extra field for a GLPI item.
+ * As an example, the Phone itemtype does not have a UUID field so one is added using this class/table.
+ */
+class PluginJamfExtField extends CommonDBTM {
 
-Session::checkLoginUser();
+    public static function getValue($itemtype, $items_id, $name) {
+        $ext_field = new self();
+        $match = $ext_field->find([
+            'itemtype'  => $itemtype,
+            'items_id'  => $items_id,
+            'name'      => $name
+        ], [], 1);
+        if (count($match)) {
+            return reset($match)['value'];
+        } else {
+            return '';
+        }
+    }
 
-global $DB;
+    public static function setValue($itemtype, $items_id, $name, $value) {
+        global $DB;
 
-// Get AJAX input and load it into $_REQUEST
-$input = file_get_contents('php://input');
-parse_str($input, $_REQUEST);
-
-// An action must be specified
-if (!isset($_REQUEST['itemtype']) || !isset($_REQUEST['items_id'])) {
-   throw new RuntimeException('Required argument missing!');
-}
-
-try {
-   $mobiledevice = new PluginJamfMobileDevice();
-   // Find the mobile device linked to the specified itemtype and id
-   $mobiledevice->getFromDBByCrit([
-      'itemtype'  => $_REQUEST['itemtype'],
-      'items_id'  => $_REQUEST['items_id']
-   ]);
-   // Sync the found device
-   PluginJamfSync::syncMobileDevice($mobiledevice);
-} catch (Exception $e) {
-   Toolbox::logError($e->getMessage());
-   return;
+        $DB->updateOrInsert(self::getTable(), [
+            'value' => $value
+        ], [
+            'itemtype'  => $itemtype,
+            'items_id'  => $items_id,
+            'name'      => $name
+        ]);
+    }
 }

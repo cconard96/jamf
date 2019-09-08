@@ -94,21 +94,29 @@ while ($data = $pending->next()) {
       }
       $itemtype::dropdown($params);
    } else {
-      $guess = $item->find([
-         'OR' => [
-            'uuid' => $data['udid'],
+      $extfield = new PluginJamfExtField();
+      $guess = $extfield->find([
+         'itemtype'  => $itemtype,
+         'name'      => 'uuid',
+         'value'     => $data['udid']
+      ], [], 1);
+      if (!count($guess)) {
+         $guess = $item->find([
             'name' => $data['name']
-         ]
-      ], [new QueryExpression("CASE WHEN uuid='".$data['udid']."' THEN 0 ELSE 1 END")], 1);
+         ], [], 1);
+      }
       $params = [
          'used'   => array_values($phone_ids)
       ];
       if (count($guess)) {
-         $params['value'] = reset($guess)['id'];
+         $match = reset($guess);
+         if (isset($match['items_id'])) {
+            $params['value'] = $match['items_id'];
+         } else {
+            $params['value'] = $match['id'];
+         }
       }
-      $itemtype::dropdown([
-         'used'   => array_values($phone_ids)
-      ]);
+      $itemtype::dropdown($params);
    }
    echo "</td></tr>";
 }
