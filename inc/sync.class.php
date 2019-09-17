@@ -640,6 +640,7 @@ class PluginJamfSync extends CommonGLPI
             $this->mobiledevice_changes['enroll_date'] = $enroll_date->format("Y-m-d H:i:s");
          }
 
+         $this->mobiledevice_changes['jamf_items_id'] = $general['id'];
          $this->mobiledevice_changes['udid'] = $general['udid'];
          $this->mobiledevice_changes['managed'] = $general['managed'];
          $this->mobiledevice_changes['supervised'] = $general['supervised'];
