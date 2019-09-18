@@ -187,6 +187,16 @@ function plugin_jamf_install()
          'value'     => '0'
       ]);
    }
+
+   // New Configs (post 1.0.0)
+   // Allow choosing item types
+   $migration->addConfig([
+      'itemtype_iphone' => 'Phone',
+      'itemtype_ipad' => 'Computer',
+      'itemtype_appletv' => 'Computer'
+   ]);
+   // End of Post-release configs
+
    CronTask::register('PluginJamfSync', 'syncJamf', 300, [
       'state'        => 1,
       'allowmode'    => 2,

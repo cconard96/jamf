@@ -78,6 +78,28 @@ class PluginJamfConfig extends CommonDBTM
       echo "</table>";
 
       echo "<table class='tab_cadre_fixe'><thead>";
+      echo "<th colspan='4'>" . __('Import Settings', 'jamf') . "</th></thead>";
+
+      echo "<tr><td>" . __('iPhone Item Type', 'jamf') . "</td>";
+      echo "<td>";
+      Dropdown::showItemType('itemtype_iphone', [
+         'value'  => isset($config['itemtype_iphone']) ? $config['itemtype_iphone'] : 'Phone'
+      ]);
+      echo "<td>" . __('iPad Item Type', 'jamf') . "</td>";
+      echo "<td>";
+      Dropdown::showItemType('itemtype_ipad', [
+         'value'  => isset($config['itemtype_ipad']) ? $config['itemtype_ipad'] : 'Computer'
+      ]);
+      echo "</td></tr>";
+      echo "<tr><td>" . __('Apple TV Item Type', 'jamf') . "</td>";
+      echo "<td>";
+      Dropdown::showItemType('itemtype_appletv', [
+         'value'  => isset($config['itemtype_appletv']) ? $config['itemtype_appletv'] : 'Computer'
+      ]);
+      echo "</td></tr>";
+      echo "</table>";
+
+      echo "<table class='tab_cadre_fixe'><thead>";
       echo "<th colspan='4'>" . __('Sync Settings') . "</th></thead>";
 
       echo "<tr><td>" . __('Sync Interval (minutes)', 'jamf') . "</td>";

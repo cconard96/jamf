@@ -858,10 +858,12 @@ class PluginJamfSync extends CommonGLPI
          if (in_array($jamf_device['udid'], $imported)) {
             // Already imported
          } else {
-            $phone = strpos($jamf_device['model_identifier'], 'iPhone') !== false;
+            $itemtype = strpos($jamf_device['model_identifier'], 'iPhone') !== false ? ($config['itemtype_iphone'] ?? 'Phone') :
+               (strpos($jamf_device['model_identifier'], 'AppleTV') !== false ? ($config['itemtype_appletv'] ?? 'Computer') :
+               ($config['itemtype_ipad'] ?? 'Computer'));
             if (isset($config['autoimport']) && $config['autoimport']) {
                try {
-                  $result = self::importMobileDevice($phone ? 'Phone' : 'Computer', $jamf_device['id']);
+                  $result = self::importMobileDevice($itemtype, $jamf_device['id']);
                   if ($result) {
                      $task->addVolume(1);
                   }
@@ -878,7 +880,7 @@ class PluginJamfSync extends CommonGLPI
                   $DB->insert('glpi_plugin_jamf_imports', [
                      'jamf_items_id' => $jamf_device['id'],
                      'name' => $DB->escape($jamf_device['name']),
-                     'type' => $phone ? 'Phone' : 'Computer',
+                     'type' => $itemtype,
                      'udid' => $jamf_device['udid'],
                      'date_discover' => $_SESSION['glpi_currenttime']
                   ]);
