@@ -74,7 +74,10 @@ class PluginJamfProfile extends Profile {
                             'field'     => 'plugin_jamf_mobiledevice'],
                       ['itemtype'  => 'PluginJamfRuleImport',
                             'label'     => _n('Import rule', 'Import rules', Session::getPluralNumber(), 'jamf'),
-                            'field'     => 'plugin_jamf_ruleimport']];
+                            'field'     => 'plugin_jamf_ruleimport'],
+                      ['itemtype'  => 'PluginJamfUser_JSSAccount',
+                         'label'     => PluginJamfUser_JSSAccount::getTypeName(Session::getPluralNumber()),
+                         'field'     => PluginJamfUser_JSSAccount::$rightname]];
       $matrix_options['title'] = __('Jamf Plugin');
       $profile->displayRightsChoiceMatrix($rights, $matrix_options);
 

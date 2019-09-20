@@ -4,10 +4,9 @@
 
 ### Added
 - View in Jamf button to mobile device info box in Computers and Phones
-- When merging items, a GLPI item will be preselected if the UUID/UDID or name matches.
- - View in Jamf button to mobile device info box in Computers and Phones
- - When merging items, a GLPI item will be preselected if the UDID/UUID matches (or if the name matches as a backup check)
- - View and sync Extension Attributes
+- When merging items, a GLPI item will be preselected if the UDID/UUID matches (or if the name matches as a backup check)
+- View and sync Extension Attributes
+- Link GLPI users to JSS accounts for privilege checks. This is mandatory for certain actions/sections such as sending MDM commands.
 
 
 ## [1.0.1]

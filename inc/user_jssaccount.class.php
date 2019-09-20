@@ -1,0 +1,152 @@
+<?php
+
+/*
+ * -------------------------------------------------------------------------
+ * JAMF plugin for GLPI
+ * Copyright (C) 2019 by Curtis Conard
+ * https://github.com/cconard96/jamf
+ * -------------------------------------------------------------------------
+ * LICENSE
+ * This file is part of JAMF plugin for GLPI.
+ * JAMF plugin for GLPI is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * JAMF plugin for GLPI is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with JAMF plugin for GLPI. If not, see <http://www.gnu.org/licenses/>.
+ * --------------------------------------------------------------------------
+ */
+
+/**
+ * User_JSSAccount class. Links GLPI users to a JSS account for the purpose of managing permissions.
+ * A user may be linked to any JSS account, which is why it is recommended to only give JSS Account Links rights to
+ * admins that already have full access in Jamf. Otherwise, they could escalate their own permissions.
+ *
+ * @since 1.1.0
+ */
+class PluginJamfUser_JSSAccount extends CommonDBChild {
+   static public $itemtype = 'User';
+   static public $items_id = 'users_id';
+   static public $rightname = 'plugin_jamf_jssaccount';
+
+   const LINK = 256;
+
+   public static function getTypeName($nb = 0)
+   {
+      return _n('JSS Account Link', 'JSS Account Links', $nb, 'jamf');
+   }
+
+   function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
+   {
+      if (!PluginJamfUser_JSSAccount::canView()) {
+         return false;
+      }
+      return self::getTypeName(1);
+   }
+
+   static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
+   {
+      return self::showForUser($item);
+   }
+
+   public function getJSSPrivileges()
+   {
+      // Cache JSS account information to avoid extra, costly API calls.
+      static $jssaccount = [];
+
+      if (!isset($jssaccount[$this->fields['jssusers_id']]) === null) {
+         $jssaccount[$this->fields['jssusers_id']] = PluginJamfAPIClassic::getItems('accounts', ['userid' => $this->fields['jssusers_id']]);
+      }
+      return $jssaccount[$this->fields['jssusers_id']]['privileges'] ?? [];
+   }
+
+   public static function haveJSSRight($type, $jss_right) {
+      $user_jssaccount = new self();
+      $matches = $user_jssaccount->find([
+         'users_id'  => Session::getLoginUserID()
+      ]);
+      if (count($matches) === 0) {
+         // No JSS account link
+         return false;
+      }
+      $user_jssaccount->getFromDB(reset($matches)['id']);
+      $type_rights = $user_jssaccount->getJSSPrivileges()[$type] ?? [];
+      if (count($type_rights) === 0) {
+         return false;
+      }
+      return in_array($jss_right, $type_rights[$jss_right]);
+   }
+
+   public static function showForUser($item) {
+      $canedit = PluginJamfUser_JSSAccount::canUpdate();
+
+      $user_jssaccount = new self();
+      $mylink = $user_jssaccount->find(['users_id' => $item->getID()]);
+      if (count($mylink)) {
+         $mylink = reset($mylink);
+      } else {
+         $mylink = null;
+      }
+
+      $allusers = PluginJamfAPIClassic::getItems('accounts')['users'];
+      $values = [];
+      foreach ($allusers as $user) {
+         $values[$user['id']] = $user['name'];
+      }
+      if ($canedit) {
+         echo "<form method='POST' action='" . self::getFormURL() . "'>";
+      } else {
+         $values = [$mylink['jssaccounts_id'] => $values[$mylink['jssaccounts_id']]];
+      }
+
+      echo Html::hidden('users_id', ['value' => $item->getID()]);
+      echo "<table class='tab_cadre_fixe'><tr>";
+      echo "<td>".__('JSS Account', 'jamf')."</td><td>";
+      Dropdown::showFromArray('jssaccounts_id', $values, [
+         'display_emptychoice'   => true,
+         'value'                 => isset($mylink) ? $mylink['jssaccounts_id'] : 0
+      ]);
+      echo "</td><td></td><td></td></td></tr><tr><td class='tab_bg_2 center' colspan='4'>";
+      if ($canedit) {
+         echo "<input type='submit' name='update' value='" . _sx('button', 'Save') . "' class='submit'/>";
+      }
+      echo "</td></tr></table>";
+      if ($canedit) {
+         Html::closeForm();
+      }
+
+      if ($mylink !== null) {
+         $link = self::getJSSAccountURL($mylink['jssaccounts_id']);
+         $view_msg = __('View in Jamf', 'jamf');
+         echo "<table class='tab_cadre_fixe'><tr><td colspan='4' class='center'>";
+         echo "<a class='vsubmit' href='{$link}' target='_blank'>{$view_msg}</a>";
+         echo "</td></tr></table>";
+      }
+   }
+
+   /**
+    * Get a direct link to the JSS account on the Jamf server.
+    * @param string $jssaccount_id The ID of the JSS Account.
+    * @return string Jamf URL for the JSS account.
+    */
+   public static function getJSSAccountURL($jssaccount_id)
+   {
+      $config = PluginJamfConfig::getConfig();
+      return "{$config['jssserver']}/accounts.html?id={$jssaccount_id}";
+   }
+
+   public function getRights($interface = 'central') {
+      if ($interface == 'central') {
+         return [
+            READ    => __('Read'),
+            UPDATE  => __('Update')
+         ];
+      } else {
+         return [];
+      }
+   }
+}

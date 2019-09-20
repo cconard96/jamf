@@ -128,6 +128,15 @@ function plugin_jamf_install()
                ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
         $DB->queryOrDie($query, 'Error creating JAMF plugin item extension field table' . $DB->error());
     }
+    if (!$DB->tableExists('glpi_plugin_jamf_users_jssacounts')) {
+      $query = "CREATE TABLE `glpi_plugin_jamf_users_jssacounts` (
+                  `id` int(11) NOT NULL auto_increment,
+                  `users_id` int(11) NOT NULL,
+                  `jssaccounts_id` int(11) NOT NULL,
+                PRIMARY KEY (`id`)
+               ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
+      $DB->queryOrDie($query, 'Error creating JAMF plugin jss account link table' . $DB->error());
+   }
 
    $jamfconfig = Config::getConfigurationValues('plugin:Jamf');
    if (!count($jamfconfig)) {
@@ -238,6 +247,7 @@ function plugin_jamf_uninstall()
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_extensionattributes');
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_items_extensionattributes');
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_ext_fields');
+   PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_users_jssaccounts');
    Config::deleteConfigurationValues('plugin:Jamf');
    CronTask::unregister('jamf');
    return true;
