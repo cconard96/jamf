@@ -179,9 +179,10 @@
      * @since 1.0.0
      * @param string $itemtype The type of data to fetch. This matches up with endpoint names.
      * @param array $params API input parameters such as udid, name, or subset.
+     * @param bool $user_auth True if the user's linked JSS account privileges should be checked for requested resource.
      * @return array Associative array of the decoded JSON response.
      */
-    public static function getItems(string $itemtype, array $params = [])
+    public static function getItems(string $itemtype, array $params = [], $user_auth = false)
     {
         $param_str = self::getParamString($params);
         $endpoint = "$itemtype$param_str";
@@ -197,9 +198,10 @@
      * @param string $itemtype The type of data to fetch. This matches up with endpoint names.
      * @param array $params API input parameters such as udid, name, or subset.
      * @param array $fields Associative array of item fields.
+     * @param bool $user_auth True if the user's linked JSS account privileges should be checked for requested resource.
      * @return array Associative array of the decoded JSON response.
      */
-    public static function addItem(string $itemtype, array $params = [], array $fields = [])
+    public static function addItem(string $itemtype, array $params = [], array $fields = [], $user_auth = false)
     {
         $param_str = self::getParamString($params);
         $endpoint = "$itemtype$param_str";
@@ -213,9 +215,10 @@
      * @param string $itemtype The type of data to fetch. This matches up with endpoint names.
      * @param array $params API input parameters such as udid, name, or subset.
      * @param array $fields Associative array of item fields.
+     * @param bool $user_auth True if the user's linked JSS account privileges should be checked for requested resource.
      * @return array Associative array of the decoded JSON response.
      */
-    public static function updateItem(string $itemtype, array $params = [], array $fields = [])
+    public static function updateItem(string $itemtype, array $params = [], array $fields = [], $user_auth = false)
     {
         $param_str = self::getParamString($params);
         $endpoint = "$itemtype$param_str";
@@ -228,9 +231,10 @@
      * @since 1.1.0
      * @param string $itemtype The type of data to fetch. This matches up with endpoint names.
      * @param array $params API input parameters such as udid, name, or subset.
+     * @param bool $user_auth True if the user's linked JSS account privileges should be checked for requested resource.
      * @return array Associative array of the decoded JSON response.
      */
-    public static function deleteItem(string $itemtype, array $params = [])
+    public static function deleteItem(string $itemtype, array $params = [], $user_auth = false)
     {
         $param_str = self::getParamString($params);
         $endpoint = "$itemtype$param_str";

@@ -40,6 +40,7 @@ function plugin_init_jamf() {
        'Computer',
        'Phone'
    ]]);
+   Plugin::registerClass('PluginJamfUser_JSSAccount', ['addtabon' => ['User']]);
    if (Session::haveRight('plugin_jamf_mobiledevice', READ)) {
       $PLUGIN_HOOKS['menu_toadd']['jamf'] = ['tools' => 'PluginJamfMenu'];
    }
