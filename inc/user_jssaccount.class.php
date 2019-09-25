@@ -194,7 +194,8 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
       ]);
       echo "</td><td></td><td></td></td></tr><tr><td class='tab_bg_2 center' colspan='4'>";
       if ($canedit) {
-         echo "<input type='submit' name='update' value='" . _sx('button', 'Save') . "' class='submit'/>";
+         $title = __('Update account link', 'jamf');
+         echo "<input title='{$title}' type='submit' name='update' value='" . _sx('button', 'Save') . "' class='submit'/>";
       }
       echo "</td></tr></table>";
       if ($canedit) {
