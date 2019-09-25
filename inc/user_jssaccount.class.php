@@ -64,11 +64,93 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
       return $jssaccount[$this->fields['jssusers_id']]['privileges'] ?? [];
    }
 
+   private static function getItemRightMap() {
+      static $map = null;
+      if ($map === null) {
+         $map = [
+            'accounts' => ['Accounts'],
+            'advancedcomputersearches' => ['Advanced Computer Searches'],
+            'advancedmobiledevicesearches' => ['Advanced Mobile Device Searches'],
+            'advancedusersearches' => ['Advanced User Searches'],
+            'buildings' => ['Buildings'],
+            'categories' => ['Categories'],
+            'classes' => ['Classes'],
+            'departments' => ['Departments'],
+            'mobiledeviceapplications' => ['Mobile Device Applications'],
+            'mobiledeviceextensionattributes' => ['Mobile Device Extension Attributes'],
+            'mobiledevicegroups' => ['Smart Mobile Device Groups', 'Static Mobile Device Groups'],
+            'mobiledevices' => ['Mobile Devices'],
+            'users' => ['Users'],
+         ];
+      }
+      return $map;
+   }
+
+   public static function canCreateJSSItem($itemtype) {
+      $map = self::getItemRightMap();
+      if (!isset($map[$itemtype])) {
+         return false;
+      }
+      $rights = $map[$itemtype];
+      foreach ($rights as $right) {
+         if (!self::haveJSSRight('jss_objects', 'Create '.$right)) {
+            return false;
+         }
+      }
+      return true;
+   }
+
+   public static function canReadJSSItem($itemtype) {
+      $map = self::getItemRightMap();
+      if (!isset($map[$itemtype])) {
+         return false;
+      }
+      $rights = $map[$itemtype];
+      foreach ($rights as $right) {
+         if (!self::haveJSSRight('jss_objects', 'Read '.$right)) {
+            return false;
+         }
+      }
+      return true;
+   }
+
+   public static function canUpdateJSSItem($itemtype) {
+      $map = self::getItemRightMap();
+      if (!isset($map[$itemtype])) {
+         return false;
+      }
+      $rights = $map[$itemtype];
+      foreach ($rights as $right) {
+         if (!self::haveJSSRight('jss_objects', 'Update '.$right)) {
+            return false;
+         }
+      }
+      return true;
+   }
+
+   public static function canDeleteJSSItem($itemtype) {
+      $map = self::getItemRightMap();
+      if (!isset($map[$itemtype])) {
+         return false;
+      }
+      $rights = $map[$itemtype];
+      foreach ($rights as $right) {
+         if (!self::haveJSSRight('jss_objects', 'Delete '.$right)) {
+            return false;
+         }
+      }
+      return true;
+   }
+
    public static function haveJSSRight($type, $jss_right) {
       $user_jssaccount = new self();
-      $matches = $user_jssaccount->find([
-         'users_id'  => Session::getLoginUserID()
-      ]);
+      static $matches = null;
+
+      if ($matches === null) {
+         $matches = $user_jssaccount->find([
+            'users_id' => Session::getLoginUserID()
+         ]);
+      }
       if (count($matches) === 0) {
          // No JSS account link
          return false;
