@@ -17,6 +17,10 @@ Only supports mobile devices for now.
 - There is a rule enginge used to filter out imported devices. The default import action is to allow the import.
 - iPads and AppleTVs are imported as Computers, while iPhones are imported as Phones.
 
+## Locale Support
+- Contribute to French and Spanish localizations on (POEditor)[https://poeditor.com/join/project/BepTgrM7ab].
+- To request new languages, please open a GitHub issue.
+
 ## Versioning/Support
 - For each new major version of GLPI supported, the major version number of this plugin gets incremented.
 - For each feature release on the same major GLPI version, the minor version number of this plugin gets incremented.
