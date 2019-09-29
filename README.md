@@ -9,6 +9,7 @@ Only supports mobile devices for now.
 - GLPI >= 9.4.0
 - PHP >= 7.0.0 (Notice this differs from GLPI requirements)
 - Jamf Pro >= 10.9.0
+- php simplexml extension. run "composer require ext-simplexml --ignore-platform-reqs" in the root of the site to install the newest version for PHP 7 and ignore GLPI's lower required PHP version.
 
 ## Usage
 - Server/sync configuration is found in Setup > Config under the JAMF Plugin tab.
