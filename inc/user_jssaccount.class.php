@@ -146,6 +146,14 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
       return true;
    }
 
+   public static function hasLink() {
+      $user_jssaccount = new self();
+      $matches = $user_jssaccount->find([
+         'users_id' => Session::getLoginUserID()
+      ]);
+      return count($matches) > 0;
+   }
+
    public static function haveJSSRight($type, $jss_right) {
       $user_jssaccount = new self();
       static $matches = null;

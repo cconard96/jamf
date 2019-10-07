@@ -49,7 +49,7 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
    }
 
    private static function getApplicableCommands(PluginJamfMobileDevice $mobiledevice) {
-      if (Session::haveRight(self::$rightname, CREATE)) {
+      if (Session::haveRight(self::$rightname, CREATE) && PluginJamfUser_JSSAccount::hasLink()) {
          $allcommands = PluginJamfMDMCommand::getAvailableCommands();
 
          foreach ($allcommands as $command => &$params) {
