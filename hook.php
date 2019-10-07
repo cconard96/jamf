@@ -115,8 +115,8 @@ function plugin_jamf_install()
                ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
         $DB->queryOrDie($query, 'Error creating JAMF plugin item extension attribute table' . $DB->error());
     }
-    if (!$DB->tableExists('glpi_plugin_jamf_ext_fields')) {
-        $query = "CREATE TABLE `glpi_plugin_jamf_ext_fields` (
+    if (!$DB->tableExists('glpi_plugin_jamf_extfields')) {
+        $query = "CREATE TABLE `glpi_plugin_jamf_extfields` (
                   `id` int(11) NOT NULL auto_increment,
                   `itemtype` varchar(100) NOT NULL,
                   `items_id` int(11) NOT NULL,
@@ -128,8 +128,8 @@ function plugin_jamf_install()
                ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
         $DB->queryOrDie($query, 'Error creating JAMF plugin item extension field table' . $DB->error());
     }
-    if (!$DB->tableExists('glpi_plugin_jamf_users_jssacounts')) {
-      $query = "CREATE TABLE `glpi_plugin_jamf_users_jssacounts` (
+    if (!$DB->tableExists('glpi_plugin_jamf_users_jssaccounts')) {
+      $query = "CREATE TABLE `glpi_plugin_jamf_users_jssaccounts` (
                   `id` int(11) NOT NULL auto_increment,
                   `users_id` int(11) NOT NULL,
                   `jssaccounts_id` int(11) NOT NULL,
@@ -235,6 +235,11 @@ function plugin_jamf_install()
          }
       }
    }
+
+   $migration->addRight(PluginJamfMobileDevice::$rightname, ALLSTANDARDRIGHT);
+   $migration->addRight(PluginJamfRuleImport::$rightname, ALLSTANDARDRIGHT);
+   $migration->addRight(PluginJamfUser_JSSAccount::$rightname, ALLSTANDARDRIGHT);
+   $migration->addRight(PluginJamfItem_MDMCommand::$rightname, ALLSTANDARDRIGHT);
    $migration->executeMigration();
    return true;
 }
@@ -246,7 +251,7 @@ function plugin_jamf_uninstall()
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_softwares');
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_extensionattributes');
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_items_extensionattributes');
-   PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_ext_fields');
+   PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_extfields');
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_users_jssaccounts');
    Config::deleteConfigurationValues('plugin:Jamf');
    CronTask::unregister('jamf');

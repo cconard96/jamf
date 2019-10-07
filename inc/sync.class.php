@@ -119,7 +119,7 @@ class PluginJamfSync extends CommonGLPI
 
       if ($DB->fieldExists($itemtype::getTable(), 'uuid')) {
          $iterator = $DB->request([
-            'SELECT' => ['id'],
+            'SELECT' => [$itemtype::getTable().'.id'],
             'FROM' => $itemtype::getTable(),
             'WHERE' => [
                'uuid' => $jamf_item['general']['udid']
@@ -128,23 +128,23 @@ class PluginJamfSync extends CommonGLPI
          ]);
       } else {
          $iterator = $DB->request([
-            'SELECT' => ['id'],
+            'SELECT' => [$itemtype::getTable().'.id'],
             'FROM' => $itemtype::getTable(),
             'LEFT JOIN' => [
-               'glpi_plugin_jamf_ext_fields' => [
+               'glpi_plugin_jamf_extfields' => [
                   'FKEY' => [
-                     'glpi_plugin_jamf_ext_fields' => 'items_id',
+                     'glpi_plugin_jamf_extfields' => 'items_id',
                      $itemtype::getTable() => 'id', [
                         'AND' => [
-                           'glpi_plugin_jamf_ext_fields.itemtype' => $itemtype
+                           'glpi_plugin_jamf_extfields.itemtype' => $itemtype
                         ]
                      ]
                   ]
                ]
             ],
             'WHERE' => [
-               'glpi_plugin_jamf_ext_fields.name' => 'uuid',
-               'glpi_plugin_jamf_ext_fields.value' => $jamf_item['general']['udid']
+               'glpi_plugin_jamf_extfields.name' => 'uuid',
+               'glpi_plugin_jamf_extfields.value' => $jamf_item['general']['udid']
             ],
             'LIMIT' => 1
          ]);
@@ -552,7 +552,7 @@ class PluginJamfSync extends CommonGLPI
                'itemtype' => $this->jamfdevice::getType()
             ], [], 1);
 
-            if ($attr_match !== null) {
+            if ($attr_match !== null && count($attr_match)) {
                $attr_match = reset($attr_match);
                $DB->updateOrInsert(PluginJamfItem_ExtensionAttribute::getTable(), ['value' => $attr['value']], [
                   'glpi_plugin_jamf_extensionattributes_id' => $attr_match['id'],
