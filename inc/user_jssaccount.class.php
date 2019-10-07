@@ -40,6 +40,15 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
       return _n('JSS Account Link', 'JSS Account Links', $nb, 'jamf');
    }
 
+   function prepareInputForUpdate($input)
+   {
+      global $DB;
+      if ($input['jssaccounts_id'] == 0) {
+         $DB->delete(self::getTable(), ['id' => $this->fields['id']]);
+         return false;
+      }
+   }
+
    function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
    {
       if (!PluginJamfUser_JSSAccount::canView()) {
