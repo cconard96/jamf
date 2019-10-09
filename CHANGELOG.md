@@ -1,5 +1,15 @@
 # Jamf Plugin for GLPI Changelog
 
+## [1.1.1]
+
+### Fixed
+- Fix table names used during fresh installs and uninstalls.
+- Added all Jamf plugin rights to profiles with Config right by default.
+- Fix dropTableOrDie error message on uninstall.
+- Hide MDM Command buttons completely if no JSS account is linked to the current user.
+- Fix orphaned record when removing a JSS account link from a user.
+- Remove QueryExpression in ORDER clause. This is not supported in GLPI yet.
+
 ## [1.1.0]
 
 ### Added
