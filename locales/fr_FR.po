@@ -54,27 +54,27 @@ msgstr "Message du mode perdu"
 
 #: hook.php:286
 msgid "Lost mode phone"
-msgstr ""
+msgstr "Téléphone en mode perdu"
 
 #: hook.php:294
 msgid "Lost mode latitude"
-msgstr ""
+msgstr "Mode perdu : latitude"
 
 #: hook.php:302
 msgid "Lost mode longitude"
-msgstr ""
+msgstr "Mode perdu : longitude"
 
 #: hook.php:310
 msgid "Lost mode altitude"
-msgstr ""
+msgstr "Mode perdu : altitude"
 
 #: hook.php:318
 msgid "Lost mode speed"
-msgstr ""
+msgstr "Mode perdu : vitesse"
 
 #: hook.php:326
 msgid "Lost mode location date"
-msgstr ""
+msgstr "Mode perdu : date de localisation"
 
 #: hook.php:342
 msgid "Sync date"
@@ -82,7 +82,7 @@ msgstr "Date de synchronisation"
 
 #: setup.php:56
 msgid "JAMF Plugin for GLPI"
-msgstr "Plugin JAMF pour GLPI"
+msgstr "Plugin Jamf pour GLPI"
 
 #: front/import.php:47 front/merge.php:60
 msgid "Jamf ID"
@@ -98,11 +98,11 @@ msgstr "Type"
 
 #: front/import.php:50 front/merge.php:63
 msgid "UDID"
-msgstr ""
+msgstr "UDID"
 
 #: front/import.php:51 front/merge.php:64
 msgid "Discovery Date"
-msgstr ""
+msgstr "Date de découverte"
 
 #: front/import.php:72 inc/ruleimport.class.php:75
 msgid "Import"
@@ -131,11 +131,11 @@ msgstr "Plugin Jamf"
 
 #: front/menu.php:50
 msgid "You do not have access to any Jamf plugin items"
-msgstr ""
+msgstr "Vous n'avez accès à aucune fonction du plugin Jamf"
 
 #: front/merge.php:65
 msgid "GLPI Item"
-msgstr ""
+msgstr "Item Glpi"
 
 #: front/merge.php:92
 msgid "Merge"
@@ -143,15 +143,15 @@ msgstr "Fusionner"
 
 #: front/merge.php:131
 msgid "Merging devices..."
-msgstr "Fusion des appareils en cours... "
+msgstr "Fusion des appareils en cours..."
 
 #: inc/apiclassic.class.php:72
 msgid "Unknown JSS API Error"
-msgstr ""
+msgstr "API JSS : Erreur inconnue"
 
 #: inc/config.class.php:36
 msgid "JAMF plugin"
-msgstr ""
+msgstr "Plugin Jamf"
 
 #: inc/config.class.php:63
 msgid "Server Settings"
@@ -179,7 +179,7 @@ msgstr "Fréquence de synchronisation (minutes)"
 
 #: inc/config.class.php:90
 msgid "Sync General"
-msgstr ""
+msgstr "Synchroniser les informations générales"
 
 #: inc/config.class.php:95
 msgid "Sync OS"
@@ -187,15 +187,15 @@ msgstr "Synchroniser l'OS"
 
 #: inc/config.class.php:100
 msgid "Sync Software"
-msgstr ""
+msgstr "Synchroniser les logiciels"
 
 #: inc/config.class.php:105
 msgid "Sync Financial"
-msgstr ""
+msgstr "Synchroniser les information financières"
 
 #: inc/config.class.php:110
 msgid "Sync User"
-msgstr ""
+msgstr "Synchroniser l'utilisateur"
 
 #: inc/config.class.php:115
 msgid "Auto Import"
@@ -203,7 +203,7 @@ msgstr "Import automatique"
 
 #: inc/config.class.php:121
 msgid "Default Type Settings"
-msgstr ""
+msgstr "Réglages du type de machine par défaut"
 
 #: inc/config.class.php:122
 msgid "Manufacturer"
@@ -211,15 +211,15 @@ msgstr "Fabricant"
 
 #: inc/config.class.php:128
 msgid "iPhone Type"
-msgstr ""
+msgstr "iPhone"
 
 #: inc/config.class.php:133
 msgid "iPad Type"
-msgstr ""
+msgstr "iPad"
 
 #: inc/config.class.php:138
 msgid "AppleTV Type"
-msgstr ""
+msgstr "Apple TV"
 
 #: inc/config.class.php:148 inc/profile.class.php:88 inc/profile.class.php:130
 msgctxt "button"
@@ -228,17 +228,17 @@ msgstr "Sauvegarder"
 
 #: inc/dbutil.class.php:45
 msgid "%1$s - Error during the database query: %2$s - Error is %3$s"
-msgstr ""
+msgstr "%1$s - Erreur lors de l'exécution de la requête : %2$s - Erreur : %3$s"
 
 #: inc/import.class.php:33
 msgid "Pending import"
 msgid_plural "Pending imports"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Import en attente"
+msgstr[1] "Imports en attente"
 
 #: inc/mobiledevice.class.php:37
 msgid "Jamf mobile device"
-msgstr ""
+msgstr "Appareil mobile Jamf"
 
 #: inc/mobiledevice.class.php:64
 msgid "Yes"
@@ -250,7 +250,7 @@ msgstr "Non"
 
 #: inc/mobiledevice.class.php:68
 msgid "Jamf General Information"
-msgstr ""
+msgstr "Informations Jamf"
 
 #: inc/mobiledevice.class.php:71
 msgid "Last sync"
@@ -270,15 +270,15 @@ msgstr "Appareil partagé"
 
 #: inc/mobiledevice.class.php:91
 msgid "Activation locked"
-msgstr ""
+msgstr "Verrou d'activation"
 
 #: inc/mobiledevice.class.php:96
 msgid "Sync now"
-msgstr "Synchroniser maintenant"
+msgstr "Synchroniser"
 
 #: inc/mobiledevice.class.php:115
 msgid "Jamf Lost Mode Information"
-msgstr ""
+msgstr "Informations mode perdu"
 
 #: inc/mobiledevice.class.php:118
 msgid "Lost mode is not enabled"
@@ -318,19 +318,19 @@ msgstr "Vitesse"
 
 #: inc/mobiledevice.class.php:144
 msgid "Lost location date"
-msgstr ""
+msgstr "Lost location date"
 
 #: inc/profile.class.php:76
 msgid "Import rule"
 msgid_plural "Import rules"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Règle d'import"
+msgstr[1] "Règles d'import"
 
 #: inc/profile.class.php:79
 msgid "Sync rule"
 msgid_plural "Sync rules"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Règle de synchronisation"
+msgstr[1] "Règles de synchronisation"
 
 #: inc/profile.class.php:122
 msgid "Read"
@@ -342,5 +342,147 @@ msgstr "Règles d'import des appareils"
 
 #: inc/ruleimport.class.php:52
 msgid "Item type"
-msgstr ""
+msgstr "Type d'item"
+
+#: 
+msgid "Discovering..."
+msgstr "Découverte..."
+
+#: 
+msgid "%s remove a link to a JSS account from a user"
+msgstr "%s remove a link to a JSS account from a user"
+
+#: 
+msgid "%s links a JSS account to a user"
+msgstr "%s links a JSS account to a user"
+
+#: 
+msgid "Pending Commands"
+msgstr "Commandes en attente"
+
+#: 
+msgid "Command"
+msgstr "Commande"
+
+#: 
+msgid "Failed Commands"
+msgstr "Commandes échouées"
+
+#: 
+msgid "Status"
+msgstr "Statut"
+
+#: 
+msgid "Date issued"
+msgstr "Date d'envoi"
+
+#: 
+msgid "Date of last push"
+msgstr "Date du dernier push"
+
+#: 
+msgid "Username"
+msgstr "Acteur"
+
+#: 
+msgid "Import Settings"
+msgstr "réglages d'import"
+
+#: 
+msgid "Update Inventory"
+msgstr "Mettre l'inventaire à jour"
+
+#: 
+msgid "Send Blank Push"
+msgstr "Envoyer une notification push vide"
+
+#: 
+msgid "Device name"
+msgstr "Nom de l'appareil"
+
+#: 
+msgid "Update device location"
+msgstr "Mettre à jour la localisation de l'appareil"
+
+#: 
+msgid "Lock device"
+msgstr "Verrouiller l'appareil"
+
+#: 
+msgid "Footnote"
+msgstr "Note de pied de page"
+
+#: 
+msgid "Disable lost mode"
+msgstr "Désactiver le mode perdu"
+
+#: 
+msgid "Enable lost mode"
+msgstr "Activer le mode perdu"
+
+#: 
+msgid "Erase device"
+msgstr "Effacer l'appareil"
+
+#: 
+msgid "Preserve data plan"
+msgstr "Preserve data plan"
+
+#: 
+msgid "Disallow proximity setup"
+msgstr "Interdire le paramétrage par proximité"
+
+#: 
+msgid "Clear activation lock"
+msgstr "Effacer le verrou d'activation"
+
+#: 
+msgid "Password lock grace period"
+msgstr "Période de grâce du verrouillage par mot de passe"
+
+#: 
+msgid "Grace period (seconds)"
+msgstr "Période de grâce (secondes)"
+
+#: 
+msgid "Play lost mode sound"
+msgstr "Play lost mode sound"
+
+#: 
+msgid "Restart device"
+msgstr "Redémarrer l'appareil"
+
+#: 
+msgid "Shutdown device"
+msgstr "Eteindre l'appareil"
+
+#: 
+msgid "Value"
+msgstr "Valeur"
+
+#: 
+msgid "%1$s - Error during the drop of the table %2$s - Error is %3$s"
+msgstr "%1$s - Error during the drop of the table %2$s - Error is %3$s"
+
+#: 
+msgid "JSS Account"
+msgstr "Compte JSS"
+
+#: 
+msgid "Update account link"
+msgstr "Update account link"
+
+#: 
+msgid "View in Jamf"
+msgstr "Voir dans Jamf"
+
+#: 
+msgid "Extension attribute"
+msgid_plural "Extension attributes"
+msgstr[0] "Attribut d'extension"
+msgstr[1] "Attributs d'extension"
+
+#: 
+msgid "Are you sure you want to send the command: %s?"
+msgstr "Voulez-vous vraiment exécuter la commande : %s"
 
