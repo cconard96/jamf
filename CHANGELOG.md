@@ -1,5 +1,16 @@
 # Jamf Plugin for GLPI Changelog
 
+## [1.1.2]
+
+### Added
+
+- French localization thanks to Syn Cinatti
+
+### Fixed
+
+- Extension attribute definitions now sync when using the import and merge menus
+- Fixed import rule tests
+
 ## [1.1.1]
 
 ### Fixed
