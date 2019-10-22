@@ -48,6 +48,8 @@ if ($_REQUEST['action'] == 'import') {
             'jamf_items_id'  => $_REQUEST['item_ids']
          ]
       ]);
+      // Trigger extension attribute definition sync
+      PluginJamfSync::syncExtensionAttributeDefinitions();
       // Import the requested device(s)
       while ($data = $toimport->next()) {
          PluginJamfSync::importMobileDevice($data['type'], $data['jamf_items_id']);

@@ -208,13 +208,13 @@ function plugin_jamf_install()
 
    CronTask::register('PluginJamfSync', 'syncJamf', 300, [
       'state'        => 1,
-      'allowmode'    => 2,
+      'allowmode'    => 3,
       'logslifetime' => 30,
       'comment'      => "Sync devices with Jamf that are already imported"
    ]);
    CronTask::register('PluginJamfSync', 'importJamf', 900, [
       'state'        => 1,
-      'allowmode'    => 2,
+      'allowmode'    => 3,
       'logslifetime' => 30,
       'comment'      => "Import or discover devices in Jamf that are not already imported"
    ]);
@@ -240,6 +240,16 @@ function plugin_jamf_install()
    $migration->addRight(PluginJamfRuleImport::$rightname, ALLSTANDARDRIGHT);
    $migration->addRight(PluginJamfUser_JSSAccount::$rightname, ALLSTANDARDRIGHT);
    $migration->addRight(PluginJamfItem_MDMCommand::$rightname, ALLSTANDARDRIGHT);
+
+   // Update 1.1.2
+   // Make all plugin cron tasks CLI or GLPI mode instead of CLI-only. This makes it easier for debugging.
+   $DB->updateOrDie('glpi_crontasks', [
+      'allowmode' => 3
+   ], [
+      'itemtype'  => 'PluginJamfSync'
+   ]);
+
+   // Finish update/install
    $migration->executeMigration();
    return true;
 }

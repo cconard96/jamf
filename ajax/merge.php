@@ -37,6 +37,8 @@ if (!isset($_REQUEST['action'])) {
    throw new RuntimeException('Required argument missing!');
 }
 if ($_REQUEST['action'] == 'merge') {
+   // Trigger extension attribute definition sync
+   PluginJamfSync::syncExtensionAttributeDefinitions();
    // An array of item IDs is required
    if (isset($_REQUEST['item_ids']) && is_array($_REQUEST['item_ids'])) {
       foreach ($_REQUEST['item_ids'] as $glpi_id => $data) {
