@@ -244,6 +244,30 @@ class PluginJamfMDMCommand {
                   'supervised'   => true
                ]
             ]
+            'ScheduleOSUpdate'   => [
+               'name'         => __('Schedule OS update', 'jamf'),
+               'icon'         => 'fas fa-arrow-up',
+               'jss_right'    => 'Send Mobile Device Remote Command to Download and Install iOS Update',
+               'confirm'      => true,
+               'requirements' => [
+                  'devicetypes'  => ['mobiledevice'],
+                  'managed'      => true,
+                  'supervised'   => true
+               ],
+               'params' => [
+                  'install_action'  => [
+                     'name'   => __('Install action', 'jamf'),
+                     'type'   => 'dropdown',
+                     'values' => [
+                        '1'   => __('Download and prompt for install', 'jamf'),
+                        '2'   => __('Download, install, and restart', 'jamf')
+                     ]
+                  ],
+                  'product_version' => [
+                     'name'   => __('Product version', 'jamf'),
+                     'type'   => 'string',
+                  ]
+               ]
          ];
       }
       return $allcommands;
@@ -279,6 +303,10 @@ class PluginJamfMDMCommand {
                   $out .= " checked='checked'";
                }
                $out .= "/>";
+            } else if ($fieldtype === 'dropdown') {
+               $out .= Dropdown::showFromArray($name, $params['values'], [
+                  'display'   => false
+               ]);
             } else {
                $out .= "<input title='$displayname' name='$name' type='text'/>";
             }
