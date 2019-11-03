@@ -243,7 +243,7 @@ class PluginJamfMDMCommand {
                   'managed'      => true,
                   'supervised'   => true
                ]
-            ]
+            ],
             'ScheduleOSUpdate'   => [
                'name'         => __('Schedule OS update', 'jamf'),
                'icon'         => 'fas fa-arrow-up',
@@ -268,6 +268,7 @@ class PluginJamfMDMCommand {
                      'type'   => 'string',
                   ]
                ]
+            ]
          ];
       }
       return $allcommands;
