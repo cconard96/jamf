@@ -206,6 +206,7 @@ class PluginJamfSync extends CommonGLPI
    /**
     * Sync general information such as name, serial number, etc.
     * All synced fields here are on the main GLPI item and not a plugin item type.
+    * @since 1.1.0
     * @return PluginJamfSync
     */
    private function syncGeneral()
@@ -299,6 +300,7 @@ class PluginJamfSync extends CommonGLPI
 
    /**
     * Sync operating system information.
+    * @since 1.1.0
     * @return PluginJamfSync
     */
    private function syncOS()
@@ -354,6 +356,7 @@ class PluginJamfSync extends CommonGLPI
 
    /**
     * Sync software information.
+    * @since 1.1.0
     * @return PluginJamfSync
     */
    private function syncSoftware()
@@ -443,6 +446,7 @@ class PluginJamfSync extends CommonGLPI
 
    /**
     * Sync user information.
+    * @since 1.1.0
     * @return PluginJamfSync
     */
    private function syncUser()
@@ -473,6 +477,7 @@ class PluginJamfSync extends CommonGLPI
 
    /**
     * Sync purchasing information.
+    * @since 1.1.0
     * @return PluginJamfSync
     */
    private function syncPurchasing()
@@ -523,6 +528,7 @@ class PluginJamfSync extends CommonGLPI
 
    /**
     * Sync extension attributes. This task will be deferred if run for a device that was not previously imported.
+    * @since 1.1.0
     * @return PluginJamfSync
     */
    private function syncExtensionAttributes()
@@ -537,14 +543,12 @@ class PluginJamfSync extends CommonGLPI
          $this->status['syncExtensionAttributes'] = self::STATUS_SKIPPED;
          return $this;
       } else if ($this->config['sync_general'] && $this->jamfdevice === null) {
-         error_log("Deferred extension attribute sync");
          $this->status['syncExtensionAttributes'] = self::STATUS_DEFERRED;
          return $this;
       }
       try {
          $extension_attributes = $this->data['extension_attributes'];
          $ext_attribute = new PluginJamfExtensionAttribute();
-         error_log("Running extension attribute sync");
 
          foreach ($extension_attributes as $attr) {
             $attr_match = $ext_attribute->find([
@@ -571,6 +575,7 @@ class PluginJamfSync extends CommonGLPI
 
    /**
     * Sync security information.
+    * @since 1.1.0
     * @return PluginJamfSync
     */
    private function syncSecurity()
@@ -610,8 +615,159 @@ class PluginJamfSync extends CommonGLPI
       return $this;
    }
 
+    /**
+     * Sync network information.
+     * @since 1.2.0
+     * @return PluginJamfSync
+     */
+    private function syncNetwork()
+    {
+        if ($this->dummySync) {
+            $this->status['syncNetwork'] = self::STATUS_ERROR;
+            return $this;
+        }
+        if ($this->item === null || !isset($this->data['general'])) {
+            $this->status['syncNetwork'] = self::STATUS_SKIPPED;
+            return $this;
+        }
+        try {
+            $general = $this->data['general'];
+            //$expected_wifi_name = "Generic ".$general['model'].' WiFi';
+            //$expected_bt_name = "Generic ".$general['model'].' Bluetooth';
+            $expected_netcard_name = "Generic {$general['model']} Network Card";
+            $nic_model = new DeviceNetworkCardModel();
+            $nic = new DeviceNetworkCard();
+            $wifi_port = new NetworkPortWifi();
+
+            if (isset($general['wifi_mac_address']) && !empty($general['wifi_mac_address'])) {
+                $wifi_model = $this->createOrGetItem('DeviceNetworkCardModel', ['name' => $expected_netcard_name], [
+                    'name'       => $expected_netcard_name,
+                    'comment'    => 'Created by Jamf Plugin for GLPI'
+                ]);
+                $wifi = $this->createOrGetItem('DeviceNetworkCard', ['designation' => $expected_netcard_name], [
+                    'designation'                   => $expected_netcard_name,
+                    'devicenetworkcardmodels_id'    => $wifi_model->getID(),
+                    'comment'                       => 'Created by Jamf Plugin for GLPI'
+                ]);
+                $item_wifi = $this->createOrGetItem('Item_DeviceNetworkCard', [
+                    'itemtype'              => $this->item->getType(),
+                    'items_id'              => $this->item->getID(),
+                    'devicenetworkcards_id' => $wifi->getID()
+                ], [
+                    'itemtype'              => $this->item->getType(),
+                    'items_id'              => $this->item->getID(),
+                    'devicenetworkcards_id' => $wifi->getID(),
+                    'is_dynamic'            => 1,
+                    'entities_id'           => 0,
+                    'is_recursive'          => 1
+                ]);
+
+                $netport = $this->createOrGetItem('NetworkPort', [
+                    'itemtype'              => $this->item->getType(),
+                    'items_id'              => $this->item->getID(),
+                    'instantiation_type'    => 'NetworkPortWifi',
+                    'logical_number'        => 0
+                ], [
+                    'itemtype'                      => $this->item->getType(),
+                    'items_id'                      => $this->item->getID(),
+                    'instantiation_type'            => 'NetworkPortWifi',
+                    'logical_number'                => 0,
+                    'name'                          => 'Wifi',
+                    'comment'                       => 'Created by Jamf Plugin for GLPI',
+                    'items_devicenetworkcards_id'   => $item_wifi->getID(),
+                    'is_dynamic'                    => 1,
+                    'mac'                           => $general['wifi_mac_address']
+                ]);
+
+                $network_name = $this->createOrGetItem('NetworkName', [
+                    'itemtype'  => 'NetworkPort',
+                    'items_id'  => $netport->getID()
+                ], [
+                    'itemtype'          => 'NetworkPort',
+                    'items_id'          => $netport->getID(),
+                    'entities_id'       => $this->item->fields['entities_id'],
+                    'is_dynamic'    => 1
+                ]);
+
+                $ipaddress = new IPAddress();
+                $ip_matches = $ipaddress->find([
+                    'entities_id'   => $this->item->fields['entities_id'],
+                    'itemtype'      => 'NetworkName',
+                    'items_id'      => $network_name->getID(),
+                    'mainitemtype'  => $this->item->getType(),
+                    'mainitems_id'  => $this->item->getID(),
+                    'is_dynamic'    => 1
+                ]);
+                if (!count($ip_matches)) {
+                    $ipaddress->add([
+                        'entities_id'   => $this->item->fields['entities_id'],
+                        'itemtype'      => 'NetworkName',
+                        'items_id'      => $network_name->getID(),
+                        'mainitemtype'  => $this->item->getType(),
+                        'mainitems_id'  => $this->item->getID(),
+                        'is_dynamic'    => 1,
+                        'name'          => $general['ip_address']
+                    ]);
+                } else {
+                    $ip_matches = reset($ip_matches);
+                    $ipaddress->getFromDB($ip_matches['id']);
+                    $ipaddress->update([
+                        'name'  => $general['ip_address']
+                    ]);
+                }
+            }
+
+            if (isset($general['bluetooth_mac_address']) && !empty($general['bluetooth_mac_address'])) {
+                $bt_model = $this->createOrGetItem('DeviceNetworkCardModel', ['name' => $expected_netcard_name], [
+                    'name'       => $expected_netcard_name,
+                    'comment'    => 'Created by Jamf Plugin for GLPI'
+                ]);
+                $bt = $this->createOrGetItem('DeviceNetworkCard', ['designation' => $expected_netcard_name], [
+                    'designation'                   => $expected_netcard_name,
+                    'devicenetworkcardmodels_id'    => $bt_model->getID(),
+                    'comment'                       => 'Created by Jamf Plugin for GLPI'
+                ]);
+                $item_bt = $this->createOrGetItem('Item_DeviceNetworkCard', [
+                    'itemtype'              => $this->item->getType(),
+                    'items_id'              => $this->item->getID(),
+                    'devicenetworkcards_id' => $bt->getID()
+                ], [
+                    'itemtype'              => $this->item->getType(),
+                    'items_id'              => $this->item->getID(),
+                    'devicenetworkcards_id' => $bt->getID(),
+                    'is_dynamic'            => 1,
+                    'entities_id'           => 0,
+                    'is_recursive'          => 1
+                ]);
+
+                $this->createOrGetItem('NetworkPort', [
+                    'itemtype'              => $this->item->getType(),
+                    'items_id'              => $this->item->getID(),
+                    'instantiation_type'    => 'NetworkPortWifi',
+                    'logical_number'        => 1
+                ], [
+                    'itemtype'                      => $this->item->getType(),
+                    'items_id'                      => $this->item->getID(),
+                    'instantiation_type'            => 'NetworkPortWifi',
+                    'logical_number'                => 1,
+                    'name'                          => 'Bluetooth',
+                    'comment'                       => 'Created by Jamf Plugin for GLPI',
+                    'items_devicenetworkcards_id'   => $item_bt->getID(),
+                    'mac'                           => $general['bluetooth_mac_address']
+                ]);
+            }
+
+        } catch (Exception $e) {
+            $this->status['syncNetwork'] = self::STATUS_ERROR;
+            return $this;
+        }
+        $this->status['syncNetwork'] = self::STATUS_OK;
+        return $this;
+    }
+
    /**
     * Sync general Jamf device information. All changes are made for the Jamf plugin item only. No GLPI item changes are made here.
+    * @since 1.1.0
     * @return PluginJamfSync
     */
    private function syncGeneralJamf()
@@ -656,6 +812,7 @@ class PluginJamfSync extends CommonGLPI
 
    /**
     * Apply all pending changes and retry deferred tasks.
+    * @since 1.1.0
     * @return array STATUS_OK if the sync was successful, STATUS_ERROR otherwise.
     */
    private function finalizeSync()
@@ -700,6 +857,18 @@ class PluginJamfSync extends CommonGLPI
       return $this->status;
    }
 
+   private function createOrGetItem($itemtype, $criteria, $params) {
+       $item = new $itemtype();
+       $item_matches = $item->find($criteria);
+       if (!count($item_matches)) {
+           $items_id = $item->add($params);
+           $item->getFromDB($items_id);
+       } else {
+           $item->getFromDB(reset($item_matches)['id']);
+       }
+       return $item;
+   }
+
    /**
     * Updates a computer or phone from data received from the Jamf API. The item must already exist in GLPI even if it isn't linked yet.
     * @param string $itemtype The GLPI itemtype.
@@ -731,6 +900,7 @@ class PluginJamfSync extends CommonGLPI
             ->syncPurchasing()
             ->syncExtensionAttributes()
             ->syncSecurity()
+            ->syncNetwork()
             ->syncGeneralJamf()
             ->finalizeSync();
          // Evaluate final sync result. If any errors exist, count as failure.
