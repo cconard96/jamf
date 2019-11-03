@@ -1,6 +1,13 @@
 # Jamf Plugin for GLPI Changelog
 
 
+## [1.2.0]
+
+### Added
+
+- Schedule iOS/iPad OS Update Command
+- Sync network information
+
 ## [1.1.2]
 
 ### Added

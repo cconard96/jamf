@@ -12,7 +12,7 @@
          <en><![CDATA[
 This plugin allows you to sync iPads, iPhones and AppleTVs from Jamf Pro to GLPI along with their associated data. It also allows you to issue commands from GLPI.
 
-This is an open source plugin with locale support for English only right now, but translation contributions are welcome for other languages.
+This is an open source plugin with locale support for English and French only right now, but translation contributions are welcome for other languages.
 
 
 
@@ -39,7 +39,7 @@ Versioning/Support
 - For each feature release on the same major GLPI version, the minor version number of this plugin gets incremented.
 - Each bugfix release will increment the patch version number.
 - Bugfixes for the current and previous major versions of the plugin will be supported at least. Older versions may be supported depending on community interest and my own company's need. This plugin will not be backported to support versions older than 9.4.0.
-- I will strive to have at least a beta release for the latest major version of GLPi within a week of the full release.
+- I will strive to have at least a beta release for the latest major version of GLPI within a week of the full release.
             ]]></en>
       </long>
    </description>
@@ -51,6 +51,10 @@ Versioning/Support
       <author>Curtis Conard</author>
    </authors>
    <versions>
+      <version>
+        <num>1.2.0</num>
+        <compatibility>9.4</compatibility>
+      </version>
       <version>
         <num>1.1.2</num>
         <compatibility>9.4</compatibility>
