@@ -21,9 +21,9 @@
  --------------------------------------------------------------------------
  */
 
-define('PLUGIN_JAMF_VERSION', '1.2.0');
-define('PLUGIN_JAMF_MIN_GLPI', '9.4.0');
-define('PLUGIN_JAMF_MAX_GLPI', '9.5.0');
+define('PLUGIN_JAMF_VERSION', '2.0.0');
+define('PLUGIN_JAMF_MIN_GLPI', '9.5.0');
+define('PLUGIN_JAMF_MAX_GLPI', '9.6.0');
 
 function plugin_init_jamf() {
    global $PLUGIN_HOOKS;

@@ -1028,9 +1028,7 @@ class PluginJamfSync extends CommonGLPI
          if (in_array($jamf_device['udid'], $imported)) {
             // Already imported
          } else {
-            $itemtype = strpos($jamf_device['model_identifier'], 'iPhone') !== false ? ($config['itemtype_iphone'] ?? 'Phone') :
-               (strpos($jamf_device['model_identifier'], 'AppleTV') !== false ? ($config['itemtype_appletv'] ?? 'Computer') :
-               ($config['itemtype_ipad'] ?? 'Computer'));
+            $itemtype = strpos($jamf_device['model_identifier'], 'iPhone') !== false ? 'Phone' :  'Computer';
             if (isset($config['autoimport']) && $config['autoimport']) {
                try {
                   $result = self::importMobileDevice($itemtype, $jamf_device['id']);

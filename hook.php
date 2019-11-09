@@ -198,11 +198,18 @@ function plugin_jamf_install()
    }
 
    // New Configs (post 1.0.0)
-   // Allow choosing item types
-   $migration->addConfig([
-      'itemtype_iphone' => 'Phone',
-      'itemtype_ipad' => 'Computer',
-      'itemtype_appletv' => 'Computer'
+   // Remove choosing item types (From before 2.0.0)
+   $DB->delete('glpi_configs', [
+      'context'   => 'plugin:Jamf',
+      'name'      => 'itemtype_iphone'
+   ]);
+   $DB->delete('glpi_configs', [
+      'context'   => 'plugin:Jamf',
+      'name'      => 'itemtype_ipad'
+   ]);
+   $DB->delete('glpi_configs', [
+      'context'   => 'plugin:Jamf',
+      'name'      => 'itemtype_appletv'
    ]);
    // End of Post-release configs
 
