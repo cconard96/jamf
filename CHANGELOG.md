@@ -1,5 +1,12 @@
 # Jamf Plugin for GLPI Changelog
 
+## [2.0.0]
+
+### Added
+
+### Changed
+
+- Use client-side translations in JS files
 
 ## [1.2.0]
 
