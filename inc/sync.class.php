@@ -367,10 +367,6 @@ class PluginJamfSync extends CommonGLPI
          $this->status['syncSoftware'] = self::STATUS_ERROR;
          return $this;
       }
-      if ($this->item::getType() !== 'Computer') {
-         $this->status['syncSoftware'] = self::STATUS_SKIPPED;
-         return $this;
-      }
       if (!$this->config['sync_software'] || $this->item === null || isset($this->data['applications'])) {
          $this->status['syncSoftware'] = self::STATUS_SKIPPED;
          return $this;
@@ -422,17 +418,19 @@ class PluginJamfSync extends CommonGLPI
             } else {
                $softwareversion_id = array_keys($softwareversion_matches)[0];
             }
-            $computer_softwareversion = new Computer_SoftwareVersion();
-            $computer_softwareversion_matches = $computer_softwareversion->find([
-               'computers_id' => $this->item->getID(),
-               'softwareversions_id' => $softwareversion_id
+            $item_softwareversion = new Item_SoftwareVersion();
+            $item_softwareversion_matches = $item_softwareversion->find([
+               'itemtype'              => $this->item::getType(),
+               'items_id'              => $this->item->getID(),
+               'softwareversions_id'   => $softwareversion_id
             ]);
-            if (!count($computer_softwareversion_matches)) {
-               $computer_softwareversion->add([
-                  'computers_id' => $this->item->getID(),
-                  'softwareversions_id' => $softwareversion_id,
-                  'entities_id' => $this->item->fields['entities_id'],
-                  'is_recursive' => $this->item->fields['is_recursive']
+            if (!count($item_softwareversion_matches)) {
+               $item_softwareversion->add([
+                  'itemtype'              => $this->item::getType(),
+                  'items_id'              => $this->item->getID(),
+                  'softwareversions_id'   => $softwareversion_id,
+                  'entities_id'           => $this->item->fields['entities_id'],
+                  'is_recursive'          => $this->item->fields['is_recursive']
                ]);
             }
          }

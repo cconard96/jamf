@@ -43,7 +43,8 @@ class PluginJamfSoftware extends CommonDBTM
       global $DB;
 
       $DB->delete(self::getTable(), [
-         'softwares_id' => $item->getID(),
+         'itemtype'  => $item->getType(),
+         'items_id'  => $item->getID()
       ]);
    }
 }
