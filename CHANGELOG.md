@@ -4,6 +4,8 @@
 
 ### Added
 
+- Software sync for phones
+
 ### Changed
 
 - Use client-side translations in JS files
