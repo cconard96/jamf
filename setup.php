@@ -35,7 +35,6 @@ function plugin_init_jamf() {
    $PLUGIN_HOOKS['post_item_form']['jamf'] = ['PluginJamfMobileDevice', 'showForComputerOrPhoneMain'];
    $PLUGIN_HOOKS['pre_item_update']['jamf']['Phone'] = ['PluginJamfMobileDevice', 'preUpdatePhone'];
    $PLUGIN_HOOKS['undiscloseConfigValue']['jamf'] = [PluginJamfConfig::class, 'undiscloseConfigValue'];
-   Plugin::registerClass('PluginJamfShimPhoneOS', ['addtabon' => 'Phone']);
    Plugin::registerClass('PluginJamfRuleImportCollection', ['rulecollections_types' => true]);
    Plugin::registerClass('PluginJamfProfile', ['addtabon' => ['Profile']]);
    Plugin::registerClass('PluginJamfItem_ExtensionAttribute', ['addtabon' => [

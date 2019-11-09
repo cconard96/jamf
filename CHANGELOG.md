@@ -7,6 +7,7 @@
 ### Changed
 
 - Use client-side translations in JS files
+- Dropped Phone OS shim. This is natively handled in GLPI 9.5.0.
 
 ## [1.2.0]
 
