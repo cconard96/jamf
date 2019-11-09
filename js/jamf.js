@@ -132,7 +132,7 @@
             }
          });
 
-         var warn_text = __('Are you sure you want to send the command: %s?').replace("%s", __(self.commands[command].name));
+         var warn_text = __('Are you sure you want to send the command: %s?', 'jamf').replace("%s", __(self.commands[command].name, 'jamf'));
          self.dialog_confirm_command.text(warn_text);
          self.dialog_confirm_command.dialog("open");
       };
