@@ -30,14 +30,6 @@
        */
       this.commands = {};
 
-      /**
-       * String localizations.
-       * Each object key is the unlocalized string, and the value is the localized string (or un-localized if it could not be translated).
-       * @since 1.1.0
-       * @type {{}}
-       */
-      this.translations = {};
-
       this.dialog_confirm_command = null;
 
       this.dialog_send_command = null;
@@ -57,12 +49,6 @@
             self.jamf_id = args.jamf_id;
          }
          self.ajax_root = CFG_GLPI.root_doc + "/plugins/jamf/ajax/";
-         $.ajax({
-            method: 'GET',
-            url: (self.ajax_root + "getTranslations.php"),
-         }).done(function (data) {
-            self.translations = data;
-         });
       };
 
       this.onMDMCommandButtonClick = function(command, event) {
@@ -146,7 +132,7 @@
             }
          });
 
-         var warn_text = self.translations['Are you sure you want to send the command: %s?'].replace("%s", self.commands[command].name);
+         var warn_text = __('Are you sure you want to send the command: %s?', 'jamf').replace("%s", __(self.commands[command].name, 'jamf'));
          self.dialog_confirm_command.text(warn_text);
          self.dialog_confirm_command.dialog("open");
       };
