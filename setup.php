@@ -47,7 +47,7 @@ function plugin_init_jamf() {
    ]]);
    Plugin::registerClass('PluginJamfUser_JSSAccount', ['addtabon' => ['User']]);
    if (Session::haveRight('plugin_jamf_mobiledevice', READ)) {
-      $PLUGIN_HOOKS['menu_toadd']['jamf'] = ['tools' => 'PluginJamfMenu'];
+      $PLUGIN_HOOKS['menu_toadd']['jamf'] = ['plugins' => 'PluginJamfMenu'];
    }
    $PLUGIN_HOOKS['post_init']['jamf'] = 'plugin_jamf_postinit';
    $PLUGIN_HOOKS['item_purge']['jamf'] = [
@@ -61,7 +61,7 @@ function plugin_init_jamf() {
 function plugin_version_jamf() {
    
    return [
-      'name' => __("JAMF Plugin for GLPI", 'jamf'),
+      'name' => __('JAMF Plugin for GLPI', 'jamf'),
       'version' => PLUGIN_JAMF_VERSION,
       'author'  => 'Curtis Conard',
       'license' => 'GPLv2',
