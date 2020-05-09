@@ -31,4 +31,8 @@ class PluginJamfMenu extends CommonGLPI {
    {
       return __('Jamf plugin');
    }
+
+   static function getIcon() {
+      return "fas fa-tablet-alt";
+   }
 }
