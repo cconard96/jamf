@@ -50,4 +50,8 @@ class PluginJamfMenu extends CommonGLPI {
    static function canView() {
       return Config::canView();
    }
+
+   static function getIcon() {
+      return "fas fa-tablet-alt";
+   }
 }
