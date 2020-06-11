@@ -49,7 +49,7 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
    }
 
    private static function getApplicableCommands(PluginJamfMobileDevice $mobiledevice) {
-      if (Session::haveRight(self::$rightname, CREATE) && PluginJamfUser_JSSAccount::hasLink()) {
+      if (PluginJamfUser_JSSAccount::hasLink()) {
          $allcommands = PluginJamfMDMCommand::getAvailableCommands();
 
          foreach ($allcommands as $command => &$params) {
@@ -108,7 +108,7 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
 
    static function showForItem(CommonDBTM $item)
    {
-      if (!PluginJamfMobileDevice::canView()) {
+      if (!PluginJamfMobileDevice::canView() || static::canView()) {
          return false;
       }
 
@@ -184,5 +184,15 @@ JAVASCRIPT;
 
       echo Html::scriptBlock($js);
       return true;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   function getRights($interface = 'central') {
+
+      $values = [READ    => __('Read')];
+
+      return $values;
    }
 }
