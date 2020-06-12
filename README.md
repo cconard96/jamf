@@ -2,8 +2,7 @@
 
 [![CodeFactor](https://www.codefactor.io/repository/github/cconard96/jamf/badge/master)](https://www.codefactor.io/repository/github/cconard96/jamf/overview/master)
 
-Syncs data from JAMF Pro to GLPI.
-Only supports mobile devices for now.
+Syncs asset data from JAMF Pro to GLPI.
 
 ## Requirements
 - GLPI >= 9.5.0
