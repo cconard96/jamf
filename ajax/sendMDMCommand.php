@@ -27,7 +27,7 @@ Html::header_nocache();
 Session::checkLoginUser();
 
 // An action must be specified
-if (!isset($_POST['command']) || !isset($_POST['jamf_id'])) {
+if (!isset($_POST['command'], $_POST['jamf_id'], $_POST['itemtype'], $_POST['items_id'])) {
    throw new \RuntimeException('Required argument missing!');
 }
 
@@ -35,10 +35,43 @@ if (!is_array($_POST['jamf_id'])) {
    $_POST['jamf_id'] = [$_POST['jamf_id']];
 }
 
+if (!is_array($_POST['items_id'])) {
+   $_POST['items_id'] = [$_POST['items_id']];
+}
 
 $fields = [];
 if (isset($_POST['fields'])) {
    parse_str($_POST['fields'], $fields);
+}
+
+$valid_types = ['MobileDevice'];
+
+if (!in_array($_POST['itemtype'], $valid_types, true)) {
+   die('Invalid itemtype. Cannot send Jamf MDM command.');
+}
+
+$items = [];
+if ($_POST['itemtype'] === 'MobileDevice') {
+   foreach ($_POST['items_id'] as $items_id) {
+      /** @var PluginJamfMobileDevice $item */
+      $item = new PluginJamfMobileDevice();
+      $item->getFromDB((int) $items_id);
+      $items[] = $item;
+   }
+}
+
+foreach ($items as $k => $item) {
+   $commands = PluginJamfItem_MDMCommand::getApplicableCommands($item);
+   $command_names = array_keys($commands);
+
+   if (!in_array($_POST['command'], $command_names, true)) {
+      unset($items[$k]);
+   }
+}
+
+if (!count($items)) {
+   // No applicable items or no right to send command
+   exit();
 }
 
 $payload = new SimpleXMLElement("<mobile_device_command/>");
@@ -47,9 +80,10 @@ $general->addChild('command', $_POST['command']);
 $fields = array_flip($fields);
 array_walk_recursive($fields, [$general, 'addChild']);
 $mobile_devices = $payload->addChild('mobile_devices');
-foreach ($_POST['jamf_id'] as $device_id) {
+foreach ($items as $item) {
+   $jamf_id = $item->fields['jamf_items_id'];
    $m = $mobile_devices->addChild('mobile_device');
-   $m->addChild('id', $device_id);
+   $m->addChild('id', $jamf_id);
 }
 
 echo PluginJamfAPIClassic::addItem('mobiledevicecommands', $payload->asXML(), true);

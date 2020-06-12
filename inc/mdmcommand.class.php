@@ -319,4 +319,11 @@ class PluginJamfMDMCommand {
       }
       return null;
    }
+
+   public static function canSend($command)
+   {
+      $allcommands = self::getAvailableCommands();
+
+      return PluginJamfUser_JSSAccount::haveJSSRight('jss_actions', $allcommands[$command]['jss_right']);
+   }
 }
