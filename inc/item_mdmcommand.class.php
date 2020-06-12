@@ -48,8 +48,13 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
       return self::showForItem($item);
    }
 
-   private static function getApplicableCommands(PluginJamfMobileDevice $mobiledevice) {
-      if (Session::haveRight(self::$rightname, CREATE) && PluginJamfUser_JSSAccount::hasLink()) {
+   /**
+    * @param PluginJamfMobileDevice $mobiledevice
+    * @return array
+    * @since 1.0.0
+    */
+   public static function getApplicableCommands(PluginJamfMobileDevice $mobiledevice) {
+      if (PluginJamfUser_JSSAccount::hasLink()) {
          $allcommands = PluginJamfMDMCommand::getAvailableCommands();
 
          foreach ($allcommands as $command => &$params) {
@@ -99,6 +104,12 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
                      }
                   }
                }
+
+               // Test user JSS account rights - Cost: 2
+               if (isset($params['jss_right']) && !empty($params['jss_right']) && !PluginJamfMDMCommand::canSend($command)) {
+                  unset($allcommands[$command]);
+                  continue;
+               }
             }
          }
          return $allcommands;
@@ -108,7 +119,7 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
 
    static function showForItem(CommonDBTM $item)
    {
-      if (!PluginJamfMobileDevice::canView()) {
+      if (!PluginJamfMobileDevice::canView() || !static::canView()) {
          return false;
       }
 
@@ -127,7 +138,7 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
          $icon = $params['icon'] ?? '';
          $icon_color = $params['icon_color'] ?? 'black';
          $onclick = "jamfPlugin.onMDMCommandButtonClick('$command', event)";
-         echo "<div class='mdm-button' onclick=\"$onclick\"><i class='$icon' style='color: $icon_color'/>$title</div>";
+         echo "<div class='mdm-button' onclick=\"$onclick\"><i class='$icon' style='color: $icon_color'></i>$title</div>";
       }
       echo "</div>";
 
@@ -172,17 +183,31 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
       echo "</table>";
       $commands_json = json_encode($commands, JSON_FORCE_OBJECT);
       $jamf_id = $mobiledevice->fields['jamf_items_id'];
+      $itemtype = 'MobileDevice';
+      $items_id = $mobiledevice->getID();
       $js = <<<JAVASCRIPT
          $(function(){
             jamfPlugin = new JamfPlugin();
             jamfPlugin.init({
                commands: $commands_json,
-               jamf_id: $jamf_id
+               jamf_id: $jamf_id,
+               itemtype: "$itemtype",
+               items_id: $items_id
             });
          });
 JAVASCRIPT;
 
       echo Html::scriptBlock($js);
       return true;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   function getRights($interface = 'central') {
+
+      $values = [READ    => __('Read')];
+
+      return $values;
    }
 }

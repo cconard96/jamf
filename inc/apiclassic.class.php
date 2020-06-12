@@ -39,7 +39,7 @@ class PluginJamfAPIClassic
     * @return mixed JSON string or associative array depending on the value of $raw.
     * @since 1.0.0
     */
-   private static function get(string $endpoint, $raw = false)
+   private static function get(string $endpoint, $raw = false, $response_type = 'application/json')
    {
       if (!self::$connection) {
          self::$connection = new PluginJamfConnection();
@@ -53,12 +53,13 @@ class PluginJamfAPIClassic
       curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
       curl_setopt($curl, CURLOPT_HTTPHEADER, [
          'Content-Type: application/json',
-         'Accept: application/json'
+         "Accept: {$response_type}"
       ]);
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
       $response = curl_exec($curl);
       $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
       curl_close($curl);
+
       if (!$response) {
          return null;
       }
@@ -261,6 +262,82 @@ class PluginJamfAPIClassic
       $endpoint = "$itemtype$param_str";
       $response = self::delete($endpoint);
       return $response;
+   }
+
+   private static function getJSSGroupActionRights($groupid)
+   {
+      $response = self::get("accounts/groupid/$groupid");
+      return $response['group']['privileges']['jss_actions'];
+   }
+
+   public static function getJSSAccountRights($userid, $user_auth = false)
+   {
+      if ($user_auth && !PluginJamfUser_JSSAccount::canReadJSSItem('accounts')) {
+         return null;
+      }
+      $response = self::get("accounts/userid/$userid", true, 'application/xml');
+      $account = simplexml_load_string($response);
+
+      $access_level = reset($account->access_level);
+      $rights = [
+         'jss_objects'  => [],
+         'jss_actions'  => [],
+         'jss_settings' => []
+      ];
+      if ($access_level === 'Group Access') {
+         $group_count = count($account->groups->group);
+         //$groups = $account->groups->group;
+         for ($i = 0; $i < $group_count; $i++) {
+            $group = $account->groups->group[$i];
+            if (isset($group->privileges->jss_objects)) {
+               $c = count($group->privileges->jss_objects->privilege);
+               if ($c > 0) {
+                  for ($j = 0; $j < $c; $j++) {
+                     $rights['jss_objects'][] = reset($group->privileges->jss_objects->privilege[$j]);
+                  }
+               }
+            }
+            // Why are jss_actions not included in the group when all other rights are?
+            $action_privileges = self::getJSSGroupActionRights(reset($group->id));
+            $rights['jss_actions'] = $action_privileges;
+
+            if (isset($group->privileges->jss_settings)) {
+               $c = count($group->privileges->jss_settings->privilege);
+               if ($c > 0) {
+                  for ($j = 0; $j < $c; $j++) {
+                     $rights['jss_settings'][] = reset($group->privileges->jss_settings->privilege[$j]);
+                  }
+               }
+            }
+         }
+      } else {
+         $privileges = $account->privileges;
+         if (isset($privileges->jss_objects)) {
+            $c = count($privileges->jss_objects->privilege);
+            if ($c > 0) {
+               for ($j = 0; $j < $c; $j++) {
+                  $rights['jss_objects'][] = reset($privileges->jss_objects->privilege[$j]);
+               }
+            }
+         }
+         if (isset($privileges->jss_actions)) {
+            $c = count($privileges->jss_actions->privilege);
+            if ($c > 0) {
+               for ($j = 0; $j < $c; $j++) {
+                  $rights['jss_actions'][] = reset($privileges->jss_actions->privilege[$j]);
+               }
+            }
+         }
+         if (isset($privileges->jss_settings)) {
+            $c = count($privileges->jss_settings->privilege);
+            if ($c > 0) {
+               for ($j = 0; $j < $c; $j++) {
+                  $rights['jss_settings'][] = reset($privileges->jss_settings->privilege[$j]);
+               }
+            }
+         }
+      }
+      return $rights;
    }
 }
 

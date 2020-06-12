@@ -64,13 +64,13 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
 
    public function getJSSPrivileges()
    {
-      // Cache JSS account information to avoid extra, costly API calls.
-      static $jssaccount = [];
+      // Cache JSS account privileges information to avoid extra, costly API calls.
+      static $privileges = [];
 
-      if (!isset($jssaccount[$this->fields['jssaccounts_id']])) {
-         $jssaccount[$this->fields['jssaccounts_id']] = PluginJamfAPIClassic::getItems('accounts', ['userid' => $this->fields['jssaccounts_id']]);
+      if (!isset($privileges[$this->fields['jssaccounts_id']])) {
+         $privileges[$this->fields['jssaccounts_id']] = PluginJamfAPIClassic::getJSSAccountRights($this->fields['jssaccounts_id']);
       }
-      return $jssaccount[$this->fields['jssaccounts_id']]['privileges'] ?? [];
+      return $privileges[$this->fields['jssaccounts_id']];
    }
 
    private static function getItemRightMap() {
@@ -180,7 +180,7 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
       $user_jssaccount->getFromDB(reset($matches)['id']);
       $type_rights = $user_jssaccount->getJSSPrivileges()[$type] ?? [];
       if (count($type_rights) === 0) {
-         Toolbox::logError("Linked JSS account has no rights of type $type");
+         //Toolbox::logError("Linked JSS account has no rights of type $type");
          return false;
       }
       return in_array($jss_right, $type_rights);
