@@ -36,6 +36,10 @@
 
       this.jamf_id = -1;
 
+      this.itemtype = null;
+
+      this.items_id = -1;
+
       /**
        * The AJAX directory.
        * @since 1.1.0
@@ -47,6 +51,8 @@
          if (args !== undefined && args.commands !== undefined) {
             self.commands = args.commands;
             self.jamf_id = args.jamf_id;
+            self.itemtype = args.itemtype;
+            self.items_id = args.items_id;
          }
          self.ajax_root = CFG_GLPI.root_doc + "/plugins/jamf/ajax/";
       };
@@ -150,7 +156,9 @@
             data: {
                command: command,
                fields: params,
-               jamf_id: self.jamf_id
+               jamf_id: self.jamf_id,
+               itemtype: self.itemtype,
+               items_id: self.items_id
             }
          }).always(function() {
             location.reload();
