@@ -23,7 +23,7 @@
 
 include('../../../inc/includes.php');
 Session::checkRight("plugin_jamf_mobiledevice", CREATE);
-Html::header('Jamf Plugin', '', 'tools', 'PluginJamfMenu', 'import');
+Html::header('Jamf Plugin', '', 'plugins', 'PluginJamfMenu', 'import');
 
 global $DB, $CFG_GLPI;
 
