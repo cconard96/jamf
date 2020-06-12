@@ -1,5 +1,5 @@
 # English translations for Jamf Plugin for GLPI package.
-# Copyright (C) 2019 Curtis Conard and Contributors
+# Copyright (C) 2019-2020 Curtis Conard and Contributors
 # This file is distributed under the same license as the Jamf Plugin for GLPI package.
 # Automatically generated, 2019.
 #
