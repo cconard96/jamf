@@ -25,11 +25,9 @@
  * JamfMobileDevice class. This represents a mobile device from Jamf.
  * This is mainly used to store extra fields that are not already in Computer or Phone classes.
  */
-class PluginJamfMobileDevice extends CommonDBChild
+class PluginJamfMobileDevice extends PluginJamfAbstractDevice
 {
 
-   static public $itemtype = 'itemtype';
-   static public $items_id = 'items_id';
    public static $rightname = 'plugin_jamf_mobiledevice';
 
    public static function getTypeName($nb = 1)
@@ -37,12 +35,7 @@ class PluginJamfMobileDevice extends CommonDBChild
       return _n('Jamf mobile device', 'Jamf mobile devices', $nb, 'jamf');
    }
 
-   /**
-    * Display the extra information for mobile devices on the main Computer or Phone tab.
-    * @param type $params
-    * @return void|bool
-    */
-   public static function showForComputerOrPhoneMain($params)
+   public static function showForItem(array $params)
    {
       global $CFG_GLPI;
 
@@ -60,11 +53,11 @@ class PluginJamfMobileDevice extends CommonDBChild
       $out = '';
       if ($item::getType() === 'Phone') {
          $uuid = PluginJamfExtField::getValue('Phone', $item->getID(), 'uuid');
-         $out .= "<tr><td>" . __('UUID', 'jamf') . "</td><td>";
+         $out .= '<tr><td>' . __('UUID', 'jamf') . '</td><td>';
          $out .= Html::input('_plugin_jamf_uuid', [
             'value' => $uuid
          ]);
-         $out .= "</td></tr>";
+         $out .= '</td></tr>';
       }
       $mobiledevice = new self();
       $match = $mobiledevice->find([
@@ -73,35 +66,35 @@ class PluginJamfMobileDevice extends CommonDBChild
 
       if (!count($match)) {
          echo $out;
-         return;
+         return false;
       }
       $match = reset($match);
 
-      $out .= "<tr><th colspan='4'>".__('Jamf General Information', 'jamf')."</th></tr>";
-      $out .= "<tr><td>".__('Import date', 'jamf')."</td>";
-      $out .= "<td>".Html::convDateTime($match['import_date'])."</td>";
-      $out .= "<td>".__('Last sync', 'jamf')."</td>";
-      $out .= "<td>".Html::convDateTime($match['sync_date'])."</td></tr>";
+      $out .= "<tr><th colspan='4'>".__('Jamf General Information', 'jamf'). '</th></tr>';
+      $out .= '<tr><td>' .__('Import date', 'jamf'). '</td>';
+      $out .= '<td>' .Html::convDateTime($match['import_date']). '</td>';
+      $out .= '<td>' .__('Last sync', 'jamf'). '</td>';
+      $out .= '<td>' .Html::convDateTime($match['sync_date']). '</td></tr>';
 
-      $out .= "<tr><td>".__('Jamf last inventory', 'jamf')."</td>";
-      $out .= "<td>".Html::convDateTime($match['last_inventory'])."</td>";
-      $out .= "<td>".__('Jamf import date', 'jamf')."</td>";
-      $out .= "<td>".Html::convDateTime($match['entry_date'])."</td></tr>";
+      $out .= '<tr><td>' .__('Jamf last inventory', 'jamf'). '</td>';
+      $out .= '<td>'.Html::convDateTime($match['last_inventory']). '</td>';
+      $out .= '<td>'.__('Jamf import date', 'jamf'). '</td>';
+      $out .= '<td>' .Html::convDateTime($match['entry_date']). '</td></tr>';
 
-      $out .= "<tr><td>".__('Enrollment date', 'jamf')."</td>";
-      $out .= "<td>".Html::convDateTime($match['enroll_date'])."</td>";
-      $out .= "<td>".__('Shared device', 'jamf')."</td>";
-      $out .= "<td>".$match['shared']."</td></tr>";
+      $out .= '<tr><td>'.__('Enrollment date', 'jamf').'</td>';
+      $out .= '<td>'.Html::convDateTime($match['enroll_date']).'</td>';
+      $out .= '<td>'.__('Shared device', 'jamf').'</td>';
+      $out .= '<td>'.$match['shared']. '</td></tr>';
 
-      $out .= "<tr><td>".__('Supervised', 'jamf')."</td>";
-      $out .= "<td>".$getYesNo($match['supervised'])."</td>";
-      $out .= "<td>".__('Managed', 'jamf')."</td>";
-      $out .= "<td>".$getYesNo($match['managed'])."</td></tr>";
+      $out .= '<tr><td>'.__('Supervised', 'jamf').'</td>';
+      $out .= '<td>'.$getYesNo($match['supervised']).'</td>';
+      $out .= '<td>'.__('Managed', 'jamf').'</td>';
+      $out .= '<td>'.$getYesNo($match['managed']).'</td></tr>';
 
-      $out .= "<td>".__('Cloud backup enabled', 'jamf')."</td>";
-      $out .= "<td>".$getYesNo($match['cloud_backup_enabled'])."</td>";
-      $out .= "<td>".__('Activation locked', 'jamf')."</td>";
-      $out .= "<td>".$getYesNo($match['activation_lock_enabled'])."</td></tr>";
+      $out .= '<td>'.__('Cloud backup enabled', 'jamf').'</td>';
+      $out .= '<td>'.$getYesNo($match['cloud_backup_enabled']).'</td>';
+      $out .= '<td>'.__('Activation locked', 'jamf').'</td>';
+      $out .= '<td>'.$getYesNo($match['activation_lock_enabled']).'</td></tr>';
 
       $link = self::getJamfDeviceURL($match['jamf_items_id']);
       $view_msg = __('View in Jamf', 'jamf');
@@ -109,8 +102,9 @@ class PluginJamfMobileDevice extends CommonDBChild
       $out .= "<a class='vsubmit' href='{$link}' target='_blank'>{$view_msg}</a>";
 
       if ($item->canUpdate()) {
-         $out .= "&nbsp;&nbsp;<a class='vsubmit' onclick='syncDevice(&quot;{$item::getType()}&quot;, {$item->getID()}); return false;'>".__('Sync now', 'jamf')."</a>";
-         $ajax_url = $CFG_GLPI['root_doc']."/plugins/jamf/ajax/sync.php";
+         $onclick = "syncDevice(\"{$item::getType()}\", {$item->getID()}); return false;";
+         $out .= "&nbsp;&nbsp;<a class='vsubmit' onclick='{$onclick}'>".__('Sync now', 'jamf'). '</a>';
+         $ajax_url = $CFG_GLPI['root_doc']. '/plugins/jamf/ajax/sync.php';
          $js = <<<JAVASCRIPT
                function syncDevice(itemtype, items_id) {
                   $.ajax({
@@ -126,114 +120,48 @@ class PluginJamfMobileDevice extends CommonDBChild
 JAVASCRIPT;
          $out .= Html::scriptBlock($js);
       }
-      $out .= "</td></tr>";
+      $out .= '</td></tr>';
 
-      $out .= "<tr><th colspan='4'>".__('Jamf Lost Mode Information', 'jamf')."</th></tr>";
+      $out .= "<tr><th colspan='4'>".__('Jamf Lost Mode Information', 'jamf'). '</th></tr>';
       $enabled = $match['lost_mode_enabled'];
       if (!$enabled || ($enabled != 'true')) {
-         $out .= "<tr class='center'><td colspan='4'>".__('Lost mode is not enabled')."</td></tr>";
+         $out .= "<tr class='center'><td colspan='4'>".__('Lost mode is not enabled'). '</td></tr>';
       } else {
-         $out .= "<tr><td>".__('Enabled', 'jamf')."</td>";
-         $out .= "<td>".$enabled."</td>";
-         $out .= "<td>".__('Enforced', 'jamf')."</td>";
-         $out .= "<td>".$getYesNo($match['lost_mode_enforced'])."</td></tr>";
+         $out .= '<tr><td>'.__('Enabled', 'jamf'). '</td>';
+         $out .= '<td>'.$enabled. '</td>';
+         $out .= '<td>'.__('Enforced', 'jamf'). '</td>';
+         $out .= '<td>'.$getYesNo($match['lost_mode_enforced']). '</td></tr>';
 
-         $out .= "<tr><td>".__('Enable date', 'jamf')."</td>";
-         $out .= "<td>".Html::convDateTime($match['lost_mode_enable_date'])."</td></tr>";
+         $out .= '<tr><td>'.__('Enable date', 'jamf'). '</td>';
+         $out .= '<td>'.Html::convDateTime($match['lost_mode_enable_date']). '</td></tr>';
 
-         $out .= "<tr><td>".__('Message', 'jamf')."</td>";
-         $out .= "<td>".$match['lost_mode_message']."</td>";
-         $out .= "<td>".__('Phone', 'jamf')."</td>";
-         $out .= "<td>".$match['lost_mode_phone']."</td></tr>";
+         $out .= '<tr><td>'.__('Message', 'jamf'). '</td>';
+         $out .= '<td>'.$match['lost_mode_message']. '</td>';
+         $out .= '<td>'.__('Phone', 'jamf'). '</td>';
+         $out .= '<td>'.$match['lost_mode_phone']. '</td></tr>';
 
          $lat = $match['lost_location_latitude'];
          $long = $match['lost_location_longitude'];
-         $out .= "<td>".__('GPS')."</td><td>";
+         $out .= '<td>'.__('GPS'). '</td><td>';
          //TODO Use leaflet
          $out .= Html::link("$lat, $long", "https://www.google.com/maps/place/$lat,$long", [
             'display'   => false
          ]);
-         $out .= "</td><td>".__('Altitude')."</td>";
-         $out .= "<td>".$match['lost_location_altitude']."</td>";
-         $out .= "<tr><td>".__('Speed', 'jamf')."</td>";
-         $out .= "<td>".$match['lost_location_speed']."</td>";
-         $out .= "<td>".__('Lost location date')."</td>";
-         $out .= "<td>".Html::convDateTime($match['lost_location_date'])."</td></tr>";
+         $out .= '<tr><td>'.__('Altitude'). '</td>';
+         $out .= '<td>'.$match['lost_location_altitude']. '</td>';
+         $out .= '<tr><td>'.__('Speed', 'jamf'). '</td>';
+         $out .= '<td>'.$match['lost_location_speed']. '</td>';
+         $out .= '<td>'.__('Lost location date'). '</td>';
+         $out .= '<td>'.Html::convDateTime($match['lost_location_date']). '</td></tr>';
       }
 
       echo $out;
    }
 
-   /**
-    * Get a direct link to the mobile device on the Jamf server.
-    * @param string $jamf_id The Jamf ID of the device.
-    * @return string Jamf URL for the mobile device.
-    */
-   public static function getJamfDeviceURL($jamf_id)
+   public static function getJamfDeviceURL(int $jamf_id): string
    {
       $config = PluginJamfConfig::getConfig();
       return "{$config['jssserver']}/mobileDevices.html?id={$jamf_id}";
-   }
-
-   /**
-    * Cleanup relations when an item is purged.
-    * @global type $DB
-    * @param CommonDBTM $item
-    */
-   private static function purgeItemCommon(CommonDBTM $item)
-   {
-      global $DB;
-
-      $DB->delete(self::getTable(), [
-         'itemtype' => $item::getType(),
-         'items_id' => $item->getID()
-      ]);
-   }
-
-   /**
-    * Cleanup relations when a Computer is purged.
-    * @global type $DB
-    * @param CommonDBTM $item
-    */
-   public static function plugin_jamf_purgeComputer(Computer $item)
-   {
-      self::purgeItemCommon($item);
-   }
-
-   /**
-    * Cleanup relations when a Phone is purged.
-    * @global type $DB
-    * @param CommonDBTM $item
-    */
-   public static function plugin_jamf_purgePhone(Phone $item)
-   {
-      global $DB;
-
-      self::purgeItemCommon($item);
-      $DB->delete(Item_OperatingSystem::getTable(), [
-         'itemtype' => $item::getType(),
-         'items_id' => $item->getID()
-      ]);
-   }
-
-
-   /**
-    * @param CommonDBTM $item
-    * @return PluginJamfMobileDevice
-    */
-   public static function getJamfItemForGLPIItem(CommonDBTM $item)
-   {
-       $mobiledevice = new self();
-       $matches = $mobiledevice->find([
-           'itemtype'   => $item::getType(),
-           'items_id'   => $item->getID()
-       ], [], 1);
-       if (count($matches)) {
-           $id = reset($matches)['id'];
-           $mobiledevice->getFromDB($id);
-           return $mobiledevice;
-       }
-       return null;
    }
 
    public function getExtensionAttributes()
@@ -267,19 +195,6 @@ JAVASCRIPT;
            $attributes[] = $data;
        }
        return $attributes;
-   }
-
-   public static function preUpdatePhone($item) {
-      if (isset($item->input['_plugin_jamf_uuid'])) {
-         PluginJamfExtField::setValue($item::getType(), $item->getID(), 'uuid', $item->input['_plugin_jamf_uuid']);
-      }
-   }
-
-   public function getGLPIItem() {
-      $itemtype = $this->fields['itemtype'];
-      $item = new $itemtype();
-      $item->getFromDB($this->fields['items_id']);
-      return $item;
    }
 
    public function getMDMCommands()
