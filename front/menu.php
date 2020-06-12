@@ -23,7 +23,7 @@
 
 include('../../../inc/includes.php');
 
-Html::header('Jamf Plugin', '', 'tools', 'PluginJamfMenu', 'import');
+Html::header('Jamf Plugin', '', 'plugins', 'PluginJamfMenu', 'import');
 
 global $CFG_GLPI;
 
