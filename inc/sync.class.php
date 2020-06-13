@@ -290,6 +290,10 @@ class PluginJamfSync extends CommonGLPI
          if ($preferred_manufacturer) {
             $this->item_changes['manufacturers_id'] = $preferred_manufacturer;
          }
+
+         if ($this->item === null || $this->item->fields['states_id'] === 0) {
+            $this->item_changes['states_id'] = $config['default_status'];
+         }
       } catch (Exception $e) {
          $this->status['syncGeneral'] = self::STATUS_ERROR;
          return $this;
