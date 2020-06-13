@@ -140,7 +140,7 @@ class PluginJamfConfig extends CommonDBTM
       echo "</td></tr>";
 
       echo "<table class='tab_cadre_fixe'><thead>";
-      echo "<th colspan='4'>" . __('Default Type Settings') . "</th></thead>";
+      echo "<th colspan='4'>" . __('Default Settings') . "</th></thead>";
       echo "<td>" . __('Manufacturer', 'jamf') . "</td>";
       echo "<td>";
       Dropdown::show('Manufacturer', [
@@ -162,7 +162,21 @@ class PluginJamfConfig extends CommonDBTM
          'name' => 'appletv_type',
          'value' => isset($config['appletv_type']) ? $config['appletv_type'] : false
       ]);
-      echo "</td></tr></table>";
+      echo "</td></tr>";
+
+      echo "<tr><td>".__('Default status', 'jamf')."</td><td>";
+      State::dropdown([
+         'name'      => 'default_status',
+         'value'     => $config['default_status'],
+         'entity'    => 0,
+         'condition' => [
+            'is_visible_computer'   => 1,
+            'is_visible_phone'      => 1
+         ],
+      ]);
+      echo "</td><td></td></tr>";
+
+      echo "</table>";
 
       echo "<table class='tab_cadre_fixe'>";
       echo "<tr class='tab_bg_2'>";

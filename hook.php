@@ -204,6 +204,14 @@ function plugin_jamf_install()
       'itemtype_ipad' => 'Computer',
       'itemtype_appletv' => 'Computer'
    ]);
+
+   if (!count(Config::getConfigurationValues('plugin:Jamf', ['default_status']))) {
+      $DB->insertOrDie('glpi_configs', [
+         'context'   => 'plugin:Jamf',
+         'name'      => 'default_status',
+         'value'     => null
+      ]);
+   }
    // End of Post-release configs
 
    CronTask::register('PluginJamfSync', 'syncJamf', 300, [
