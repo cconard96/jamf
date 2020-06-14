@@ -27,8 +27,9 @@
  */
 class PluginJamfMobileDevice extends PluginJamfAbstractDevice
 {
-
    public static $rightname = 'plugin_jamf_mobiledevice';
+
+   public static $jamftype_name = 'mobiledevices';
 
    public static function getTypeName($nb = 1)
    {

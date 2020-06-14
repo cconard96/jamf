@@ -52,4 +52,17 @@ class PluginJamfToolbox {
       }
       return implode(' ', $text_arr);
    }
+
+   /**
+    * Helper function to convert the UTC timestamps from JSS to a local DateTime.
+    * @param DateTime $utc The UTC DateTime from JSS.
+    * @return DateTime The local DateTime.
+    */
+   public static function utcToLocal(DateTime $utc)
+   {
+      //TODO Use GLPI timezone when GLPI supports them.
+      $tz = new DateTimeZone(date_default_timezone_get());
+      $utc->setTimezone($tz);
+      return $utc;
+   }
 }
