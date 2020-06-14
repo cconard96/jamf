@@ -28,6 +28,8 @@ class PluginJamfComputer extends PluginJamfAbstractDevice
 {
    static $rightname = 'plugin_jamf_computer';
 
+   public static $jamftype_name = 'computers';
+
    public static function getTypeName($nb = 1)
    {
       return _n('Jamf computer', 'Jamf computers', $nb, 'jamf');

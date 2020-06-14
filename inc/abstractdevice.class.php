@@ -28,6 +28,9 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
 {
    static public $itemtype = 'itemtype';
    static public $items_id = 'items_id';
+   static public $jamftype_name = null;
+
+   static public $jamftype_name = null;
 
    /**
     * Display the extra information for Jamf devices on the main Computer or Phone tab.
