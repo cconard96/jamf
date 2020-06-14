@@ -219,6 +219,14 @@ function plugin_jamf_install()
          'value'     => null
       ]);
    }
+
+   if (!count(Config::getConfigurationValues('plugin:Jamf', ['sync_components']))) {
+      $DB->insertOrDie('glpi_configs', [
+         'context'   => 'plugin:Jamf',
+         'name'      => 'sync_components',
+         'value'     => 0
+      ]);
+   }
    // End of Post-release configs
 
    CronTask::register('PluginJamfSync', 'syncJamf', 300, [

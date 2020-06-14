@@ -117,6 +117,11 @@ class PluginJamfConfig extends CommonDBTM
       Dropdown::showYesNo('autoimport', isset($config['autoimport']) ? $config['autoimport'] : false);
       echo "</td></tr>";
 
+      echo "<tr><td>" . __('Sync Components', 'jamf') . "</td>";
+      echo "<td>";
+      Dropdown::showYesNo('sync_components', isset($config['sync_components']) ? $config['sync_components'] : false);
+      echo "</td></tr>";
+
       echo "<table class='tab_cadre_fixe'><thead>";
       echo "<th colspan='4'>" . __('Default Settings') . "</th></thead>";
       echo "<td>" . __('Manufacturer', 'jamf') . "</td>";

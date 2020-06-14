@@ -813,6 +813,80 @@ class PluginJamfSync extends CommonGLPI
    }
 
    /**
+    * Sync component information such as volumes.
+    * @since 2.0.0
+    * @return PluginJamfSync
+    */
+   private function syncComponents()
+   {
+
+      if ($this->dummySync) {
+         $this->status['syncComponents'] = self::STATUS_ERROR;
+         return $this;
+      }
+      if (!$this->config['sync_components'] || $this->item === null || !isset($this->data['general'])) {
+         $this->status['syncComponents'] = self::STATUS_SKIPPED;
+         return $this;
+      }
+      try {
+         $config = PluginJamfConfig::getConfig();
+         $general = $this->data['general'];
+
+         // Volume
+         $this->createOrGetItem(Item_Disk::class, [
+            'itemtype'              => $this->item::getType(),
+            'items_id'              => $this->item->getID(),
+            'mountpoint'            => '/',
+         ], [
+            'itemtype'              => $this->item::getType(),
+            'items_id'              => $this->item->getID(),
+            'name'                  => 'OS',
+            'mountpoint'            => '/',
+            'totalsize'             => $general['capacity'],
+            'freesize'              => $general['available'],
+            'entities_id'           => $this->item->fields['entities_id'],
+            'is_dynamic'            => 1,
+         ]);
+
+         if (!empty($general['phone_number'])) {
+            // Simcard/Line
+            $simcard = $this->createOrGetItem(DeviceSimcard::class, [
+               'designation'  => 'Generic Apple Simcard',
+            ], [
+               'designation'  => 'Generic Apple Simcard',
+               'comment'      => 'Created by Jamf Plugin for GLPI',
+               'is_recursive' => 1,
+               'manufacturer' => $config['default_manufacturer'],
+            ]);
+            $line = $this->createOrGetItem(Line::class, [
+               'caller_num'   => $general['phone_number'],
+            ], [
+               'name'         => $general['phone_number'],
+               'caller_num'   => $general['phone_number'],
+            ]);
+            $this->createOrGetItem(Item_DeviceSimcard::class, [
+               'itemtype'              => $this->item::getType(),
+               'items_id'              => $this->item->getID(),
+               'devicesimcards_id'     => $simcard->getID()
+            ], [
+               'itemtype'              => $this->item::getType(),
+               'items_id'              => $this->item->getID(),
+               'devicesimcards_id'     => $simcard->getID(),
+               'is_dynamic'            => 1,
+               'entities_id'           => $this->item->fields['entities_id'],
+               'is_recursive'          => 1,
+               'lines_id'              => $line->getID(),
+            ]);
+         }
+      } catch (Exception $e) {
+         $this->status['syncComponents'] = self::STATUS_ERROR;
+         return $this;
+      }
+      $this->status['syncComponents'] = self::STATUS_OK;
+      return $this;
+   }
+
+   /**
     * Apply all pending changes and retry deferred tasks.
     * @since 1.1.0
     * @return array STATUS_OK if the sync was successful, STATUS_ERROR otherwise.
@@ -903,6 +977,7 @@ class PluginJamfSync extends CommonGLPI
             ->syncExtensionAttributes()
             ->syncSecurity()
             ->syncNetwork()
+            ->syncComponents()
             ->syncGeneralJamf()
             ->finalizeSync();
          // Evaluate final sync result. If any errors exist, count as failure.

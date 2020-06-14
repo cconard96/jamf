@@ -33,7 +33,7 @@ $input = file_get_contents('php://input');
 parse_str($input, $_REQUEST);
 
 // An action must be specified
-if (!isset($_REQUEST['itemtype']) || !isset($_REQUEST['items_id'])) {
+if (!isset($_REQUEST['itemtype'], $_REQUEST['items_id'])) {
    throw new RuntimeException('Required argument missing!');
 }
 
