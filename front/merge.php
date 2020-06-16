@@ -82,9 +82,9 @@ while ($data = $pending->next()) {
       $guess = $item->find([
          'OR' => [
             'uuid' => $data['udid'],
-            //'name' => $data['name']
+            'name' => $data['name']
          ]
-      ]);//, [new QueryExpression("CASE WHEN uuid='".$data['udid']."' THEN 0 ELSE 1 END")], 1);
+      ], [new QueryExpression("CASE WHEN uuid='".$data['udid']."' THEN 0 ELSE 1 END")], 1);
 
       $params = [
          'used'   => array_values($computer_ids)
