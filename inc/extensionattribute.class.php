@@ -45,7 +45,65 @@ class PluginJamfExtensionAttribute extends CommonDBTM {
        return $DB->updateOrInsert(PluginJamfExtensionAttribute::getTable(), $input, ['jamf_id' => $jamf_id]);
     }
 
-    public function showForm() {
+    public static function dashboardCards()
+    {
+       global $DB;
 
+       $table = self::getTable();
+       $iterator = $DB->request([
+          'SELECT'   => ['name'],
+          'FROM'  => $table
+       ]);
+       $cards = [];
+
+       while ($data = $iterator->next()) {
+          $slug = strtolower(str_replace(' ', '_', $data['name']));
+          $cards["plugin_jamf_extensionattribute_{$slug}"] = [
+             'widgettype'  => ['halfdonut'],
+             'label'       => sprintf(__('Jamf Attribute - %s'), $data['name']),
+             'provider'    => 'PluginJamfExtensionAttribute::cardProvider',
+             'args'        => ['name' => $data['name']]
+          ];
+       }
+
+       return $cards;
+    }
+
+    public static function cardProvider($name, array $params = [])
+    {
+       global $DB;
+
+       $rel_table = PluginJamfItem_ExtensionAttribute::getTable();
+       $table = self::getTable();
+       $iterator = $DB->request([
+          'SELECT'   => [
+             'value',
+             'COUNT' => "{$rel_table}.id as cpt"
+          ],
+          'FROM'  => $table,
+          'JOIN'  => [
+             $rel_table => [
+                'ON' => [
+                   $rel_table => 'glpi_plugin_jamf_extensionattributes_id',
+                   $table     => 'id'
+                ]
+             ]
+          ],
+          'WHERE' => ['name' => $name],
+          'GROUP' => "{$rel_table}.value"
+       ]);
+
+       $card_data = [];
+       while ($data = $iterator->next()) {
+          $card_data[] = [
+             'label'    => $data['value'],
+             'number'   => $data['cpt'],
+             'url'      => '#'
+          ];
+       }
+       return [
+          'label' => sprintf(__('Jamf Attribute - %s'), $name),
+          'data'  => $card_data
+       ];
     }
 }

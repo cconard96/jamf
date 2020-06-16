@@ -56,6 +56,9 @@ function plugin_init_jamf() {
       'Software'  => ['PluginJamfSoftware', 'plugin_jamf_purgeSoftware']
    ];
    $PLUGIN_HOOKS['pre_item_update']['jamf']['Config'] = ['PluginJamfConfig', 'plugin_jamf_preitemupdate'];
+
+   // Dashboards
+   $PLUGIN_HOOKS['dashboard_cards']['jamf'] = ['PluginJamfExtensionAttribute', 'dashboardCards'];
 }
 
 function plugin_version_jamf() {
