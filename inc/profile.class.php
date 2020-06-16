@@ -32,14 +32,14 @@ if (!defined('GLPI_ROOT')) {
 class PluginJamfProfile extends Profile
 {
 
-   static $rightname = "config";
+   public static $rightname = "config";
 
-   function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
+   public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
    {
       return self::createTabEntry('Jamf');
    }
 
-   static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
+   public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
    {
       $jamfprofile = new self();
       if ($item->fields['interface'] == 'central') {
@@ -56,8 +56,10 @@ class PluginJamfProfile extends Profile
     * @param int $profiles_id Current profile ID
     * @param bool $openform Open the form (true by default)
     * @param bool $closeform Close the form (true by default)
-    **/
-   function showForm($profiles_id = 0, $openform = true, $closeform = true)
+    *
+    * @return bool|void
+    */
+   public function showForm($profiles_id = 0, $openform = true, $closeform = true)
    {
       global $CFG_GLPI;
 
@@ -68,9 +70,8 @@ class PluginJamfProfile extends Profile
       echo "<div class='spaced'>";
       $profile = new Profile();
       $profile->getFromDB($profiles_id);
-      if (($canedit = Session::haveRightsOr(self::$rightname, [CREATE, UPDATE, PURGE]))
-         && $openform) {
-         echo "<form method='post' action='" . $profile->getFormURL() . "'>";
+      if ($openform && ($canedit = Session::haveRightsOr(self::$rightname, [CREATE, UPDATE, PURGE]))) {
+         echo "<form method='post' action='" . $profile::getFormURL() . "'>";
       }
 
       $rights = [['itemtype' => 'PluginJamfMobileDevice',
@@ -96,7 +97,7 @@ class PluginJamfProfile extends Profile
          echo "</div>\n";
          Html::closeForm();
       }
-      echo "</div>";
+      echo '</div>';
    }
 
    /**
@@ -105,7 +106,9 @@ class PluginJamfProfile extends Profile
     * @param int $profiles_id Current profile ID
     * @param bool $openform Open the form (true by default)
     * @param bool $closeform Close the form (true by default)
-    **/
+    *
+    * @return bool|void
+    */
    function showFormHelpdesk($profiles_id = 0, $openform = true, $closeform = true)
    {
       global $CFG_GLPI;
@@ -118,7 +121,7 @@ class PluginJamfProfile extends Profile
       $profile->getFromDB($profiles_id);
       echo "<div class='spaced'>";
       if ($canedit = Session::haveRightsOr(self::$rightname, [CREATE, UPDATE, PURGE])) {
-         echo "<form method='post' action='" . $profile->getFormURL() . "'>";
+         echo "<form method='post' action='" . $profile::getFormURL() . "'>";
       }
 
       $matrix_options = ['canedit' => $canedit,
@@ -142,6 +145,6 @@ class PluginJamfProfile extends Profile
       } else {
          echo "</table>\n";
       }
-      echo "</div>";
+      echo '</div>';
    }
 }

@@ -21,10 +21,8 @@
  --------------------------------------------------------------------------
  */
 
-use Exception;
-
 if (!defined('GLPI_ROOT')) {
    die("Sorry. You can't access this file directly");
 }
 
-class PluginJamfRateLimitException extends Exception {};
+class PluginJamfRateLimitException extends Exception {}

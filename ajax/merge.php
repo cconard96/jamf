@@ -42,13 +42,13 @@ if ($_REQUEST['action'] == 'merge') {
    // An array of item IDs is required
    if (isset($_REQUEST['item_ids']) && is_array($_REQUEST['item_ids'])) {
       foreach ($_REQUEST['item_ids'] as $glpi_id => $data) {
-         if (!isset($data['jamf_id']) || !isset($data['itemtype'])) {
+         if (!isset($data['jamf_id'], $data['itemtype'])) {
             continue;
          }
          $jamf_id = $data['jamf_id'];
          $itemtype = $data['itemtype'];
 
-         if (($itemtype != 'Computer') && ($itemtype != 'Phone')) {
+         if (($itemtype !== 'Computer') && ($itemtype !== 'Phone')) {
             // Invalid itemtype for a mobile device
             throw new RuntimeException('Invalid itemtype!');
          }

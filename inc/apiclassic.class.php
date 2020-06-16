@@ -36,7 +36,9 @@ class PluginJamfAPIClassic
     * Get data from a JSS Classic API endpoint.
     * @param string $endpoint The API endpoint.
     * @param bool $raw If true, data is returned as JSON instead of decoded into an array.
+    * @param string $response_type
     * @return mixed JSON string or associative array depending on the value of $raw.
+    * @throws PluginJamfRateLimitException
     * @since 1.0.0
     */
    private static function get(string $endpoint, $raw = false, $response_type = 'application/json')
@@ -73,10 +75,10 @@ class PluginJamfAPIClassic
                   throw new PluginJamfRateLimitException($fault['faultstring']);
             }
          }
-         throw new RuntimeException(__("Unknown JSS API Error"));
-      } else {
-         return ($raw ? $response : json_decode($response, true));
+         throw new RuntimeException(__('Unknown JSS API Error'));
       }
+
+      return ($raw ? $response : json_decode($response, true));
    }
 
    /**
@@ -171,7 +173,7 @@ class PluginJamfAPIClassic
     */
    private static function getParamString(array $params = [])
    {
-      $param_str = "";
+      $param_str = '';
       foreach ($params as $key => $value) {
          $param_str = "{$param_str}/{$key}/{$value}";
       }
@@ -196,7 +198,7 @@ class PluginJamfAPIClassic
       $response = self::get($endpoint);
       // Strip first key (usually like mobile_devices or mobile_device)
       // No other first level keys exist
-      return (!is_null($response) && count($response)) ? reset($response) : null;
+      return ($response !== null && count($response)) ? reset($response) : null;
    }
 
    /**
@@ -204,7 +206,7 @@ class PluginJamfAPIClassic
     * @param string $itemtype The type of data to fetch. This matches up with endpoint names.
     * @param string $payload XML payload of data to post to the endpoint.
     * @param bool $user_auth True if the user's linked JSS account privileges should be checked for requested resource.
-    * @return array Associative array of the decoded JSON response.
+    * @return bool|int
     * @since 1.1.0
     */
    public static function addItem(string $itemtype, string $payload, $user_auth = false)
@@ -221,8 +223,7 @@ class PluginJamfAPIClassic
       }
 
       $endpoint = "$itemtype$param_str";
-      $response = self::add($endpoint, $payload);
-      return $response;
+      return self::add($endpoint, $payload);
    }
 
    /**
@@ -231,7 +232,7 @@ class PluginJamfAPIClassic
     * @param array $params API input parameters such as udid, name, or subset.
     * @param array $fields Associative array of item fields.
     * @param bool $user_auth True if the user's linked JSS account privileges should be checked for requested resource.
-    * @return array Associative array of the decoded JSON response.
+    * @return bool|int
     * @since 1.1.0
     */
    public static function updateItem(string $itemtype, array $params = [], array $fields = [], $user_auth = false)
@@ -241,8 +242,7 @@ class PluginJamfAPIClassic
       }
       $param_str = self::getParamString($params);
       $endpoint = "$itemtype$param_str";
-      $response = self::update($endpoint, $fields);
-      return $response;
+      return self::update($endpoint, $fields);
    }
 
    /**
@@ -250,7 +250,7 @@ class PluginJamfAPIClassic
     * @param string $itemtype The type of data to fetch. This matches up with endpoint names.
     * @param array $params API input parameters such as udid, name, or subset.
     * @param bool $user_auth True if the user's linked JSS account privileges should be checked for requested resource.
-    * @return array Associative array of the decoded JSON response.
+    * @return bool|int
     * @since 1.1.0
     */
    public static function deleteItem(string $itemtype, array $params = [], $user_auth = false)
@@ -260,8 +260,7 @@ class PluginJamfAPIClassic
       }
       $param_str = self::getParamString($params);
       $endpoint = "$itemtype$param_str";
-      $response = self::delete($endpoint);
-      return $response;
+      return self::delete($endpoint);
    }
 
    private static function getJSSGroupActionRights($groupid)

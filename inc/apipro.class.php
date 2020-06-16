@@ -84,9 +84,9 @@
        $connection = self::$connection;
        if (version_compare($connection->getServerVersion(), '10.14.0', '>=')) {
           return self::get('/v1/mobile-devices');
-       } else {
-          return self::get('/inventory/obj/mobileDevice');
-       } 
+       }
+
+       return self::get('/inventory/obj/mobileDevice');
     }
 
     /**

@@ -30,34 +30,35 @@ class PluginJamfMobileDevice extends CommonDBChild
 
    static public $itemtype = 'itemtype';
    static public $items_id = 'items_id';
-   static $rightname = 'plugin_jamf_mobiledevice';
+   public static $rightname = 'plugin_jamf_mobiledevice';
 
    public static function getTypeName($nb = 1)
    {
-      return __('Jamf mobile device', 'Jamf mobile devices', $nb, 'jamf');
+      return _n('Jamf mobile device', 'Jamf mobile devices', $nb, 'jamf');
    }
 
    /**
     * Display the extra information for mobile devices on the main Computer or Phone tab.
     * @param type $params
-    * @return type
+    * @return void|bool
     */
    public static function showForComputerOrPhoneMain($params)
    {
       global $CFG_GLPI;
 
+      /** @var CommonDBTM $item */
       $item = $params['item'];
 
-      if (!self::canView() || (!($item::getType() == 'Computer') && !($item::getType() == 'Phone'))) {
+      if (!self::canView() || (!($item::getType() === 'Computer') && !($item::getType() === 'Phone'))) {
          return false;
       }
 
-      $getYesNo = function($value) {
+      $getYesNo = static function($value) {
          return $value ? __('Yes') : __('No');
       };
 
       $out = '';
-      if ($item::getType() == 'Phone') {
+      if ($item::getType() === 'Phone') {
          $uuid = PluginJamfExtField::getValue('Phone', $item->getID(), 'uuid');
          $out .= "<tr><td>" . __('UUID', 'jamf') . "</td><td>";
          $out .= Html::input('_plugin_jamf_uuid', [
@@ -65,7 +66,7 @@ class PluginJamfMobileDevice extends CommonDBChild
          ]);
          $out .= "</td></tr>";
       }
-      $mobiledevice = new PluginJamfMobileDevice();
+      $mobiledevice = new self();
       $match = $mobiledevice->find([
          'itemtype' => $item::getType(),
          'items_id' => $item->getID()]);
@@ -222,7 +223,7 @@ JAVASCRIPT;
     */
    public static function getJamfItemForGLPIItem(CommonDBTM $item)
    {
-       $mobiledevice = new PluginJamfMobileDevice();
+       $mobiledevice = new self();
        $matches = $mobiledevice->find([
            'itemtype'   => $item::getType(),
            'items_id'   => $item->getID()
@@ -268,7 +269,7 @@ JAVASCRIPT;
        return $attributes;
    }
 
-   static function preUpdatePhone($item) {
+   public static function preUpdatePhone($item) {
       if (isset($item->input['_plugin_jamf_uuid'])) {
          PluginJamfExtField::setValue($item::getType(), $item->getID(), 'uuid', $item->input['_plugin_jamf_uuid']);
       }

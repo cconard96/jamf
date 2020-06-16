@@ -31,17 +31,17 @@
    static public $rightname = 'plugin_jamf_ruleimport';
    public $can_sort = true;
 
-   function getTitle()
+   public function getTitle()
    {
       return __('Device import rules', 'jamf');
    }
 
-   function maxActionsCount()
+   public function maxActionsCount()
    {
       return 1;
    }
 
-   function getCriterias() 
+   public function getCriterias()
    {
       $criterias = [];
       $criterias['name']['field'] = 'name';
@@ -69,7 +69,7 @@
       return $criterias;
    }
 
-   function getActions()
+   public function getActions()
    {
       $actions = [];
       $actions['_import']['name']  = __('Import');
@@ -77,7 +77,7 @@
       return $actions;
    }
 
-   function displayAdditionalRuleCondition($condition, $crit, $name, $value, $test = false)
+   public function displayAdditionalRuleCondition($condition, $crit, $name, $value, $test = false)
    {
       if (isset($crit['field'])) {
          switch ($crit['field']) {

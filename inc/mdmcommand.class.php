@@ -279,7 +279,7 @@ class PluginJamfMDMCommand {
     * @param string $command The name of the command such as "UpdateInventory".
     * @return string|null HTML form or null if it is not applicable.
     */
-   static function getFormForCommand($command)
+   public static function getFormForCommand($command)
    {
       if (isset(self::getAvailableCommands()[$command])) {
          $command_data = self::getAvailableCommands()[$command];

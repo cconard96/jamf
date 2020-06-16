@@ -42,7 +42,7 @@ class PluginJamfExtensionAttribute extends CommonDBTM {
        }
        $jamf_id = $input['jamf_id'];
        unset($input['jamf_id']);
-       return $DB->updateOrInsert(PluginJamfExtensionAttribute::getTable(), $input, ['jamf_id' => $jamf_id]);
+       return $DB->updateOrInsert(self::getTable(), $input, ['jamf_id' => $jamf_id]);
     }
 
     public static function dashboardCards()

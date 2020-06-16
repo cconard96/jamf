@@ -30,7 +30,7 @@
    static public $rightname = 'plugin_jamf_ruleimport';
    public $menu_option = 'jamf_import';
 
-   function getTitle()
+   public function getTitle()
    {
       return __('Device import rules', 'jamf');
    }

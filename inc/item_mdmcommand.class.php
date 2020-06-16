@@ -35,7 +35,7 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
       return _n('MDM command', 'MDM commands', $nb, 'jamf');
    }
 
-   function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
+   public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
    {
       if (!PluginJamfMobileDevice::canView()) {
          return false;
@@ -43,7 +43,7 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
       return self::getTypeName(2);
    }
 
-   static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
+   public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
    {
       return self::showForItem($item);
    }
@@ -76,32 +76,35 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
                }
 
                // Check lost status - Cost: 0
-               if (isset($params['requirements']['lostmode']) &&
-                  $mobiledevice->fields['lost_mode_enabled'] !== 'true' && $mobiledevice->fields['lost_mode_enabled'] !== 'false') {
-                  unset($allcommands[$command]);
-                  continue;
-               } else if (isset($params['requirements']['lostmode']) &&
-                  $params['requirements']['lostmode'] && $mobiledevice->fields['lost_mode_enabled'] !== 'true') {
-                  unset($allcommands[$command]);
-                  continue;
-               } else if (isset($params['requirements']['lostmode']) &&
-                  !$params['requirements']['lostmode'] && $mobiledevice->fields['lost_mode_enabled'] !== 'false') {
-                  unset($allcommands[$command]);
-                  continue;
+               if (isset($params['requirements']['lostmode'])) {
+                  $req_value = $params['requirements']['lostmode'];
+                  $value = $mobiledevice->fields['lost_mode_enabled'];
+
+                  if ($value !== 'true' && $value !== 'false') {
+                     unset($allcommands[$command]);
+                     continue;
+                  }
+
+                  if ($req_value && $value !== 'true') {
+                     unset($allcommands[$command]);
+                     continue;
+                  }
+
+                  if (!$req_value && $value !== 'false') {
+                     unset($allcommands[$command]);
+                     continue;
+                  }
                }
 
                // Test device type requirements - Cost: 2
-               if (isset($params['requirements']['devicetypes'])) {
-                  if (!empty($params['requirements']['devicetypes'])) {
-                     if (!array_key_exists('mobiledevice', $params['requirements']['devicetypes']) &&
-                        !in_array('mobiledevice', $params['requirements']['devicetypes'])) {
-                        $specifictype = $mobiledevice->getSpecificType();
-                        if (!array_key_exists($specifictype, $params['requirements']['devicetypes']) &&
-                           !in_array($specifictype, $params['requirements']['devicetypes'])) {
-                           unset($allcommands[$command]);
-                           continue;
-                        }
-                     }
+               if (isset($params['requirements']['devicetypes']) && !empty($params['requirements']['devicetypes']) &&
+                  !array_key_exists('mobiledevice', $params['requirements']['devicetypes']) &&
+                  !in_array('mobiledevice', $params['requirements']['devicetypes'], true)) {
+                  $specifictype = $mobiledevice->getSpecificType();
+                  if (!array_key_exists($specifictype, $params['requirements']['devicetypes']) &&
+                     !in_array($specifictype, $params['requirements']['devicetypes'], true)) {
+                     unset($allcommands[$command]);
+                     continue;
                   }
                }
 
@@ -117,7 +120,7 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
       return [];
    }
 
-   static function showForItem(CommonDBTM $item)
+   public static function showForItem(CommonDBTM $item)
    {
       if (!PluginJamfMobileDevice::canView() || !static::canView()) {
          return false;
@@ -204,10 +207,8 @@ JAVASCRIPT;
    /**
     * {@inheritDoc}
     */
-   function getRights($interface = 'central') {
+   public function getRights($interface = 'central') {
 
-      $values = [READ    => __('Read')];
-
-      return $values;
+      return [READ    => __('Read')];
    }
 }

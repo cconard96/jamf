@@ -33,14 +33,14 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
    static public $items_id = 'users_id';
    static public $rightname = 'plugin_jamf_jssaccount';
 
-   const LINK = 256;
+   public const LINK = 256;
 
    public static function getTypeName($nb = 0)
    {
       return _n('JSS Account Link', 'JSS Account Links', $nb, 'jamf');
    }
 
-   function prepareInputForUpdate($input)
+   public function prepareInputForUpdate($input)
    {
       global $DB;
       if ($input['jssaccounts_id'] == 0) {
@@ -49,15 +49,15 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
       }
    }
 
-   function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
+   public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
    {
-      if (!PluginJamfUser_JSSAccount::canView()) {
+      if (!self::canView()) {
          return false;
       }
       return self::getTypeName(1);
    }
 
-   static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
+   public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
    {
       return self::showForUser($item);
    }
@@ -187,7 +187,7 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
    }
 
    public static function showForUser($item) {
-      $canedit = PluginJamfUser_JSSAccount::canUpdate();
+      $canedit = self::canUpdate();
 
       $user_jssaccount = new self();
       $mylink = $user_jssaccount->find(['users_id' => $item->getID()]);
@@ -251,8 +251,8 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
             READ    => __('Read'),
             UPDATE  => __('Update')
          ];
-      } else {
-         return [];
       }
+
+      return [];
    }
 }

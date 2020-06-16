@@ -85,9 +85,9 @@ class PluginJamfConnection {
    {
       if ($pro_api) {
          return "{$this->config['jssserver']}/uapi/{$endpoint}";
-      } else {
-         return "{$this->config['jssserver']}/JSSResource/{$endpoint}";
       }
+
+      return "{$this->config['jssserver']}/JSSResource/{$endpoint}";
    }
 
    /**
@@ -96,8 +96,8 @@ class PluginJamfConnection {
     */
    public function setCurlAuth(&$curl)
    {
-      if (isset($this->config['jssuser']) && (strlen($this->config['jssuser']) > 0)) {
-         curl_setopt($curl, CURLOPT_USERPWD, $this->config['jssuser'] . ":" . $this->config['jsspassword']);
+      if (isset($this->config['jssuser']) && !empty($this->config['jssuser'])) {
+         curl_setopt($curl, CURLOPT_USERPWD, $this->config['jssuser'] . ':' . $this->config['jsspassword']);
       }
    }
 }
