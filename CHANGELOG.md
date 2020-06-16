@@ -5,11 +5,19 @@
 ### Added
 
 - Software sync for phones
+- Default status configuration setting for newly imported devices
+- Simcards, volumes, and lines syncing
+- Dashboard cards for extension attributes, lost mode device count, managed device count, and supervised device count
 
 ### Changed
 
 - Use client-side translations in JS files
 - Dropped Phone OS shim. This is natively handled in GLPI 9.5.0.
+- Moved Jamf plugin menu to Plugins menu from Tools
+- Bumped GLPI minimum version to 9.5.0
+- Bumped minimum PHP version to 7.2.0 to be in-line with GLPI
+- Bumped minimum Jamf Pro version to 10.20.0. There are no known issues with 10.9.0-10.19.0 at this time but later features in this plugin may be incompatible.
+- MDM command rights are now checked with the Jamf server on a per-command basis based on the user's linked JSS account
 
 ## [1.2.0]
 
