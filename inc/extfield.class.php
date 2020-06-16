@@ -36,9 +36,9 @@ class PluginJamfExtField extends CommonDBTM {
         ], [], 1);
         if (count($match)) {
             return reset($match)['value'];
-        } else {
-            return '';
         }
+
+       return '';
     }
 
     public static function setValue($itemtype, $items_id, $name, $value) {

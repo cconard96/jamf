@@ -31,21 +31,24 @@ class PluginJamfSync extends CommonGLPI
    /**
     * The sync task completed successfully.
     */
-   const STATUS_OK = 0;
+   public const STATUS_OK = 0;
+
    /**
     * The sync task was skipped because the required data was not supplied (rights error on JSS), the config denies the sync, or another reason.
     */
-   const STATUS_SKIPPED = 1;
+   public const STATUS_SKIPPED = 1;
+
    /**
     * An error occurred during the sync task.
     */
-   const STATUS_ERROR = 2;
+   public const STATUS_ERROR = 2;
+
    /**
     * An attempt was made to run async task without the necessary resources being ready.
     * For example, adding an extension attribute to a mobile device on the first sync before it is created.
     * In this case, the task will get deferred until the sync is finalized. At that stage, the task is retired a final time.
     */
-   const STATUS_DEFERRED = 3;
+   public const STATUS_DEFERRED = 3;
 
    /**
     * @var bool If true, it indicates an instance of the sync engine was created without the intention of using it for syncing.
@@ -82,6 +85,7 @@ class PluginJamfSync extends CommonGLPI
     * @param string $itemtype GLPI type of device (Computer or Phone)
     * @param array $jamf_items_id Jamf item IDs to import
     * @return bool True if the import(s) were successful
+    * @throws Exception
     * @since 1.0.0
     */
    public static function importMobileDevice(string $itemtype, int $jamf_items_id): bool
@@ -96,7 +100,7 @@ class PluginJamfSync extends CommonGLPI
       $mobiledevice = new PluginJamfMobileDevice();
 
       $jamf_item = PluginJamfAPIClassic::getItems('mobiledevices', ['id' => $jamf_items_id]);
-      if (is_null($jamf_item)) {
+      if ($jamf_item === null) {
          // API error or device no longer exists in Jamf
          return false;
       }
@@ -1090,7 +1094,7 @@ class PluginJamfSync extends CommonGLPI
          'FROM' => PluginJamfMobileDevice::getTable()
       ]);
       while ($data = $iterator->next()) {
-         array_push($imported, $data['udid']);
+         $imported[] = $data['udid'];
       }
       $pending_iterator = $DB->request([
          'FROM' => 'glpi_plugin_jamf_imports'

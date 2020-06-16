@@ -45,11 +45,11 @@ $linked_phones = $mobiledevice->find([
    'itemtype'  => 'Phone'
 ]);
 
-$computer_ids = array_map(function($a) {
+$computer_ids = array_map(static function($a) {
    return $a['items_id'];
 }, $linked_computers);
 
-$phone_ids = array_map(function($a) {
+$phone_ids = array_map(static function($a) {
    return $a['items_id'];
 }, $linked_phones);
 

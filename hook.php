@@ -305,7 +305,7 @@ function plugin_jamf_getAddSearchOptions($itemtype)
    $opt = [];
    $plugin = new Plugin();
    if ($plugin->isActivated('jamf')) {
-      if ($itemtype == 'Computer' || $itemtype == 'Phone') {
+      if ($itemtype === 'Computer' || $itemtype === 'Phone') {
          $opt = [
             '22002' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',

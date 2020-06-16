@@ -24,10 +24,10 @@
 class PluginJamfToolbox {
 
    public static function getHumanReadableTimeDiff($start, $end = null) {
-      if (is_null($start) || $start == 'NULL') {
+      if ($start === null || $start == 'NULL') {
          return null;
       }
-      if (is_null($end)) {
+      if ($end === null) {
          $end = $_SESSION['glpi_currenttime'];
       }
       $diff = date_diff(date_create($start), date_create($end));

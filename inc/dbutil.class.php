@@ -31,14 +31,14 @@
     {
        global $DB;
 
-       return $DB->query('DROP TABLE'.$DB->quoteName($table));
+       return $DB->query('DROP TABLE'.$DB::quoteName($table));
     }
 
     public static function dropTableOrDie(string $table, string $message = '')
     {
         global $DB;
 
-        $res = $DB->query('DROP TABLE'.$DB->quoteName($table));
+        $res = $DB->query('DROP TABLE'.$DB::quoteName($table));
         if (!$res) {
            //TRANS: %1$s is the description, %2$s is the query, %3$s is the error message
             $message = sprintf(
@@ -49,10 +49,10 @@
             );
             if (isCommandLine()) {
                 throw new \RuntimeException($message);
-            } else {
-                echo $message . "\n";
-                die(1);
             }
+
+           echo $message . "\n";
+           die(1);
         }
         return $res;
     }
