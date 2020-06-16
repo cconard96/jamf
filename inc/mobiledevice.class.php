@@ -316,4 +316,83 @@ JAVASCRIPT;
       }
       return null;
    }
+
+   public static function dashboardCards()
+   {
+      $cards = [];
+
+      $cards['plugin_jamf_mobile_lost'] = [
+         'widgettype'  => ['bigNumber'],
+         'label'       => __('Jamf Lost Mobile Device Count'),
+         'provider'    => 'PluginJamfMobileDevice::cardLostModeProvider'
+      ];
+      $cards['plugin_jamf_mobile_managed'] = [
+         'widgettype'  => ['bigNumber'],
+         'label'       => __('Jamf Managed Mobile Device Count'),
+         'provider'    => 'PluginJamfMobileDevice::cardManagedProvider'
+      ];
+      $cards['plugin_jamf_mobile_supervised'] = [
+         'widgettype'  => ['bigNumber'],
+         'label'       => __('Jamf Supervised Mobile Device Count'),
+         'provider'    => 'PluginJamfMobileDevice::cardSupervisedProvider'
+      ];
+
+      return $cards;
+   }
+
+   public static function cardLostModeProvider($params = [])
+   {
+      global $DB;
+
+      $table = self::getTable();
+      $iterator = $DB->request([
+         'SELECT'   => [
+            'COUNT' => 'lost_mode_enabled as cpt'
+         ],
+         'FROM'  => $table,
+         'WHERE' => ['lost_mode_enabled' => 'Enabled'],
+      ]);
+
+      return [
+         'label' => __('Jamf Lost Mobile Device Count'),
+         'number' => $iterator->next()['cpt']
+      ];
+   }
+
+   public static function cardManagedProvider($params = [])
+   {
+      global $DB;
+
+      $table = self::getTable();
+      $iterator = $DB->request([
+         'SELECT'   => [
+            'COUNT' => 'managed as cpt'
+         ],
+         'FROM'  => $table,
+         'WHERE' => ['managed' => 1],
+      ]);
+
+      return [
+         'label' => __('Jamf Managed Mobile Device Count'),
+         'number' => $iterator->next()['cpt']
+      ];
+   }
+
+   public static function cardSupervisedProvider($params = [])
+   {
+      global $DB;
+
+      $table = self::getTable();
+      $iterator = $DB->request([
+         'SELECT'   => [
+            'COUNT' => 'supervised as cpt'
+         ],
+         'FROM'  => $table,
+         'WHERE' => ['supervised' => 1],
+      ]);
+      return [
+         'label'  => __('Jamf Supervised Mobile Device Count'),
+         'number' => $iterator->next()['cpt']
+      ];
+   }
 }
