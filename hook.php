@@ -476,6 +476,7 @@ function plugin_jamf_dashboardCards()
 {
    $cards = [];
    $cards = array_merge($cards, PluginJamfExtensionAttribute::dashboardCards());
+   $cards = array_merge($cards, PluginJamfMobileDevice::dashboardCards());
 
    return $cards;
 }
