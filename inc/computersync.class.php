@@ -493,10 +493,8 @@ class PluginJamfComputerSync extends PluginJamfSync {
 
          $this->jamfdevice_changes['jamf_items_id'] = $general['id'];
          $this->jamfdevice_changes['udid'] = $general['udid'];
-         $this->jamfdevice_changes['managed'] = $general['managed'];
+         $this->jamfdevice_changes['managed'] = $general['remote_management']['managed'];
          $this->jamfdevice_changes['supervised'] = $general['supervised'];
-         $this->jamfdevice_changes['shared'] = $general['shared'];
-         $this->jamfdevice_changes['cloud_backup_enabled'] = $general['cloud_backup_enabled'];
       } catch (Exception $e) {
          $this->status['syncGeneralJamf'] = self::STATUS_ERROR;
          return $this;
@@ -561,27 +559,26 @@ class PluginJamfComputerSync extends PluginJamfSync {
 
       $config = Config::getConfigurationValues('plugin:Jamf');
       foreach ($jamf_devices as $jamf_device) {
-         if (!in_array($jamf_device['jamf_items_id'], $imported, true)) {
+         if (!in_array($jamf_device['id'], $imported, true)) {
+            // Not already imported
             if (isset($config['autoimport']) && $config['autoimport']) {
                try {
                   $result = self::import('Computer', $jamf_device['id']);
                   if ($result) {
                      $volume++;
                   }
-               } catch (PluginJamfRateLimitException $e1) {
-                  // We are making API calls too fast. Sleep for a bit, and we will import this item on the next round.
-                  sleep(5);
                } catch (Exception $e2) {
                   // Some other error
                }
             } else {
-               if (!array_key_exists($jamf_device['udid'], $pending_import)) {
+               if (!array_key_exists($jamf_device['id'], $pending_import)) {
+                  // Just discovered and cannot auto-import. Save to imports table instead.
                   $DB->insert('glpi_plugin_jamf_imports', [
-                     'jamf_items_id' => $jamf_device['id'],
-                     'name' => $DB->escape($jamf_device['name']),
-                     'type' => 'Computer',
-                     //'udid' => $jamf_device['udid'],
-                     'date_discover' => $_SESSION['glpi_currenttime']
+                     'jamf_type'       => 'Computer',
+                     'jamf_items_id'   => $jamf_device['id'],
+                     'name'            => $DB->escape($jamf_device['name']),
+                     'type'            => 'Computer',
+                     'date_discover'   => $_SESSION['glpi_currenttime']
                   ]);
                }
             }
@@ -643,7 +640,15 @@ class PluginJamfComputerSync extends PluginJamfSync {
          'is_recursive' => '1'
       ]);
       if ($items_id) {
-         if (self::updateComputerOrPhoneFromArray($itemtype, $items_id, $jamf_item, false)) {
+         // Link
+         $jamf_computer = new PluginJamfComputer();
+         $jamf_computer->add([
+            'itemtype'  => $item::getType(),
+            'items_id'  => $items_id,
+            'udid'      => $jamf_item['general']['udid'],
+            'jamf_items_id'   => $jamf_item['general']['id']
+         ]);
+         if (self::sync($itemtype, $items_id, false)) {
             $DB->update('glpi_plugin_jamf_computers', [
                'import_date' => $_SESSION['glpi_currenttime']
             ], [
@@ -689,9 +694,6 @@ class PluginJamfComputerSync extends PluginJamfSync {
             if ($result) {
                $volume++;
             }
-         } catch (PluginJamfRateLimitException $e1) {
-            // We are making API calls too fast. Sleep for a bit, and we will re-sync this item on the next round.
-            sleep(5);
          } catch (Exception $e2) {
             // Some other error
          }

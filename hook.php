@@ -98,7 +98,6 @@ function plugin_jamf_install()
     if (!$DB->tableExists('glpi_plugin_jamf_extensionattributes')) {
         $query = "CREATE TABLE `glpi_plugin_jamf_extensionattributes` (
                   `id` int(11) NOT NULL auto_increment,
-                  `itemtype` varchar(100) NOT NULL,
                   `jamf_type` varchar(255) NOT NULL DEFAULT 'MobileDevice',
                   `jamf_id` int(11) NOT NULL,
                   `name` varchar(255) NOT NULL,
@@ -106,7 +105,7 @@ function plugin_jamf_install()
                   `data_type` varchar(255) NOT NULL,
                 PRIMARY KEY (`id`),
                 KEY `name` (`name`),
-                UNIQUE KEY `jamf_id` (`jamf_id`, `itemtype`)
+                UNIQUE KEY `unicity` (`jamf_type`, `jamf_id`)
                ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
         $DB->queryOrDie($query, 'Error creating JAMF plugin extension attribute table' . $DB->error());
     }
@@ -237,18 +236,31 @@ function plugin_jamf_install()
    }
    // End of Post-release configs
 
-   CronTask::register('PluginJamfSync', 'syncJamf', 300, [
-      'state'        => 1,
-      'allowmode'    => 3,
-      'logslifetime' => 30,
-      'comment'      => "Sync devices with Jamf that are already imported"
-   ]);
-   CronTask::register('PluginJamfSync', 'importJamf', 900, [
-      'state'        => 1,
-      'allowmode'    => 3,
-      'logslifetime' => 30,
-      'comment'      => "Import or discover devices in Jamf that are not already imported"
-   ]);
+   $old_cron = $DB->request([
+      'SELECT' => ['id'],
+      'FROM'   => CronTask::getTable(),
+      'WHERE'  => ['itemtype' => 'PluginJamfSync']
+   ])->count() > 0;
+   if ($old_cron) {
+      $DB->updateOrDie(CronTask::getTable(), [
+         'itemtype'  => 'PluginJamfCron'
+      ], [
+         'itemtype'  => 'PluginJamfSync'
+      ]);
+   } else {
+      CronTask::register('PluginJamfCron', 'syncJamf', 300, [
+         'state' => 1,
+         'allowmode' => 3,
+         'logslifetime' => 30,
+         'comment' => "Sync devices with Jamf that are already imported"
+      ]);
+      CronTask::register('PluginJamfCron', 'importJamf', 900, [
+         'state' => 1,
+         'allowmode' => 3,
+         'logslifetime' => 30,
+         'comment' => "Import or discover devices in Jamf that are not already imported"
+      ]);
+   }
 
    if (!$DB->fieldExists('glpi_plugin_jamf_mobiledevices', 'jamf_items_id', false)) {
       $migration->addField('glpi_plugin_jamf_mobiledevices', 'jamf_items_id', 'integer', ['default' => -1]);
@@ -268,6 +280,7 @@ function plugin_jamf_install()
    }
 
    $migration->addRight(PluginJamfMobileDevice::$rightname, ALLSTANDARDRIGHT);
+   $migration->addRight(PluginJamfComputer::$rightname, ALLSTANDARDRIGHT);
    $migration->addRight(PluginJamfRuleImport::$rightname, ALLSTANDARDRIGHT);
    $migration->addRight(PluginJamfUser_JSSAccount::$rightname, ALLSTANDARDRIGHT);
    $migration->addRight(PluginJamfItem_MDMCommand::$rightname, ALLSTANDARDRIGHT);
@@ -286,6 +299,9 @@ function plugin_jamf_install()
          'default'   => 'MobileDevice',
          'after'     => 'itemtype'
       ]);
+      $migration->dropKey('glpi_plugin_jamf_extensionattributes', 'jamf_id');
+      $migration->dropField('glpi_plugin_jamf_extensionattributes', 'itemtype');
+      $migration->addKey('glpi_plugin_jamf_extensionattributes', ['jamf_type', 'jamf_id'], 'unicity', 'UNIQUE');
       $migration->migrationOneTable('glpi_plugin_jamf_extensionattributes');
    }
 
@@ -540,4 +556,13 @@ function plugin_jamf_dashboardCards()
    $cards = array_merge($cards, PluginJamfMobileDevice::dashboardCards());
 
    return $cards;
+}
+
+function plugin_jamf_showJamfInfoForItem(array $params)
+{
+   $item = $params['item'];
+   $jamf_class = PluginJamfAbstractDevice::getJamfItemClassForGLPIItem($item::getType(), $item->getID());
+   if ($jamf_class !== null) {
+      return $jamf_class::showForItem($params);
+   }
 }

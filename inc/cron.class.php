@@ -21,8 +21,43 @@
  --------------------------------------------------------------------------
  */
 
-if (!defined('GLPI_ROOT')) {
-   die("Sorry. You can't access this file directly");
-}
+/**
+ * Contains all cron functions for Jamf plugin
+ * @since 1.0.0
+ */
+final class PluginJamfCron extends CommonGLPI
+{
 
-class PluginJamfRateLimitException extends Exception {}
+   public static function getTypeName($nb = 0)
+   {
+      return __('Jamf plugin', 'jamf');
+   }
+
+   public static function cronSyncJamf(CronTask $task)
+   {
+      $volume = 0;
+      $engines = PluginJamfSync::getDeviceSyncEngines();
+
+      foreach ($engines as $jamf_class => $engine) {
+         $v = $engine::syncAll();
+         $volume += $v >= 0 ? $v : 0;
+      }
+      $task->addVolume($volume);
+
+      return 1;
+   }
+
+   public static function cronImportJamf(CronTask $task)
+   {
+      $volume = 0;
+      $engines = PluginJamfSync::getDeviceSyncEngines();
+
+      foreach ($engines as $jamf_class => $engine) {
+         $v = $engine::discover();
+         $volume += $v >= 0 ? $v : 0;
+      }
+      $task->addVolume($volume);
+
+      return 1;
+   }
+}

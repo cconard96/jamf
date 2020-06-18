@@ -182,28 +182,18 @@ abstract class PluginJamfSync
 
    public static function isSupportedGlpiItemtype(string $itemtype): bool
    {
-      return in_array($itemtype, self::getSupportedGlpiItemtypes(), true);
+      return in_array($itemtype, static::getSupportedGlpiItemtypes(), true);
    }
 
-   public static function cronSyncJamf(CronTask $task)
+   /**
+    * @return PluginJamfSync[]
+    * @since 1.0.0
+    */
+   final public static function getDeviceSyncEngines(): array
    {
-      $volume = static::syncAll();
-      if ($volume === -1) {
-         return 0;
-      }
-      $task->addVolume($volume);
-
-      return 1;
-   }
-
-   public static function cronImportJamf(CronTask $task)
-   {
-      $volume = static::discover();
-      if ($volume === -1) {
-         return 0;
-      }
-      $task->addVolume($volume);
-
-      return 1;
+      return [
+         PluginJamfMobileDevice::class => PluginJamfMobileSync::class,
+         PluginJamfComputer::class => PluginJamfComputerSync::class
+      ];
    }
 }

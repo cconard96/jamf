@@ -30,8 +30,6 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
    static public $items_id = 'items_id';
    static public $jamftype_name = null;
 
-   static public $jamftype_name = null;
-
    /**
     * Display the extra information for Jamf devices on the main Computer or Phone tab.
     * @param array $params
@@ -95,16 +93,103 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
       }
    }
 
-   public static function getJamfItemForGLPIItem(CommonDBTM $item): ?PluginJamfAbstractDevice
+   public static function getJamfItemClassForGLPIItem(string $itemtype, int $items_id): ?string
    {
-      $device = new static();
-      $matches = $device->find([
-         'itemtype'   => $item::getType(),
-         'items_id'   => $item->getID()
-      ], [], 1);
-      if (count($matches)) {
-         $id = reset($matches)['id'];
-         $device->getFromDB($id);
+      global $DB;
+
+      $computer_query = [
+         'SELECT'    => [
+            new QueryExpression('"Computer" AS jamf_type')
+         ],
+         'FROM'      => PluginJamfComputer::getTable(),
+         'WHERE'     => [
+            'itemtype'  => $itemtype,
+            'items_id'  => $items_id
+         ]
+      ];
+      $mobiledevice_query = [
+         'SELECT'    => [
+            new QueryExpression('"MobileDevice" AS jamf_type')
+         ],
+         'FROM'      => PluginJamfMobileDevice::getTable(),
+         'WHERE'     => [
+            'itemtype'  => $itemtype,
+            'items_id'  => $items_id
+         ]
+      ];
+      $iterator = $DB->request(new QueryUnion([
+         $computer_query,
+         $mobiledevice_query
+      ]));
+      if (count($iterator)) {
+         $jamf_type = $iterator->next()['jamf_type'];
+         if ($jamf_type === 'Computer') {
+            return PluginJamfComputer::class;
+         }
+
+         if ($jamf_type === 'MobileDevice') {
+            return PluginJamfMobileDevice::class;
+         }
+      }
+
+      return null;
+   }
+
+   public static function getJamfItemForGLPIItem(CommonDBTM $item, $limit_to_type = false): ?PluginJamfAbstractDevice
+   {
+      global $DB;
+
+      $found_type = static::class;
+      $found_id = null;
+
+      if (!$limit_to_type) {
+         $computer_query = [
+            'SELECT'    => [
+               new QueryExpression('"Computer" AS jamf_type'),
+               'id',
+               'itemtype',
+               'items_id',
+               'jamf_items_id'
+            ],
+            'FROM'      => PluginJamfComputer::getTable(),
+            'WHERE'     => [
+               'itemtype'  => $item::getType(),
+               'items_id'  => $item->getID()
+            ]
+         ];
+         $mobiledevice_query = [
+            'SELECT'    => [
+               new QueryExpression('"MobileDevice" AS jamf_type'),
+               'id',
+               'itemtype',
+               'items_id',
+               'jamf_items_id'
+            ],
+            'FROM'      => PluginJamfMobileDevice::getTable(),
+            'WHERE'     => [
+               'itemtype'  => $item::getType(),
+               'items_id'  => $item->getID()
+            ]
+         ];
+         $iterator = $DB->request(new QueryUnion([
+            $computer_query,
+            $mobiledevice_query
+         ]));
+         if (count($iterator)) {
+            $jamf_data = $iterator->next();
+            if ($jamf_data['jamf_type'] === 'Computer') {
+               $found_type = PluginJamfComputer::class;
+               $found_id = $jamf_data['id'];
+            } else if ($jamf_data['jamf_type'] === 'MobileDevice') {
+               $found_type = PluginJamfMobileDevice::class;
+               $found_id = $jamf_data['id'];
+            }
+         }
+      }
+
+      if ($found_id !== null) {
+         $device = new $found_type();
+         $device->getFromDB($found_id);
          return $device;
       }
       return null;

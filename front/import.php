@@ -45,6 +45,7 @@ echo "<div class='center'><table id='import_table' class='tab_cadre' style='widt
 echo "<thead>";
 echo "<th>{$check_all}</th>";
 echo "<th>".__('Jamf ID')."</th>";
+echo "<th>".__('Jamf Type')."</th>";
 echo "<th>".__('Name')."</th>";
 echo "<th>".__('Type')."</th>";
 echo "<th>".__('UDID')."</th>";
@@ -53,12 +54,13 @@ echo "</thead><tbody>";
 while ($data = $pending->next()) {
    $rowid = $data['jamf_items_id'];
    echo "<tr>";
-   $import_checkbox = Html::input("import{$rowid}", [
+   $import_checkbox = Html::input("import_{$data['id']}", [
       'type'      => 'checkbox',
       'display'   => false
    ]);
    echo "<td>{$import_checkbox}</td>";
    echo "<td>{$data['jamf_items_id']}</td>";
+   echo "<td>{$data['jamf_type']}</td>";
    $jamf_link = Html::link($data['name'], PluginJamfMobileDevice::getJamfDeviceURL($data['jamf_items_id']));
    echo "<td>{$jamf_link}</td>";
    echo "<td>{$data['type']}</td>";
@@ -77,15 +79,17 @@ $import_msg = __('Importing...');
 $discover_msg = __('Discovering...');
 $js = <<<JAVASCRIPT
       function importDevices() {
-         var ids = $(':checkbox:checked').map(function(){ return this.name.replace("import",""); }).toArray();
-         var post_data = [];
-         post_data['action'] = "import";
-         post_data['item_ids'] = ids;
+         var import_ids = $(':checkbox:checked').filter(':not([name^="_checkall"])').map(function(){
+            return this.name.replace("import","").substring(1).split('_');
+         }).toArray();
 
          $.ajax({
             type: "POST",
             url: "{$ajax_root}import.php",
-            data: {action: "import", item_ids: ids},
+            data: {
+               action: "import",
+               import_ids: import_ids
+            },
             contentType: 'application/json',
             beforeSend: function() {
               showLoading("{$import_msg}");

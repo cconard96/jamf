@@ -180,8 +180,9 @@ class PluginJamfConfig extends CommonDBTM
    public static function undiscloseConfigValue($fields)
    {
       $to_hide = ['jsspassword'];
-      foreach ($to_hide as $f) {
-         if (in_array($fields, $f, true)) {
+      $field_names = array_keys($fields);
+      foreach ($field_names as $f) {
+         if (in_array($f, $to_hide, true)) {
             unset($fields[$f]);
          }
       }

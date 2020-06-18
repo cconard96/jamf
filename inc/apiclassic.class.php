@@ -38,7 +38,6 @@ class PluginJamfAPIClassic
     * @param bool $raw If true, data is returned as JSON instead of decoded into an array.
     * @param string $response_type
     * @return mixed JSON string or associative array depending on the value of $raw.
-    * @throws PluginJamfRateLimitException
     * @since 1.0.0
     */
    private static function get(string $endpoint, $raw = false, $response_type = 'application/json')
@@ -66,15 +65,6 @@ class PluginJamfAPIClassic
          return null;
       }
       if ($httpcode == 500) {
-         $response = json_decode($response, true);
-         if (isset($response['fault'])) {
-            $fault = $response['fault'];
-            switch ($fault['detail']['errorcode']) {
-               case 'policies.ratelimit.QuotaViolation':
-                  // We are making too many API calls in a short time.
-                  throw new PluginJamfRateLimitException($fault['faultstring']);
-            }
-         }
          throw new RuntimeException(__('Unknown JSS API Error'));
       }
 
