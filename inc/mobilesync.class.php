@@ -66,7 +66,6 @@ class PluginJamfMobileSync extends PluginJamfSync {
 
          // Create or match model
          if ($itemtype === 'Phone') {
-<<<<<<< HEAD
             $model_type = 'PhoneModel';
          } else {
             $model_type = 'ComputerModel';
@@ -85,28 +84,6 @@ class PluginJamfMobileSync extends PluginJamfSync {
             $this->item_changes['computermodels_id'] = $model->getID();
          } else {
             $this->item_changes['phonemodels_id'] = $model->getID();
-=======
-            $model = new PhoneModel();
-         } else {
-            $model = new ComputerModel();
-         }
-         $model_matches = $model->find(['name' => $general['model'], 'product_number' => $general['model_number']]);
-         if (!count($model_matches)) {
-            $model_id = $model->add([
-               'name' => $this->db->escape($general['model']),
-               'product_number' => $this->db->escape($general['model_number']),
-               'comment' => 'Created by Jamf Plugin for GLPI',
-            ]);
-         } else {
-            $model_id = array_keys($model_matches)[0];
-         }
-
-         // Set model
-         if ($itemtype === 'Computer') {
-            $this->item_changes['computermodels_id'] = $model_id;
-         } else {
-            $this->item_changes['phonemodels_id'] = $model_id;
->>>>>>> 4f16aa2... Abstract the sync engine
          }
 
          // Set default type
@@ -148,15 +125,8 @@ class PluginJamfMobileSync extends PluginJamfSync {
     * @since 1.1.0
     * @return PluginJamfMobileSync
     */
-<<<<<<< HEAD
    protected function syncOS(): \PluginJamfMobileSync
    {
-=======
-   private function syncOS(): \PluginJamfMobileSync
-   {
-      global $DB;
-
->>>>>>> 4f16aa2... Abstract the sync engine
       if ($this->dummySync) {
          $this->status['syncOS'] = self::STATUS_ERROR;
          return $this;
@@ -188,11 +158,7 @@ class PluginJamfMobileSync extends PluginJamfSync {
          } else {
             $osversion_id = array_keys($osversion_matches)[0];
          }
-<<<<<<< HEAD
          $this->db->updateOrInsert(Item_OperatingSystem::getTable(), [
-=======
-         $DB->updateOrInsert(Item_OperatingSystem::getTable(), [
->>>>>>> 4f16aa2... Abstract the sync engine
             'operatingsystems_id' => $os_id,
             'operatingsystemversions_id' => $osversion_id,
             'date_creation' => $_SESSION['glpi_currenttime'],
@@ -213,15 +179,8 @@ class PluginJamfMobileSync extends PluginJamfSync {
     * @since 1.1.0
     * @return PluginJamfMobileSync
     */
-<<<<<<< HEAD
    protected function syncSoftware(): \PluginJamfMobileSync
    {
-=======
-   private function syncSoftware(): \PluginJamfMobileSync
-   {
-      global $DB;
-
->>>>>>> 4f16aa2... Abstract the sync engine
       if ($this->dummySync) {
          $this->status['syncSoftware'] = self::STATUS_ERROR;
          return $this;
@@ -246,24 +205,15 @@ class PluginJamfMobileSync extends PluginJamfSync {
                   continue;
                }
                $software_id = $software->add([
-<<<<<<< HEAD
                   'name' => $this->db->escape($software_data['general']['name']),
                   'comment' => $this->db->escape($software_data['general']['description']),
-=======
-                  'name' => $DB->escape($software_data['general']['name']),
-                  'comment' => $DB->escape($software_data['general']['description']),
->>>>>>> 4f16aa2... Abstract the sync engine
                   'entities_id' => $this->item->fields['entities_id'],
                   'is_recursive' => $this->item->fields['is_recursive']
                ]);
                $jamf_software->add([
                   'softwares_id' => $software_id,
                   'bundle_id' => $application['identifier'],
-<<<<<<< HEAD
                   'itunes_store_url' => $this->db->escape($software_data['general']['itunes_store_url'])
-=======
-                  'itunes_store_url' => $DB->escape($software_data['general']['itunes_store_url'])
->>>>>>> 4f16aa2... Abstract the sync engine
                ]);
             } else {
                $software_id = array_values($jamfsoftware_matches)[0]['softwares_id'];
@@ -312,11 +262,7 @@ class PluginJamfMobileSync extends PluginJamfSync {
     * @since 1.1.0
     * @return PluginJamfMobileSync
     */
-<<<<<<< HEAD
    protected function syncUser(): \PluginJamfMobileSync
-=======
-   private function syncUser(): \PluginJamfMobileSync
->>>>>>> 4f16aa2... Abstract the sync engine
    {
 
       if ($this->dummySync) {
@@ -347,15 +293,8 @@ class PluginJamfMobileSync extends PluginJamfSync {
     * @since 1.1.0
     * @return PluginJamfMobileSync
     */
-<<<<<<< HEAD
    protected function syncPurchasing(): \PluginJamfMobileSync
    {
-=======
-   private function syncPurchasing(): \PluginJamfMobileSync
-   {
-      global $DB;
-
->>>>>>> 4f16aa2... Abstract the sync engine
       if ($this->dummySync) {
          $this->status['syncPurchasing'] = self::STATUS_ERROR;
          return $this;
@@ -369,11 +308,7 @@ class PluginJamfMobileSync extends PluginJamfSync {
          $infocom_changes = [];
          if (!empty($purchasing['po_date_utc'])) {
             $purchase_date = PluginJamfToolbox::utcToLocal(new DateTime($purchasing['po_date_utc']));
-<<<<<<< HEAD
             $purchase_date_str = $purchase_date->format('Y-m-d H:i:s');
-=======
-            $purchase_date_str = $purchase_date->format("Y-m-d H:i:s");
->>>>>>> 4f16aa2... Abstract the sync engine
             $infocom_changes['buy_date'] = $purchase_date_str;
             if (!empty($purchasing['warranty_expires_utc'])) {
                $infocom_changes['warranty_date'] = $purchase_date_str;
@@ -390,11 +325,7 @@ class PluginJamfMobileSync extends PluginJamfSync {
             $infocom_changes['order_number'] = $purchasing['po_number'];
          }
 
-<<<<<<< HEAD
          $this->db->updateOrInsert(Infocom::getTable(), $infocom_changes, [
-=======
-         $DB->updateOrInsert(Infocom::getTable(), $infocom_changes, [
->>>>>>> 4f16aa2... Abstract the sync engine
             'itemtype' => $this->item::getType(),
             'items_id' => $this->item->getID()
          ]);
@@ -411,15 +342,8 @@ class PluginJamfMobileSync extends PluginJamfSync {
     * @since 1.1.0
     * @return PluginJamfMobileSync
     */
-<<<<<<< HEAD
    protected function syncExtensionAttributes(): \PluginJamfMobileSync
    {
-=======
-   private function syncExtensionAttributes(): \PluginJamfMobileSync
-   {
-      global $DB;
-
->>>>>>> 4f16aa2... Abstract the sync engine
       if ($this->dummySync) {
          $this->status['syncExtensionAttributes'] = self::STATUS_ERROR;
          return $this;
@@ -438,21 +362,13 @@ class PluginJamfMobileSync extends PluginJamfSync {
          foreach ($extension_attributes as $attr) {
             $attr_match = $ext_attribute->find([
                'jamf_id' => $attr['id'],
-<<<<<<< HEAD
                'itemtype' => $this->jamfdevice::getType(),
                'jamf_type' => 'MobileDevice'
-=======
-               'itemtype' => $this->jamfdevice::getType()
->>>>>>> 4f16aa2... Abstract the sync engine
             ], [], 1);
 
             if ($attr_match !== null && count($attr_match)) {
                $attr_match = reset($attr_match);
-<<<<<<< HEAD
                $this->db->updateOrInsert(PluginJamfItem_ExtensionAttribute::getTable(), ['value' => $attr['value']], [
-=======
-               $DB->updateOrInsert(PluginJamfItem_ExtensionAttribute::getTable(), ['value' => $attr['value']], [
->>>>>>> 4f16aa2... Abstract the sync engine
                   'glpi_plugin_jamf_extensionattributes_id' => $attr_match['id'],
                   'items_id' => $this->jamfdevice->getID(),
                   'itemtype' => $this->jamfdevice::getType()
@@ -472,11 +388,7 @@ class PluginJamfMobileSync extends PluginJamfSync {
     * @since 1.1.0
     * @return PluginJamfMobileSync
     */
-<<<<<<< HEAD
    protected function syncSecurity(): \PluginJamfMobileSync
-=======
-   private function syncSecurity(): \PluginJamfMobileSync
->>>>>>> 4f16aa2... Abstract the sync engine
    {
       if ($this->dummySync) {
          $this->status['syncSecurity'] = self::STATUS_ERROR;
@@ -518,11 +430,7 @@ class PluginJamfMobileSync extends PluginJamfSync {
     * @since 1.2.0
     * @return PluginJamfMobileSync
     */
-<<<<<<< HEAD
    protected function syncNetwork(): \PluginJamfMobileSync
-=======
-   private function syncNetwork(): \PluginJamfMobileSync
->>>>>>> 4f16aa2... Abstract the sync engine
    {
       if ($this->dummySync) {
          $this->status['syncNetwork'] = self::STATUS_ERROR;
@@ -672,11 +580,7 @@ class PluginJamfMobileSync extends PluginJamfSync {
     * @since 1.1.0
     * @return PluginJamfMobileSync
     */
-<<<<<<< HEAD
    protected function syncGeneralJamf(): \PluginJamfMobileSync
-=======
-   private function syncGeneralJamf(): \PluginJamfMobileSync
->>>>>>> 4f16aa2... Abstract the sync engine
    {
 
       if ($this->dummySync) {
@@ -721,14 +625,8 @@ class PluginJamfMobileSync extends PluginJamfSync {
     * @since 2.0.0
     * @return PluginJamfMobileSync
     */
-<<<<<<< HEAD
    protected function syncComponents(): \PluginJamfMobileSync
    {
-=======
-   private function syncComponents(): \PluginJamfMobileSync
-   {
-
->>>>>>> 4f16aa2... Abstract the sync engine
       if ($this->dummySync) {
          $this->status['syncComponents'] = self::STATUS_ERROR;
          return $this;
@@ -803,31 +701,19 @@ class PluginJamfMobileSync extends PluginJamfSync {
          foreach ($all_attributes as $attribute) {
             $attr = PluginJamfAPIClassic::getItems('mobiledeviceextensionattributes', ['id' => $attribute['id']]);
             $input = [
-<<<<<<< HEAD
                'jamf_id'      => $attr['id'],
                'itemtype'     => PluginJamfMobileDevice::getType(),
                'jamf_type'    => 'MobileDevice',
                'name'         => $attr['name'],
                'description'  => $attr['description'],
                'data_type'    => $attr['data_type']
-=======
-               'jamf_id' => $attr['id'],
-               'itemtype' => PluginJamfMobileDevice::getType(),
-               'name' => $attr['name'],
-               'description' => $attr['description'],
-               'data_type' => $attr['data_type']
->>>>>>> 4f16aa2... Abstract the sync engine
             ];
             $ext_attr->addOrUpdate($input);
          }
       }
    }
 
-<<<<<<< HEAD
    public static function discover(): bool
-=======
-   public static function discover(): int
->>>>>>> 4f16aa2... Abstract the sync engine
    {
       global $DB;
 
@@ -846,14 +732,10 @@ class PluginJamfMobileSync extends PluginJamfSync {
          $imported[] = $data['udid'];
       }
       $pending_iterator = $DB->request([
-<<<<<<< HEAD
          'FROM'   => 'glpi_plugin_jamf_imports',
          'WHERE'  => [
             'jamf_type' => 'MobileDevice'
          ]
-=======
-         'FROM' => 'glpi_plugin_jamf_imports'
->>>>>>> 4f16aa2... Abstract the sync engine
       ]);
       $pending_import = [];
       while ($data = $pending_iterator->next()) {
@@ -866,28 +748,22 @@ class PluginJamfMobileSync extends PluginJamfSync {
             $itemtype = strpos($jamf_device['model_identifier'], 'iPhone') !== false ? 'Phone' :  'Computer';
             if (isset($config['autoimport']) && $config['autoimport']) {
                try {
-<<<<<<< HEAD
                   $result = self::import($itemtype, $jamf_device['id']);
-=======
-                  $result = self::importMobileDevice($itemtype, $jamf_device['id']);
->>>>>>> 4f16aa2... Abstract the sync engine
                   if ($result) {
                      $volume++;
                   }
-               } catch (PluginJamfRateLimitException $e1) {
-                  // We are making API calls too fast. Sleep for a bit, and we will import this item on the next round.
-                  sleep(5);
                } catch (Exception $e2) {
                   // Some other error
                }
             } else {
                if (!array_key_exists($jamf_device['udid'], $pending_import)) {
                   $DB->insert('glpi_plugin_jamf_imports', [
-                     'jamf_items_id' => $jamf_device['id'],
-                     'name' => $DB->escape($jamf_device['name']),
-                     'type' => $itemtype,
-                     'udid' => $jamf_device['udid'],
-                     'date_discover' => $_SESSION['glpi_currenttime']
+                     'jamf_type'       => 'MobileDevice',
+                     'jamf_items_id'   => $jamf_device['id'],
+                     'name'            => $DB->escape($jamf_device['name']),
+                     'type'            => $itemtype,
+                     'udid'            => $jamf_device['udid'],
+                     'date_discover'   => $_SESSION['glpi_currenttime']
                   ]);
                }
             }
@@ -896,11 +772,7 @@ class PluginJamfMobileSync extends PluginJamfSync {
       return $volume;
    }
 
-<<<<<<< HEAD
    public static function import(string $itemtype, int $jamf_items_id): bool
-=======
-   public static function import(string $itemtype, int $jamf_items_id)
->>>>>>> 4f16aa2... Abstract the sync engine
    {
       global $DB;
 
@@ -909,10 +781,6 @@ class PluginJamfMobileSync extends PluginJamfSync {
          return false;
       }
       $item = new $itemtype();
-<<<<<<< HEAD
-=======
-      $mobiledevice = new PluginJamfMobileDevice();
->>>>>>> 4f16aa2... Abstract the sync engine
 
       $jamf_item = PluginJamfAPIClassic::getItems('mobiledevices', ['id' => $jamf_items_id]);
       if ($jamf_item === null) {
@@ -922,7 +790,6 @@ class PluginJamfMobileSync extends PluginJamfSync {
 
       $rules = new PluginJamfRuleImportCollection();
       $ruleinput = [
-<<<<<<< HEAD
          '_jamf_type'      => 'MobileDevice',
          'name'            => $jamf_item['general']['name'],
          'itemtype'        => $itemtype,
@@ -931,16 +798,6 @@ class PluginJamfMobileSync extends PluginJamfSync {
          'supervised'      => $jamf_item['general']['supervised'],
       ];
       $ruleinput = $rules->processAllRules($ruleinput, $ruleinput, ['recursive' => true]);
-=======
-         'name' => $jamf_item['general']['name'],
-         'itemtype' => $itemtype,
-         'last_inventory' => $jamf_item['general']['last_inventory_update_utc'],
-         'managed' => $jamf_item['general']['managed'],
-         'supervised' => $jamf_item['general']['supervised'],
-      ];
-      $ruleinput = $rules->processAllRules($ruleinput, $ruleinput, ['recursive' => true]);
-      $import = $ruleinput['_import'] ?? 'NS';
->>>>>>> 4f16aa2... Abstract the sync engine
 
       if (isset($ruleinput['_import']) && !$ruleinput['_import']) {
          // Dropped by rules
@@ -993,7 +850,14 @@ class PluginJamfMobileSync extends PluginJamfSync {
          'is_recursive' => '1'
       ]);
       if ($items_id) {
-         if (self::updateComputerOrPhoneFromArray($itemtype, $items_id, $jamf_item, false)) {
+         // Link
+         $jamf_computer = new PluginJamfComputer();
+         $jamf_computer->add([
+            'itemtype'  => $item::getType(),
+            'items_id'  => $items_id,
+            'udid'      => $jamf_item['general']['udid']
+         ]);
+         if (self::sync($itemtype, $items_id, false)) {
             $DB->update('glpi_plugin_jamf_mobiledevices', [
                'import_date' => $_SESSION['glpi_currenttime']
             ], [
@@ -1039,9 +903,6 @@ class PluginJamfMobileSync extends PluginJamfSync {
             if ($result) {
                $volume++;
             }
-         } catch (PluginJamfRateLimitException $e1) {
-            // We are making API calls too fast. Sleep for a bit, and we will re-sync this item on the next round.
-            sleep(5);
          } catch (Exception $e2) {
             // Some other error
          }

@@ -40,9 +40,12 @@ class PluginJamfExtensionAttribute extends CommonDBTM {
        if (!isset($input['jamf_id'])) {
           return false;
        }
-       $jamf_id = $input['jamf_id'];
-       unset($input['jamf_id']);
-       return $DB->updateOrInsert(self::getTable(), $input, ['jamf_id' => $jamf_id]);
+       //$jamf_id = $input['jamf_id'];
+       //unset($input['jamf_id']);
+       return $DB->updateOrInsert(self::getTable(), $input, [
+          'jamf_type'   => $input['jamf_type'] ?? 'MobileDevice',
+          'jamf_id'     => $input['jamf_id']
+       ]);
     }
 
     public static function dashboardCards()

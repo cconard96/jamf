@@ -38,15 +38,13 @@ if (!isset($_REQUEST['itemtype'], $_REQUEST['items_id'])) {
 }
 
 try {
-//   $mobiledevice = new PluginJamfMobileDevice();
-//   // Find the mobile device linked to the specified itemtype and id
-//   $mobiledevice->getFromDBByCrit([
-//      'itemtype'  => $_REQUEST['itemtype'],
-//      'items_id'  => $_REQUEST['items_id']
-//   ]);
-   // Sync the found device
-   PluginJamfMobileSync::sync($_REQUEST['itemtype'], $_REQUEST['items_id']);
-   //PluginJamfSync::syncMobileDevice($mobiledevice);
+   $jamf_class = PluginJamfAbstractDevice::getJamfItemClassForGLPIItem($_REQUEST['itemtype'], $_REQUEST['items_id']);
+   if ($jamf_class !== null) {
+      $sync_class = PluginJamfSync::getDeviceSyncEngines()[$jamf_class] ?? null;
+      if ($sync_class !== null) {
+         $sync_class::sync($_REQUEST['itemtype'], $_REQUEST['items_id']);
+      }
+   }
 } catch (Exception $e) {
    Toolbox::logError($e->getMessage());
    return;

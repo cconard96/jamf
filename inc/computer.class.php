@@ -36,7 +36,7 @@ class PluginJamfComputer extends PluginJamfAbstractDevice
    }
 
    /**
-    * Display the extra information for Jamf devices on the main Computer or Phone tab.
+    * Display the extra information for Jamf computers on the main Computer tab.
     * @param array $params
     * @return void|bool Displays HTML only if a supported item is in the params parameter. If there is any issue, false is returned.
     * @since 1.0.0
@@ -48,7 +48,7 @@ class PluginJamfComputer extends PluginJamfAbstractDevice
 
       $item = $params['item'];
 
-      if (!self::canView() || (!($item::getType() === 'Computer') && !($item::getType() === 'Phone'))) {
+      if (!self::canView() || $item::getType() !== 'Computer') {
          return false;
       }
 
@@ -57,16 +57,8 @@ class PluginJamfComputer extends PluginJamfAbstractDevice
       };
 
       $out = '';
-      if ($item::getType() === 'Phone') {
-         $uuid = PluginJamfExtField::getValue('Phone', $item->getID(), 'uuid');
-         $out .= '<tr><td>' . __('UUID', 'jamf') . '</td><td>';
-         $out .= Html::input('_plugin_jamf_uuid', [
-            'value' => $uuid
-         ]);
-         $out .= '</td></tr>';
-      }
-      $mobiledevice = new self();
-      $match = $mobiledevice->find([
+      $computer = new self();
+      $match = $computer->find([
          'itemtype' => $item::getType(),
          'items_id' => $item->getID()]);
 
@@ -89,16 +81,11 @@ class PluginJamfComputer extends PluginJamfAbstractDevice
 
       $out .= '<tr><td>'.__('Enrollment date', 'jamf').'</td>';
       $out .= '<td>'.Html::convDateTime($match['enroll_date']).'</td>';
-      $out .= '<td>'.__('Shared device', 'jamf').'</td>';
-      $out .= '<td>'.$match['shared']. '</td></tr>';
+      $out .= '<td>'.__('Supervised', 'jamf').'</td>';
+      $out .= '<td>'.$getYesNo($match['supervised']).'</td></tr>';
 
-      $out .= '<tr><td>'.__('Supervised', 'jamf').'</td>';
-      $out .= '<td>'.$getYesNo($match['supervised']).'</td>';
-      $out .= '<td>'.__('Managed', 'jamf').'</td>';
-      $out .= '<td>'.$getYesNo($match['managed']).'</td></tr>';
-
-      $out .= '<td>'.__('Cloud backup enabled', 'jamf').'</td>';
-      $out .= '<td>'.$getYesNo($match['cloud_backup_enabled']).'</td>';
+      $out .= '<tr><td>'.__('Managed', 'jamf').'</td>';
+      $out .= '<td>'.$getYesNo($match['managed']).'</td>';
       $out .= '<td>'.__('Activation locked', 'jamf').'</td>';
       $out .= '<td>'.$getYesNo($match['activation_lock_enabled']).'</td></tr>';
 

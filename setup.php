@@ -32,7 +32,7 @@ function plugin_init_jamf() {
    $PLUGIN_HOOKS['add_css']['jamf'][] = 'css/jamf.css';
    $PLUGIN_HOOKS['add_javascript']['jamf'][] = 'js/jamf.min.js';
    Plugin::registerClass('PluginJamfConfig', ['addtabon' => 'Config']);
-   $PLUGIN_HOOKS['post_item_form']['jamf'] = ['PluginJamfMobileDevice', 'showForItem'];
+   $PLUGIN_HOOKS['post_item_form']['jamf'] = 'plugin_jamf_showJamfInfoForItem';
    $PLUGIN_HOOKS['pre_item_update']['jamf']['Phone'] = ['PluginJamfMobileDevice', 'preUpdatePhone'];
    $PLUGIN_HOOKS['undiscloseConfigValue']['jamf'] = [PluginJamfConfig::class, 'undiscloseConfigValue'];
    Plugin::registerClass('PluginJamfRuleImportCollection', ['rulecollections_types' => true]);

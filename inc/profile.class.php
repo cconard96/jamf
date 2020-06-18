@@ -74,18 +74,33 @@ class PluginJamfProfile extends Profile
          echo "<form method='post' action='" . $profile::getFormURL() . "'>";
       }
 
-      $rights = [['itemtype' => 'PluginJamfMobileDevice',
-         'label' => PluginJamfMobileDevice::getTypeName(Session::getPluralNumber()),
-         'field' => 'plugin_jamf_mobiledevice'],
-         ['itemtype' => 'PluginJamfRuleImport',
+      $rights = [
+         [
+            'itemtype' => 'PluginJamfMobileDevice',
+            'label' => PluginJamfMobileDevice::getTypeName(Session::getPluralNumber()),
+            'field' => 'plugin_jamf_mobiledevice'
+         ],
+         [
+            'itemtype' => 'PluginJamfComputer',
+            'label' => PluginJamfComputer::getTypeName(Session::getPluralNumber()),
+            'field' => 'plugin_jamf_computer'
+         ],
+         [
+            'itemtype' => 'PluginJamfRuleImport',
             'label' => _n('Import rule', 'Import rules', Session::getPluralNumber(), 'jamf'),
-            'field' => 'plugin_jamf_ruleimport'],
-         ['itemtype' => 'PluginJamfUser_JSSAccount',
+            'field' => 'plugin_jamf_ruleimport'
+         ],
+         [
+            'itemtype' => 'PluginJamfUser_JSSAccount',
             'label' => PluginJamfUser_JSSAccount::getTypeName(Session::getPluralNumber()),
-            'field' => PluginJamfUser_JSSAccount::$rightname],
-         ['itemtype' => 'PluginJamfItem_MDMCommand',
+            'field' => PluginJamfUser_JSSAccount::$rightname
+         ],
+         [
+            'itemtype' => 'PluginJamfItem_MDMCommand',
             'label' => PluginJamfItem_MDMCommand::getTypeName(Session::getPluralNumber()),
-            'field' => PluginJamfItem_MDMCommand::$rightname]];
+            'field' => PluginJamfItem_MDMCommand::$rightname
+         ]
+      ];
       $matrix_options['title'] = __('Jamf plugin');
       $profile->displayRightsChoiceMatrix($rights, $matrix_options);
 
