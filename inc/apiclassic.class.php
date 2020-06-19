@@ -50,9 +50,7 @@ class PluginJamfAPIClassic
       $curl = curl_init($url);
       // Set the username and password in an authentication header
       self::$connection->setCurlAuth($curl);
-      curl_setopt($curl, CURLOPT_SSLVERSION, 6);
-      curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-      curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+      self::$connection->setCurlSecurity($curl);
       curl_setopt($curl, CURLOPT_HTTPHEADER, [
          'Content-Type: application/json',
          "Accept: {$response_type}"
@@ -97,8 +95,8 @@ class PluginJamfAPIClassic
       $curl = curl_init($url);
       // Set the username and password in an authentication header
       self::$connection->setCurlAuth($curl);
+      self::$connection->setCurlSecurity($curl);
       curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
-      curl_setopt($curl, CURLOPT_SSLVERSION, 6);
       curl_setopt($curl, CURLOPT_HTTPHEADER, [
          'Content-Type: application/xml',
          'Accept: application/json'
@@ -127,9 +125,7 @@ class PluginJamfAPIClassic
       self::$connection->setCurlAuth($curl);
       curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
       curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
-      curl_setopt($curl, CURLOPT_SSLVERSION, 6);
-      curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-      curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+      self::$connection->setCurlSecurity($curl);
       curl_setopt($curl, CURLOPT_HTTPHEADER, [
          'Content-Type: application/json',
          'Accept: application/json'
@@ -156,9 +152,7 @@ class PluginJamfAPIClassic
       // Set the username and password in an authentication header
       self::$connection->setCurlAuth($curl);
       curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
-      curl_setopt($curl, CURLOPT_SSLVERSION, 6);
-      curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-      curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+      self::$connection->setCurlSecurity($curl);
       curl_exec($curl);
       $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
       curl_close($curl);

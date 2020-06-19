@@ -34,8 +34,6 @@ class PluginJamfConnection {
     */
    public function __construct()
    {
-      global $DB;
-
       $jamf_config = Config::getConfigurationValues('plugin:Jamf', [
          'jssserver', 'jssuser', 'jsspassword']);
       $this->config = $jamf_config;
@@ -98,6 +96,20 @@ class PluginJamfConnection {
    {
       if (isset($this->config['jssuser']) && !empty($this->config['jssuser'])) {
          curl_setopt($curl, CURLOPT_USERPWD, $this->config['jssuser'] . ':' . $this->config['jsspassword']);
+      }
+   }
+
+   /**
+    * Set the security options for the specified curl connection.
+    * @param $curl
+    * @since 2.0.0
+    */
+   public function setCurlSecurity(&$curl)
+   {
+      curl_setopt($curl, CURLOPT_SSLVERSION, 6);
+      if ($this->config['jssignorecert']) {
+         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
       }
    }
 }
