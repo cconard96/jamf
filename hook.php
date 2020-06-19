@@ -227,6 +227,14 @@ function plugin_jamf_install()
          'value'     => 0
       ]);
    }
+
+   if (!count(Config::getConfigurationValues('plugin:Jamf', ['jssignorecert']))) {
+      $DB->insertOrDie('glpi_configs', [
+         'context'   => 'plugin:Jamf',
+         'name'      => 'jssignorecert',
+         'value'     => 0
+      ]);
+   }
    // End of Post-release configs
 
    CronTask::register('PluginJamfSync', 'syncJamf', 300, [
