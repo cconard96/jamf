@@ -72,6 +72,9 @@ class PluginJamfConfig extends CommonDBTM
       ]);
       echo '</td></tr><tr><td>' .__('JSS Password', 'jamf'). '</td><td>';
       echo Html::input('jsspassword', ['type' => 'password', 'value' => $config['jsspassword']]);
+      echo '</td>';
+      echo '<td>' .__('Ignore JSS Certificate', 'jamf'). '</td><td>';
+      Dropdown::showYesNo('jssignorecert', $config['jssignorecert']);
       echo '</td></tr>';
       echo '</table>';
 
