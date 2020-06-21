@@ -270,7 +270,7 @@ function plugin_jamf_install()
    $migration->addRight(PluginJamfMobileDevice::$rightname, ALLSTANDARDRIGHT);
    $migration->addRight(PluginJamfRuleImport::$rightname, ALLSTANDARDRIGHT);
    $migration->addRight(PluginJamfUser_JSSAccount::$rightname, ALLSTANDARDRIGHT);
-   $migration->addRight(PluginJamfItem_MDMCommand::$rightname, ALLSTANDARDRIGHT);
+   $migration->addRight(PluginJamfItem_MDMCommand::$rightname, READ);
 
    // Update 1.1.2
    // Make all plugin cron tasks CLI or GLPI mode instead of CLI-only. This makes it easier for debugging.
