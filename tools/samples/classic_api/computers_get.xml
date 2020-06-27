@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <computer>
     <general>
-        <id>33</id>
         <name>Computer 2</name>
         <network_adapter_type/>
         <mac_address>C8:2A:14:0C:43:24</mac_address>
@@ -100,7 +99,7 @@
         <processor_speed>2300</processor_speed>
         <processor_speed_mhz>2300</processor_speed_mhz>
         <number_processors>2</number_processors>
-        <number_cores>-1</number_cores>
+        <number_cores>4</number_cores>
         <total_ram>16384</total_ram>
         <total_ram_mb>16384</total_ram_mb>
         <boot_rom>MBP81.0047.B27</boot_rom>
@@ -141,7 +140,7 @@
                         <type>boot</type>
                         <partition_capacity_mb>242281</partition_capacity_mb>
                         <percentage_full>74</percentage_full>
-                        <available_mb>-1</available_mb>
+                        <available_mb>179288</available_mb>
                         <filevault_status>Encrypted</filevault_status>
                         <filevault_percent>100</filevault_percent>
                         <filevault2_status>Encrypted</filevault2_status>
@@ -169,7 +168,7 @@
                         <type>other</type>
                         <partition_capacity_mb>476120</partition_capacity_mb>
                         <percentage_full>88</percentage_full>
-                        <available_mb>-1</available_mb>
+                        <available_mb>418986</available_mb>
                         <filevault_status>Encrypted</filevault_status>
                         <filevault_percent>100</filevault_percent>
                         <filevault2_status>Encrypted</filevault2_status>
@@ -182,8 +181,8 @@
                 <model/>
                 <revision/>
                 <serial_number/>
-                <size>0</size>
-                <drive_capacity_mb>0</drive_capacity_mb>
+                <size>731</size>
+                <drive_capacity_mb>731</drive_capacity_mb>
                 <connection_type/>
                 <smart_status/>
                 <partitions>
@@ -193,7 +192,7 @@
                         <type>other</type>
                         <partition_capacity_mb>731</partition_capacity_mb>
                         <percentage_full>77</percentage_full>
-                        <available_mb>-1</available_mb>
+                        <available_mb>563</available_mb>
                         <filevault_status>Encrypted</filevault_status>
                         <filevault_percent>100</filevault_percent>
                         <filevault2_status>Encrypted</filevault2_status>

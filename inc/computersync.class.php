@@ -44,7 +44,6 @@ class PluginJamfComputerSync extends PluginJamfSync {
       try {
          $general = $this->data['general'];
          $hardware = $this->data['hardware'];
-         $config = PluginJamfConfig::getConfig();
 
          if (($general['name'] !== $this->item->fields['name'])) {
             $this->item_changes['name'] = $general['name'];
@@ -75,16 +74,16 @@ class PluginJamfComputerSync extends PluginJamfSync {
          $this->item_changes['computermodels_id'] = $model->getID();
 
          // Set default type
-        //TODO Not implemented yet
+        //Not implemented yet
 
          // Set default manufacturer
-         $preferred_manufacturer = $config['default_manufacturer'];
+         $preferred_manufacturer = $this->config['default_manufacturer'];
          if ($preferred_manufacturer) {
             $this->item_changes['manufacturers_id'] = $preferred_manufacturer;
          }
 
          if ($this->item === null || $this->item->fields['states_id'] === 0) {
-            $this->item_changes['states_id'] = $config['default_status'];
+            $this->item_changes['states_id'] = $this->config['default_status'];
          }
       } catch (Exception $e) {
          $this->status['syncGeneral'] = self::STATUS_ERROR;
@@ -111,20 +110,18 @@ class PluginJamfComputerSync extends PluginJamfSync {
       }
       try {
          $hardware = $this->data['hardware'];
-         /** @var OperatingSystem $os */
-         $os = $this->createOrGetItem(OperatingSystem::class, [
-            'name' => $hardware['os_name']
+         $os = $this->applyDesiredState('OperatingSystem', [
+            'name'      => $hardware['os_type'],
          ], [
-            'name' => $hardware['os_name'],
-            'comment' => 'Created by Jamf Plugin for GLPI'
+            'name'      => $hardware['os_type'],
+            'comment'   => 'Created by Jamf Plugin for GLPI'
          ]);
 
-         /** @var OperatingSystemVersion $os_version */
-         $os_version = $this->createOrGetItem(OperatingSystemVersion::class, [
-            'name' => $hardware['os_version']
+         $os_version = $this->applyDesiredState('OperatingSystemVersion', [
+            'name'      => $hardware['os_version'],
          ], [
-            'name' => $hardware['os_version'],
-            'comment' => 'Created by Jamf Plugin for GLPI'
+            'name'      => $hardware['os_version'],
+            'comment'   => 'Created by Jamf Plugin for GLPI'
          ]);
 
          $this->db->updateOrInsert(Item_OperatingSystem::getTable(), [
@@ -154,11 +151,54 @@ class PluginJamfComputerSync extends PluginJamfSync {
          $this->status['syncSoftware'] = self::STATUS_ERROR;
          return $this;
       }
-      if (!$this->config['sync_software'] || $this->item === null || isset($this->data['applications'])) {
+      if (!$this->config['sync_software'] || $this->item === null || !isset($this->data['software']['applications'])) {
          $this->status['syncSoftware'] = self::STATUS_SKIPPED;
          return $this;
       }
-      //TODO Not implemented
+
+      try {
+         $applications = $this->data['software']['applications'];
+         foreach ($applications as $application) {
+            $software_data = PluginJamfAPIClassic::getItems('mobiledeviceapplications', [
+               'application'  => $application['name'],
+               'version'      => $application['version']
+            ]);
+            if ($software_data === null) {
+               continue;
+            }
+            $software = $this->applyDesiredState('Software', [
+               'name'         => $this->db->escape($software_data['general']['name']),
+            ], [
+               'name'         => $this->db->escape($software_data['general']['name']),
+               'entities_id'  => $this->item->fields['entities_id'],
+               'is_recursive' => $this->item->fields['is_recursive']
+            ]);
+            $software_version = $this->applyDesiredState('SoftwareVersion', [
+               'softwares_id' => $software->getID(),
+               'name'         => $application['version'],
+            ], [
+               'softwares_id' => $software->getID(),
+               'name'         => $application['version'],
+               'entities_id'  => $this->item->fields['entities_id'],
+               'is_recursive' => $this->item->fields['is_recursive']
+            ]);
+            $this->applyDesiredState('Item_SoftwareVersion', [
+               'itemtype'              => $this->item::getType(),
+               'items_id'              => $this->item->getID(),
+               'softwareversions_id'   => $software_version->getID()
+            ], [
+               'itemtype'              => $this->item::getType(),
+               'items_id'              => $this->item->getID(),
+               'softwareversions_id'   => $software_version->getID(),
+               'entities_id'           => $this->item->fields['entities_id'],
+               'is_recursive'          => $this->item->fields['is_recursive']
+            ]);
+         }
+      } catch (Exception $e) {
+         $this->status['syncSoftware'] = self::STATUS_ERROR;
+         return $this;
+      }
+
       $this->status['syncSoftware'] = self::STATUS_OK;
       return $this;
    }
@@ -305,7 +345,7 @@ class PluginJamfComputerSync extends PluginJamfSync {
       }
       try {
          $security = $this->data['security'];
-         $this->jamfdevice_changes['activation_lock_enabled'] = $security['activation_lock_enabled'];
+         $this->jamfdevice_changes['activation_lock_enabled'] = $security['activation_lock'];
       } catch (Exception $e) {
          $this->status['syncSecurity'] = self::STATUS_ERROR;
          return $this;
@@ -331,11 +371,11 @@ class PluginJamfComputerSync extends PluginJamfSync {
       }
       try {
          $general = $this->data['general'];
-         //$expected_wifi_name = "Generic ".$general['model'].' WiFi';
-         //$expected_bt_name = "Generic ".$general['model'].' BlueTooth';
-         $expected_netcard_name = "Generic {$general['model']} Network Card";
+         $hardware = $this->data['hardware'];
 
-         if (isset($general['wifi_mac_address']) && !empty($general['wifi_mac_address'])) {
+         $expected_netcard_name = "Generic {$hardware['model']} Network Card";
+
+         if (isset($general['alt_mac_address']) && !empty($general['alt_mac_address'])) {
             $wifi_model = $this->createOrGetItem('DeviceNetworkCardModel', ['name' => $expected_netcard_name], [
                'name'       => $expected_netcard_name,
                'comment'    => 'Created by Jamf Plugin for GLPI'
@@ -372,7 +412,7 @@ class PluginJamfComputerSync extends PluginJamfSync {
                'comment'                       => 'Created by Jamf Plugin for GLPI',
                'items_devicenetworkcards_id'   => $item_wifi->getID(),
                'is_dynamic'                    => 1,
-               'mac'                           => $general['wifi_mac_address']
+               'mac'                           => $general['alt_mac_address']
             ]);
 
             $network_name = $this->createOrGetItem('NetworkName', [
@@ -411,46 +451,6 @@ class PluginJamfComputerSync extends PluginJamfSync {
                   'name'  => $general['ip_address']
                ]);
             }
-         }
-
-         if (isset($general['bluetooth_mac_address']) && !empty($general['bluetooth_mac_address'])) {
-            $bt_model = $this->createOrGetItem('DeviceNetworkCardModel', ['name' => $expected_netcard_name], [
-               'name'       => $expected_netcard_name,
-               'comment'    => 'Created by Jamf Plugin for GLPI'
-            ]);
-            $bt = $this->createOrGetItem('DeviceNetworkCard', ['designation' => $expected_netcard_name], [
-               'designation'                   => $expected_netcard_name,
-               'devicenetworkcardmodels_id'    => $bt_model->getID(),
-               'comment'                       => 'Created by Jamf Plugin for GLPI'
-            ]);
-            $item_bt = $this->createOrGetItem('Item_DeviceNetworkCard', [
-               'itemtype'              => $this->item->getType(),
-               'items_id'              => $this->item->getID(),
-               'devicenetworkcards_id' => $bt->getID()
-            ], [
-               'itemtype'              => $this->item->getType(),
-               'items_id'              => $this->item->getID(),
-               'devicenetworkcards_id' => $bt->getID(),
-               'is_dynamic'            => 1,
-               'entities_id'           => 0,
-               'is_recursive'          => 1
-            ]);
-
-            $this->createOrGetItem('NetworkPort', [
-               'itemtype'              => $this->item->getType(),
-               'items_id'              => $this->item->getID(),
-               'instantiation_type'    => 'NetworkPortWifi',
-               'logical_number'        => 1
-            ], [
-               'itemtype'                      => $this->item->getType(),
-               'items_id'                      => $this->item->getID(),
-               'instantiation_type'            => 'NetworkPortWifi',
-               'logical_number'                => 1,
-               'name'                          => 'Bluetooth',
-               'comment'                       => 'Created by Jamf Plugin for GLPI',
-               'items_devicenetworkcards_id'   => $item_bt->getID(),
-               'mac'                           => $general['bluetooth_mac_address']
-            ]);
          }
 
       } catch (Exception $e) {
@@ -515,14 +515,36 @@ class PluginJamfComputerSync extends PluginJamfSync {
          $this->status['syncComponents'] = self::STATUS_ERROR;
          return $this;
       }
-      if (!$this->config['sync_components'] || $this->item === null || !isset($this->data['hardware'])) {
+      if (!isset($this->data['hardware']) || !$this->config['sync_components'] || $this->item === null) {
          $this->status['syncComponents'] = self::STATUS_SKIPPED;
          return $this;
       }
-      $config = PluginJamfConfig::getConfig();
       $hardware = $this->data['hardware'];
 
-      //TODO Not implemented yet
+      // Boot firmware
+      if (isset($hardware['boot_rom']) && !empty($hardware['boot_rom'])) {
+         $boot_rom = $this->applyDesiredState('DeviceFirmware', [
+            'designation'   => $hardware['boot_rom']
+         ], [
+            'designation'   => $hardware['boot_rom'],
+            'manufacturers_id'   => $this->config['default_manufacturer'],
+            'entities_id'        => '0',
+            'is_recursive'       => '1'
+         ]);
+         $this->applyDesiredState('Item_DeviceFirmware', [
+            'itemtype'           => $this->item::getType(),
+            'items_id'           => $this->item->getID(),
+            'devicefirmwares_id' => $boot_rom->getID()
+         ], [
+            'itemtype'           => $this->item::getType(),
+            'items_id'           => $this->item->getID(),
+            'devicefirmwares_id' => $boot_rom->getID(),
+            'is_deleted'         => 0,
+            'is_dynamic'         => 1,
+            'entities_id'        => 0,
+            'is_recursive'       => 1,
+         ]);
+      }
 
       $this->status['syncComponents'] = self::STATUS_OK;
       return $this;
@@ -635,9 +657,10 @@ class PluginJamfComputerSync extends PluginJamfSync {
       $DB->beginTransaction();
       // Import new device
       $items_id = $item->add([
-         'name' => $DB->escape($jamf_item['general']['name']),
-         'entities_id' => '0',
-         'is_recursive' => '1'
+         'name'         => $DB->escape($jamf_item['general']['name']),
+         'entities_id'  => 0,
+         'is_recursive' => 1,
+         'is_dynamic'   => 1
       ]);
       if ($items_id) {
          // Link

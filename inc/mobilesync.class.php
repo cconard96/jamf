@@ -44,7 +44,6 @@ class PluginJamfMobileSync extends PluginJamfSync {
       try {
          $general = $this->data['general'];
          $itemtype = $this->item::getType();
-         $config = PluginJamfConfig::getConfig();
 
          if (($general['name'] !== $this->item->fields['name'])) {
             $this->item_changes['name'] = $general['name'];
@@ -70,13 +69,14 @@ class PluginJamfMobileSync extends PluginJamfSync {
          } else {
             $model_type = 'ComputerModel';
          }
-         $model = $this->createOrGetItem($model_type, [
-            'name' => $general['model'],
-            'product_number' => $general['model_number']
+
+         $model = $this->applyDesiredState($model_type, [
+            'name'            => $general['model'],
+            'product_number'  => $general['model_number']
          ], [
             'name' => $general['model'],
             'product_number' => $general['model_number'],
-            'comment' => 'Created by Jamf Plugin for GLPI',
+            'comment' => 'Created by Jamf Plugin for GLPI'
          ]);
 
          // Set model
@@ -88,15 +88,15 @@ class PluginJamfMobileSync extends PluginJamfSync {
 
          // Set default type
          if ($itemtype === 'Phone') {
-            $preferred_type = $config['iphone_type'];
+            $preferred_type = $this->config['iphone_type'];
             if ($preferred_type) {
                $this->item_changes['phonetypes_id'] = $preferred_type;
             }
          } else {
             if (strpos($general['model'], 'Apple TV') === false) {
-               $preferred_type = $config['ipad_type'];
+               $preferred_type = $this->config['ipad_type'];
             } else {
-               $preferred_type = $config['appletv_type'];
+               $preferred_type = $this->config['appletv_type'];
             }
             if ($preferred_type) {
                $this->item_changes['computertypes_id'] = $preferred_type;
@@ -104,13 +104,13 @@ class PluginJamfMobileSync extends PluginJamfSync {
          }
 
          // Set default manufacturer
-         $preferred_manufacturer = $config['default_manufacturer'];
+         $preferred_manufacturer = $this->config['default_manufacturer'];
          if ($preferred_manufacturer) {
             $this->item_changes['manufacturers_id'] = $preferred_manufacturer;
          }
 
          if ($this->item === null || $this->item->fields['states_id'] === 0) {
-            $this->item_changes['states_id'] = $config['default_status'];
+            $this->item_changes['states_id'] = $this->config['default_status'];
          }
       } catch (Exception $e) {
          $this->status['syncGeneral'] = self::STATUS_ERROR;
@@ -137,30 +137,23 @@ class PluginJamfMobileSync extends PluginJamfSync {
       }
       try {
          $general = $this->data['general'];
-         $os = new OperatingSystem();
-         $os_version = new OperatingSystemVersion();
-         $os_matches = $os->find(['name' => $general['os_type']]);
-         if (!count($os_matches)) {
-            $os_id = $os->add([
-               'name' => $general['os_type'],
-               'comment' => 'Created by Jamf Plugin for GLPI'
-            ]);
-         } else {
-            $os_id = array_keys($os_matches)[0];
-         }
+         $os = $this->applyDesiredState('OperatingSystem', [
+            'name'      => $general['os_type'],
+         ], [
+            'name'      => $general['os_type'],
+            'comment'   => 'Created by Jamf Plugin for GLPI'
+         ]);
 
-         $osversion_matches = $os_version->find(['name' => $general['os_version']]);
-         if (!count($osversion_matches)) {
-            $osversion_id = $os_version->add([
-               'name' => $general['os_version'],
-               'comment' => 'Created by Jamf Plugin for GLPI'
-            ]);
-         } else {
-            $osversion_id = array_keys($osversion_matches)[0];
-         }
+         $os_version = $this->applyDesiredState('OperatingSystemVersion', [
+            'name'      => $general['os_version'],
+         ], [
+            'name'      => $general['os_version'],
+            'comment'   => 'Created by Jamf Plugin for GLPI'
+         ]);
+
          $this->db->updateOrInsert(Item_OperatingSystem::getTable(), [
-            'operatingsystems_id' => $os_id,
-            'operatingsystemversions_id' => $osversion_id,
+            'operatingsystems_id' => $os->getID(),
+            'operatingsystemversions_id' => $os_version->getID(),
             'date_creation' => $_SESSION['glpi_currenttime'],
          ], [
             'itemtype' => $this->item::getType(),
@@ -185,7 +178,7 @@ class PluginJamfMobileSync extends PluginJamfSync {
          $this->status['syncSoftware'] = self::STATUS_ERROR;
          return $this;
       }
-      if (!$this->config['sync_software'] || $this->item === null || isset($this->data['applications'])) {
+      if (!$this->config['sync_software'] || $this->item === null || !isset($this->data['applications'])) {
          $this->status['syncSoftware'] = self::STATUS_SKIPPED;
          return $this;
       }
@@ -442,12 +435,7 @@ class PluginJamfMobileSync extends PluginJamfSync {
       }
       try {
          $general = $this->data['general'];
-         //$expected_wifi_name = "Generic ".$general['model'].' WiFi';
-         //$expected_bt_name = "Generic ".$general['model'].' Bluetooth';
          $expected_netcard_name = "Generic {$general['model']} Network Card";
-         $nic_model = new DeviceNetworkCardModel();
-         $nic = new DeviceNetworkCard();
-         $wifi_port = new NetworkPortWifi();
 
          if (isset($general['wifi_mac_address']) && !empty($general['wifi_mac_address'])) {
             $wifi_model = $this->createOrGetItem('DeviceNetworkCardModel', ['name' => $expected_netcard_name], [
@@ -845,9 +833,10 @@ class PluginJamfMobileSync extends PluginJamfSync {
       $DB->beginTransaction();
       // Import new device
       $items_id = $item->add([
-         'name' => $DB->escape($jamf_item['general']['name']),
-         'entities_id' => '0',
-         'is_recursive' => '1'
+         'name'         => $DB->escape($jamf_item['general']['name']),
+         'entities_id'  => 0,
+         'is_recursive' => 1,
+         'is_dynamic'   => 1
       ]);
       if ($items_id) {
          // Link

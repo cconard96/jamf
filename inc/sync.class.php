@@ -156,7 +156,8 @@ abstract class PluginJamfSync
       return $this->status;
    }
 
-   protected function createOrGetItem($itemtype, $criteria, $params) {
+   protected function createOrGetItem($itemtype, $criteria, $params)
+   {
        $item = new $itemtype();
        $item_matches = $item->find($criteria);
        if (!count($item_matches)) {
@@ -166,6 +167,25 @@ abstract class PluginJamfSync
            $item->getFromDB(reset($item_matches)['id']);
        }
        return $item;
+   }
+
+   protected function applyDesiredState($itemtype, $match_criteria, $state, $options = []): CommonDBTM
+   {
+      $opts = [];
+      $opts = array_replace($opts, $options);
+
+      /** @var CommonDBTM $item */
+      $item = new $itemtype();
+      $item_matches = $item->find($match_criteria);
+      if (!count($item_matches)) {
+         $items_id = $item->add($state);
+         $item->getFromDB($items_id);
+         return $item;
+      }
+
+      $item->getFromDB(reset($item_matches)['id']);
+      $item->update($state);
+      return $item;
    }
 
    abstract public static function discover(): bool;
