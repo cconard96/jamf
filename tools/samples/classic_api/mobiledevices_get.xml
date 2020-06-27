@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mobile_device>
+    <general>
+        <id>28</id>
+        <display_name>Device 2</display_name>
+        <device_name>Device 2</device_name>
+        <name>Device 2</name>
+        <asset_tag>string1234</asset_tag>
+        <last_inventory_update>Monday, March 16 2020 at 5:01 PM</last_inventory_update>
+        <last_inventory_update_epoch>1584378100868</last_inventory_update_epoch>
+        <last_inventory_update_utc>2020-03-16T17:01:40.868+0000</last_inventory_update_utc>
+        <capacity>12957</capacity>
+        <capacity_mb>12957</capacity_mb>
+        <available>2838</available>
+        <available_mb>2838</available_mb>
+        <percentage_used>78</percentage_used>
+        <os_type>iOS</os_type>
+        <os_version>8.1</os_version>
+        <os_build>12B410</os_build>
+        <serial_number>CA44C89860A3</serial_number>
+        <udid>ca44c88e60a311e490b812df261f2c7e</udid>
+        <initial_entry_date_epoch>1408598573022</initial_entry_date_epoch>
+        <initial_entry_date_utc>2014-08-21T05:22:53.022+0000</initial_entry_date_utc>
+        <phone_number>2244229909</phone_number>
+        <ip_address>63.149.27.134</ip_address>
+        <wifi_mac_address>AC:3C:0B:5E:50:93</wifi_mac_address>
+        <bluetooth_mac_address>AC:3C:0B:5E:50:94</bluetooth_mac_address>
+        <modem_firmware>7.03.00</modem_firmware>
+        <model>iPad mini (CDMA)</model>
+        <model_identifier>iPad2,7</model_identifier>
+        <model_number>MD540LL</model_number>
+        <modelDisplay deprecated="9.4">iPad mini (CDMA)</modelDisplay>
+        <model_display>iPad mini (CDMA)</model_display>
+        <device_ownership_level>Institutional</device_ownership_level>
+        <last_enrollment_epoch>1408807164775</last_enrollment_epoch>
+        <last_enrollment_utc>2014-08-23T15:19:24.775+0000</last_enrollment_utc>
+        <managed>true</managed>
+        <supervised>false</supervised>
+        <exchange_activesync_device_identifier/>
+        <shared>No</shared>
+        <diagnostic_submission>Not Enabled</diagnostic_submission>
+        <app_analytics>Not Enabled</app_analytics>
+        <tethered/>
+        <battery_level>56</battery_level>
+        <ble_capable>true</ble_capable>
+        <device_locator_service_enabled>true</device_locator_service_enabled>
+        <do_not_disturb_enabled>false</do_not_disturb_enabled>
+        <cloud_backup_enabled>true</cloud_backup_enabled>
+        <last_cloud_backup_date_epoch>1414500473000</last_cloud_backup_date_epoch>
+        <last_cloud_backup_date_utc>2014-10-28T12:47:53.000+0000</last_cloud_backup_date_utc>
+        <location_services_enabled>false</location_services_enabled>
+        <itunes_store_account_is_active>true</itunes_store_account_is_active>
+        <last_backup_time_epoch>0</last_backup_time_epoch>
+        <last_backup_time_utc/>
+        <site>
+            <id>-1</id>
+            <name>None</name>
+        </site>
+    </general>
+    <location>
+        <username>user71</username>
+        <realname>User 71</realname>
+        <real_name>User 71</real_name>
+        <email_address>User71@email.com</email_address>
+        <position/>
+        <phone>612-605-6625</phone>
+        <phone_number>612-605-6625</phone_number>
+        <department/>
+        <building>US Field</building>
+        <room>904 S. Roselle Rd #110</room>
+    </location>
+    <purchasing>
+        <is_purchased>true</is_purchased>
+        <is_leased>false</is_leased>
+        <po_number/>
+        <vendor/>
+        <applecare_id/>
+        <purchase_price/>
+        <purchasing_account/>
+        <po_date>2013-07-11</po_date>
+        <po_date_epoch>1373518800000</po_date_epoch>
+        <po_date_utc>2013-07-11T05:00:00.000+0000</po_date_utc>
+        <warranty_expires/>
+        <warranty_expires_epoch>0</warranty_expires_epoch>
+        <warranty_expires_utc/>
+        <lease_expires/>
+        <lease_expires_epoch>0</lease_expires_epoch>
+        <lease_expires_utc/>
+        <life_expectancy>0</life_expectancy>
+        <purchasing_contact/>
+        <attachments/>
+    </purchasing>
+    <applications>
+        <size>122</size>
+        <application>
+            <application_name>1Password</application_name>
+            <application_version>501017</application_version>
+            <identifier>com.agilebits.onepassword-ios</identifier>
+        </application>
+        <application>
+            <application_name>Adobe Ideas</application_name>
+            <application_version>52469</application_version>
+            <identifier>com.adobe.ideas.ipad</identifier>
+        </application>
+        <application>
+            <application_name>Airbnb</application_name>
+            <application_version>4.4.1</application_version>
+            <identifier>com.airbnb.app</identifier>
+        </application>
+        <application>
+            <application_name>AirPort Utility</application_name>
+            <application_version>134.22</application_version>
+            <identifier>com.apple.airport.mobileairportutility</identifier>
+        </application>
+        <application>
+            <application_name>American</application_name>
+            <application_version>3.8.0</application_version>
+            <identifier>com.aa.AmericanAirlines</identifier>
+        </application>
+        <application>
+            <application_name>Ancestry</application_name>
+            <application_version>2920</application_version>
+            <identifier>com.ancestry.Tree-To-Go</identifier>
+        </application>
+        <application>
+            <application_name>Apple Store</application_name>
+            <application_version>3.1.0</application_version>
+            <identifier>com.apple.store.Jolly</identifier>
+        </application>
+    </applications>
+    <security>
+        <data_protection>true</data_protection>
+        <block_level_encryption_capable>true</block_level_encryption_capable>
+        <file_level_encryption_capable>true</file_level_encryption_capable>
+        <passcode_present>true</passcode_present>
+        <passcode_compliant>true</passcode_compliant>
+        <passcode_compliant_with_profile>true</passcode_compliant_with_profile>
+        <passcode_lock_grace_period_enforced>Not Available</passcode_lock_grace_period_enforced>
+        <hardware_encryption>3</hardware_encryption>
+        <activation_lock_enabled>true</activation_lock_enabled>
+        <jailbreak_detected>Normal</jailbreak_detected>
+        <lost_mode_enabled>Unsupervised Device</lost_mode_enabled>
+        <lost_mode_enforced>false</lost_mode_enforced>
+        <lost_mode_enable_issued_epoch>0</lost_mode_enable_issued_epoch>
+        <lost_mode_enable_issued_utc/>
+        <lost_mode_message/>
+        <lost_mode_phone/>
+        <lost_mode_footnote/>
+        <lost_location_epoch>1593224890021</lost_location_epoch>
+        <lost_location_utc>2020-06-27T02:28:10.021+0000</lost_location_utc>
+        <lost_location_latitude>0.0</lost_location_latitude>
+        <lost_location_longitude>0.0</lost_location_longitude>
+        <lost_location_altitude>-1.0</lost_location_altitude>
+        <lost_location_speed>-1.0</lost_location_speed>
+        <lost_location_course>-1.0</lost_location_course>
+        <lost_location_horizontal_accuracy>-1.0</lost_location_horizontal_accuracy>
+        <lost_location_vertical_accuracy>-1.0</lost_location_vertical_accuracy>
+    </security>
+    <network>
+        <home_carrier_network>Verizon</home_carrier_network>
+        <cellular_technology>Both</cellular_technology>
+        <voice_roaming_enabled>No</voice_roaming_enabled>
+        <imei>99 000290 140632 0</imei>
+        <iccid>8914 8000 0006 0230 8992</iccid>
+        <meid>99000290140632</meid>
+        <current_carrier_network/>
+        <carrier_settings_version>18.0</carrier_settings_version>
+        <current_mobile_country_code>311</current_mobile_country_code>
+        <current_mobile_network_code>480</current_mobile_network_code>
+        <home_mobile_country_code>311</home_mobile_country_code>
+        <home_mobile_network_code>480</home_mobile_network_code>
+        <data_roaming_enabled>false</data_roaming_enabled>
+        <roaming>false</roaming>
+        <phone_number>2244229909</phone_number>
+    </network>
+    <certificates>
+        <size>0</size>
+    </certificates>
+    <configuration_profiles>
+        <size>0</size>
+    </configuration_profiles>
+    <provisioning_profiles>
+        <size>0</size>
+    </provisioning_profiles>
+    <mobile_device_groups>
+        <size>7</size>
+        <mobile_device_group>
+            <id>3</id>
+            <name>All Managed iPod touches</name>
+        </mobile_device_group>
+        <mobile_device_group>
+            <id>4</id>
+            <name>Config Profile: Does not have Managed Device</name>
+        </mobile_device_group>
+        <mobile_device_group>
+            <id>20</id>
+            <name>I'm a cool test</name>
+        </mobile_device_group>
+        <mobile_device_group>
+            <id>6</id>
+            <name>Test</name>
+        </mobile_device_group>
+        <mobile_device_group>
+            <id>7</id>
+            <name>Pats test2</name>
+        </mobile_device_group>
+        <mobile_device_group>
+            <id>8</id>
+            <name>All Managed iPads</name>
+        </mobile_device_group>
+        <mobile_device_group>
+            <id>11</id>
+            <name>iPhones</name>
+        </mobile_device_group>
+    </mobile_device_groups>
+    <extension_attributes>
+        <extension_attribute>
+            <id>3</id>
+            <name>Asset Selector</name>
+            <type>String</type>
+            <multi_value>false</multi_value>
+            <value/>
+        </extension_attribute>
+    </extension_attributes>
+</mobile_device>

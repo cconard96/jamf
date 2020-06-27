@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<computers>
+    <size>135</size>
+    <computer>
+        <id>33</id>
+        <name>Computer 2</name>
+        <managed>false</managed>
+        <username>user17</username>
+        <model>MacBookPro8,1</model>
+        <department/>
+        <building>Minneapolis</building>
+        <mac_address>C8:2A:14:0C:43:24</mac_address>
+        <udid>CA40DA58-60A3-11E4-90B8-12DF261F2C7E</udid>
+        <serial_number>CA40DA6C60A3</serial_number>
+        <report_date_utc>2020-03-16T17:04:32.764+0000</report_date_utc>
+        <report_date_epoch>1584378272764</report_date_epoch>
+    </computer>
+    <computer>
+        <id>38</id>
+        <name>Computer 3</name>
+        <managed>false</managed>
+        <username>user28</username>
+        <model>iMac12,1</model>
+        <department/>
+        <building/>
+        <mac_address>40:6C:8F:0F:AA:99</mac_address>
+        <udid>CA40DB0C-60A3-11E4-90B8-12DF261F2C7E</udid>
+        <serial_number>CA40DB2060A3</serial_number>
+        <report_date_utc>2020-03-16T17:04:34.573+0000</report_date_utc>
+        <report_date_epoch>1584378274573</report_date_epoch>
+    </computer>
+    <computer>
+        <id>39</id>
+        <name>Computer 4</name>
+        <managed>false</managed>
+        <username>user52</username>
+        <model>MacBookPro10,1</model>
+        <department/>
+        <building>Minneapolis</building>
+        <mac_address>20:C9:D0:44:B7:C3</mac_address>
+        <udid>CA40F998-60A3-11E4-90B8-12DF261F2C7E</udid>
+        <serial_number>CA40F9A260A3</serial_number>
+        <report_date_utc>2020-03-16T17:04:35.935+0000</report_date_utc>
+        <report_date_epoch>1584378275935</report_date_epoch>
+    </computer>
+    <computer>
+        <id>40</id>
+        <name>Computer 5</name>
+        <managed>false</managed>
+        <username>user59</username>
+        <model>MacBookPro11,1</model>
+        <department/>
+        <building>Minneapolis</building>
+        <mac_address>B8:E8:56:43:56:40</mac_address>
+        <udid>CA40DB98-60A3-11E4-90B8-12DF261F2C7E</udid>
+        <serial_number>CA40DBA260A3</serial_number>
+        <report_date_utc>2020-03-16T17:04:37.340+0000</report_date_utc>
+        <report_date_epoch>1584378277340</report_date_epoch>
+    </computer>
+    <computer>
+        <id>43</id>
+        <name>Computer 6</name>
+        <managed>false</managed>
+        <username>user78</username>
+        <model>MacBookPro11,1</model>
+        <department/>
+        <building/>
+        <mac_address>3C:15:C2:C6:14:4E</mac_address>
+        <udid>CA40DC10-60A3-11E4-90B8-12DF261F2C7E</udid>
+        <serial_number>CA40DC1A60A3</serial_number>
+        <report_date_utc>2020-03-16T17:04:38.531+0000</report_date_utc>
+        <report_date_epoch>1584378278531</report_date_epoch>
+    </computer>
+</computers>
