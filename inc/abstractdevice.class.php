@@ -93,7 +93,7 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
       }
    }
 
-   public static function getJamfItemClassForGLPIItem(string $itemtype, int $items_id): ?string
+   public static function getJamfItemClassForGLPIItem(string $itemtype, $items_id): ?string
    {
       global $DB;
 
