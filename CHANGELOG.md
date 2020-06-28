@@ -1,5 +1,8 @@
 # Jamf Plugin for GLPI Changelog
 
+## [1.2.1]
+
+- Fix issue with menu visiblity
 
 ## [1.2.0]
 
