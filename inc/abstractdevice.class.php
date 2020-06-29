@@ -48,7 +48,7 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
 
    /**
     * Cleanup relations when an item is purged.
-    * @global type $DB
+    * @global DBmysql $DB
     * @param CommonDBTM $item
     */
    private static function purgeItemCommon(CommonDBTM $item)

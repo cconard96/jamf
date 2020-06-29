@@ -23,7 +23,7 @@
 
 /**
  * PluginJamfSync class.
- * This class handles actively syncing data from JAMF to GLPI.
+ * This is the base class for all classes which sync data from Jamf to GLPI..
  */
 abstract class PluginJamfSync
 {
@@ -44,11 +44,17 @@ abstract class PluginJamfSync
    public const STATUS_ERROR = 2;
 
    /**
-    * An attempt was made to run async task without the necessary resources being ready.
+    * An attempt was made to run the sync task without the necessary resources being ready.
     * For example, adding an extension attribute to a mobile device on the first sync before it is created.
     * In this case, the task will get deferred until the sync is finalized. At that stage, the task is retired a final time.
     */
    public const STATUS_DEFERRED = 3;
+
+   /**
+    * The sync task does not apply to the itemtype synced by this sync engine.
+    * For example, a mobile device may not sync scripts because no such relation exists in Jamf/Apple MDM.
+    */
+   public const STATUS_NOT_APPLICABLE = 4;
 
    /**
     * @var bool If true, it indicates an instance of the sync engine was created without the intention of using it for syncing.
@@ -62,17 +68,35 @@ abstract class PluginJamfSync
 
    protected $extitem_changes = [];
 
-   protected $jamfdevice_changes = [];
+   protected $jamfplugin_item_changes = [];
 
    protected $data = [];
 
    /** @var CommonDBTM */
    protected $item = null;
 
-   protected $jamfitemtype = null;
+   /** @var CommonDBTM */
+   protected $jamfplugin_device = null;
 
-   /** @var PluginJamfMobileDevice */
-   protected $jamfdevice = null;
+   /**
+    * @var null
+    * @since 1.0.0
+    * @since 2.0.0 Renamed jamf_itemtype to jamfplugin_itemtype
+    */
+   protected static $jamfplugin_itemtype = null;
+
+   /**
+    * Textual identifier of the itemtype in Jamf that this sync engine works with.
+    *
+    * The identifier should typically match up with the Jamf API endpoint path.
+    * For example 'MobileDevice' matches with the classic endpoint "/mobiledevices".
+    * There shouldn't be any spaces, but may contain uppercase characters to make it easier to read.
+    * The identifier may be treated as case-sensitive, but it is not guaranteed.
+    *
+    * @var string
+    * @since 2.0.0
+    */
+   protected static $jamf_itemtype = null;
 
    protected $status = [];
 
@@ -100,14 +124,14 @@ abstract class PluginJamfSync
       $this->config = PluginJamfConfig::getConfig();
       $this->item = $item;
       $this->data = $data;
-      $jamfitem = new $this->jamfitemtype();
+      $jamfitem = new static::$jamfplugin_itemtype();
       $jamf_match = $jamfitem->find([
          'itemtype' => $item::getType(),
          'items_id' => $item->getID()], [], 1);
       if (count($jamf_match)) {
          $jamf_id = reset($jamf_match)['id'];
          $jamfitem->getFromDB($jamf_id);
-         $this->jamfdevice = $jamfitem;
+         $this->jamfplugin_device = $jamfitem;
       }
    }
 
@@ -121,26 +145,26 @@ abstract class PluginJamfSync
       if ($this->dummySync) {
          return $this->status;
       }
-      $this->jamfdevice_changes['sync_date'] = $_SESSION['glpi_currenttime'];
+      $this->jamfplugin_item_changes['sync_date'] = $_SESSION['glpi_currenttime'];
       $this->item->update([
             'id' => $this->item->getID()
          ] + $this->item_changes);
       foreach ($this->extitem_changes as $key => $value) {
          PluginJamfExtField::setValue($this->item::getType(), $this->item->getID(), $key, $value);
       }
-      $this->db->updateOrInsert($this->jamfitemtype::getTable(), $this->jamfdevice_changes, [
+      $this->db->updateOrInsert(static::$jamfplugin_itemtype::getTable(), $this->jamfplugin_item_changes, [
          'itemtype' => $this->item::getType(),
          'items_id' => $this->item->getID()
       ]);
 
-      if ($this->jamfdevice === null) {
-         $jamf_item = new $this->jamfitemtype();
+      if ($this->jamfplugin_device === null) {
+         $jamf_item = new static::$jamfplugin_itemtype();
          $jamf_match = $jamf_item->find([
             'itemtype' => $this->item::getType(),
             'items_id' => $this->item->getID()], [], 1);
          if (count($jamf_match)) {
             $jamf_item->getFromDB(reset($jamf_match)['id']);
-            $this->jamfdevice = $jamf_item;
+            $this->jamfplugin_device = $jamf_item;
          }
       }
 
@@ -194,9 +218,20 @@ abstract class PluginJamfSync
 
    abstract public static function syncAll(): int;
 
+   /**
+    * Get the data needed to sync the given GLPI item with a Jamf item from the Jamf API.
+    *
+    * It is assumed that the GLPI item's existence was already verified. This function should verify that the GLPI item is linked to a Jamf item.
+    * @param string $itemtype GLPI item type
+    * @param int $items_id GLPI item ID
+    * @return array
+    * @since 1.0.0
+    */
+   abstract protected static function getJamfDataForSyncingByGlpiItem(string $itemtype, int $items_id): array;
+
    abstract public static function sync(string $itemtype, int $items_id, bool $use_transaction = true): bool;
 
-   abstract public static function syncExtensionAttributeDefinitions();
+   //abstract public static function syncExtensionAttributeDefinitions();
 
    abstract public static function getSupportedGlpiItemtypes(): array;
 
