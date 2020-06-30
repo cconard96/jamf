@@ -61,8 +61,6 @@ class PluginJamfProfile extends Profile
     */
    public function showForm($profiles_id = 0, $openform = true, $closeform = true)
    {
-      global $CFG_GLPI;
-
       if (!self::canView()) {
          return false;
       }
@@ -70,7 +68,9 @@ class PluginJamfProfile extends Profile
       echo "<div class='spaced'>";
       $profile = new Profile();
       $profile->getFromDB($profiles_id);
-      if ($openform && ($canedit = Session::haveRightsOr(self::$rightname, [CREATE, UPDATE, PURGE]))) {
+
+      $can_edit = Session::haveRight(self::$rightname, UPDATE);
+      if ($openform && $can_edit) {
          echo "<form method='post' action='" . $profile::getFormURL() . "'>";
       }
 
@@ -104,8 +104,7 @@ class PluginJamfProfile extends Profile
       $matrix_options['title'] = __('Jamf plugin');
       $profile->displayRightsChoiceMatrix($rights, $matrix_options);
 
-      if ($canedit
-         && $closeform) {
+      if ($can_edit && $closeform) {
          echo "<div class='center'>";
          echo Html::hidden('id', ['value' => $profiles_id]);
          echo Html::submit(_sx('button', 'Save'), ['name' => 'update']);

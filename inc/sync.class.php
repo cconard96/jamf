@@ -102,7 +102,6 @@ abstract class PluginJamfSync
 
    /**
     * @var DBmysql
-    * @todo Replace with DI hopefully next GLPI version
     */
    protected $db;
 
