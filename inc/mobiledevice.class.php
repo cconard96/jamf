@@ -144,7 +144,6 @@ JAVASCRIPT;
          $lat = $match['lost_location_latitude'];
          $long = $match['lost_location_longitude'];
          $out .= '<td>'.__('GPS'). '</td><td>';
-         //TODO Use leaflet
          $out .= Html::link("$lat, $long", "https://www.google.com/maps/place/$lat,$long", [
             'display'   => false
          ]);

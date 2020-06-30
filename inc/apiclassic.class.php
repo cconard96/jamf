@@ -253,6 +253,81 @@ class PluginJamfAPIClassic
       return $response['group']['privileges']['jss_actions'];
    }
 
+   private static function getGroupAccessRights($account)
+   {
+      $rights = [
+         'jss_objects'  => [],
+         'jss_actions'  => [],
+         'jss_settings' => []
+      ];
+
+      $group_count = count($account->groups->group);
+      //$groups = $account->groups->group;
+      for ($i = 0; $i < $group_count; $i++) {
+         $group = $account->groups->group[$i];
+         if (isset($group->privileges->jss_objects)) {
+            $c = count($group->privileges->jss_objects->privilege);
+            if ($c > 0) {
+               for ($j = 0; $j < $c; $j++) {
+                  $rights['jss_objects'][] = reset($group->privileges->jss_objects->privilege[$j]);
+               }
+            }
+         }
+         // Why are jss_actions not included in the group when all other rights are?
+         // Confirmed bug with developer team. Sound like we need to work around it until the endpoint is in the Pro API.
+         $action_privileges = self::getJSSGroupActionRights(reset($group->id));
+         $rights['jss_actions'] = $action_privileges;
+
+         if (isset($group->privileges->jss_settings)) {
+            $c = count($group->privileges->jss_settings->privilege);
+            if ($c > 0) {
+               for ($j = 0; $j < $c; $j++) {
+                  $rights['jss_settings'][] = reset($group->privileges->jss_settings->privilege[$j]);
+               }
+            }
+         }
+      }
+
+      return $rights;
+   }
+
+   private static function getUserAccessRights($account)
+   {
+      $rights = [
+         'jss_objects'  => [],
+         'jss_actions'  => [],
+         'jss_settings' => []
+      ];
+
+      $privileges = $account->privileges;
+      if (isset($privileges->jss_objects)) {
+         $c = count($privileges->jss_objects->privilege);
+         if ($c > 0) {
+            for ($j = 0; $j < $c; $j++) {
+               $rights['jss_objects'][] = reset($privileges->jss_objects->privilege[$j]);
+            }
+         }
+      }
+      if (isset($privileges->jss_actions)) {
+         $c = count($privileges->jss_actions->privilege);
+         if ($c > 0) {
+            for ($j = 0; $j < $c; $j++) {
+               $rights['jss_actions'][] = reset($privileges->jss_actions->privilege[$j]);
+            }
+         }
+      }
+      if (isset($privileges->jss_settings)) {
+         $c = count($privileges->jss_settings->privilege);
+         if ($c > 0) {
+            for ($j = 0; $j < $c; $j++) {
+               $rights['jss_settings'][] = reset($privileges->jss_settings->privilege[$j]);
+            }
+         }
+      }
+
+      return $rights;
+   }
+
    public static function getJSSAccountRights($userid, $user_auth = false)
    {
       if ($user_auth && !PluginJamfUser_JSSAccount::canReadJSSItem('accounts')) {
@@ -262,65 +337,11 @@ class PluginJamfAPIClassic
       $account = simplexml_load_string($response);
 
       $access_level = reset($account->access_level);
-      $rights = [
-         'jss_objects'  => [],
-         'jss_actions'  => [],
-         'jss_settings' => []
-      ];
-      if ($access_level === 'Group Access') {
-         $group_count = count($account->groups->group);
-         //$groups = $account->groups->group;
-         for ($i = 0; $i < $group_count; $i++) {
-            $group = $account->groups->group[$i];
-            if (isset($group->privileges->jss_objects)) {
-               $c = count($group->privileges->jss_objects->privilege);
-               if ($c > 0) {
-                  for ($j = 0; $j < $c; $j++) {
-                     $rights['jss_objects'][] = reset($group->privileges->jss_objects->privilege[$j]);
-                  }
-               }
-            }
-            // Why are jss_actions not included in the group when all other rights are?
-            $action_privileges = self::getJSSGroupActionRights(reset($group->id));
-            $rights['jss_actions'] = $action_privileges;
 
-            if (isset($group->privileges->jss_settings)) {
-               $c = count($group->privileges->jss_settings->privilege);
-               if ($c > 0) {
-                  for ($j = 0; $j < $c; $j++) {
-                     $rights['jss_settings'][] = reset($group->privileges->jss_settings->privilege[$j]);
-                  }
-               }
-            }
-         }
-      } else {
-         $privileges = $account->privileges;
-         if (isset($privileges->jss_objects)) {
-            $c = count($privileges->jss_objects->privilege);
-            if ($c > 0) {
-               for ($j = 0; $j < $c; $j++) {
-                  $rights['jss_objects'][] = reset($privileges->jss_objects->privilege[$j]);
-               }
-            }
-         }
-         if (isset($privileges->jss_actions)) {
-            $c = count($privileges->jss_actions->privilege);
-            if ($c > 0) {
-               for ($j = 0; $j < $c; $j++) {
-                  $rights['jss_actions'][] = reset($privileges->jss_actions->privilege[$j]);
-               }
-            }
-         }
-         if (isset($privileges->jss_settings)) {
-            $c = count($privileges->jss_settings->privilege);
-            if ($c > 0) {
-               for ($j = 0; $j < $c; $j++) {
-                  $rights['jss_settings'][] = reset($privileges->jss_settings->privilege[$j]);
-               }
-            }
-         }
+      if ($access_level === 'Group Access') {
+         return self::getGroupAccessRights($account);
       }
-      return $rights;
+      return self::getUserAccessRights($account);
    }
 }
 
