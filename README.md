@@ -8,7 +8,6 @@ Syncs asset data from JAMF Pro to GLPI.
 - GLPI >= 9.5.0
 - PHP >= 7.2.0
 - Jamf Pro >= 10.20.0
-- php simplexml extension. run "composer require ext-simplexml" in the root of the site to install the newest version.
 
 ## Usage
 - Server/sync configuration is found in Setup > Config under the JAMF Plugin tab.
