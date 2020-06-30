@@ -35,28 +35,9 @@ class PluginJamfConnection {
    public function __construct()
    {
       $jamf_config = Config::getConfigurationValues('plugin:Jamf', [
-         'jssserver', 'jssuser', 'jsspassword']);
+         'jssserver', 'jssuser', 'jsspassword', 'jssignorecert']);
       $this->config = $jamf_config;
       $this->config['jsspassword'] = Toolbox::decrypt($this->config['jsspassword'], GLPIKEY);
-   }
-
-   /**
-    * Set or change the connection details in the DB.
-    * @since 1.0.0
-    * @param string $jssserver The URL (and port) or the JSS server.
-    * @param string $jssuser The user to connect to the JSS with.
-    * @param string $jsspassword The password for $jssuser.
-    */
-   public function setConnectionConfig($jssserver, $jssuser, $jsspassword)
-   {
-      global $DB;
-
-      $enc = Toolbox::encrypt($jsspassword, GLPIKEY);
-      Config::setConfigurationValues('plugin:Jamf', [
-         'jssserver' => $jssserver,
-         'jssuser' => $jssuser,
-         'jsspassword' => $enc
-      ]);
    }
 
    /**

@@ -60,8 +60,7 @@ class PluginJamfToolbox {
     */
    public static function utcToLocal(DateTime $utc)
    {
-      //TODO Use GLPI timezone when GLPI supports them.
-      $tz = new DateTimeZone(date_default_timezone_get());
+      $tz = new DateTimeZone($_SESSION['glpi_tz'] ?? date_default_timezone_get());
       $utc->setTimezone($tz);
       return $utc;
    }
