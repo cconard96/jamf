@@ -133,12 +133,14 @@ class PluginJamfProfile extends Profile
 
       $profile = new Profile();
       $profile->getFromDB($profiles_id);
+      $can_edit = Session::haveRight(self::$rightname, UPDATE);
+
       echo "<div class='spaced'>";
-      if ($canedit = Session::haveRightsOr(self::$rightname, [CREATE, UPDATE, PURGE])) {
+      if ($can_edit) {
          echo "<form method='post' action='" . $profile::getFormURL() . "'>";
       }
 
-      $matrix_options = ['canedit' => $canedit,
+      $matrix_options = ['canedit' => $can_edit,
          'default_class' => 'tab_bg_2'];
 
       $rights = [['itemtype' => 'PluginJamfMobileDevice',
@@ -148,7 +150,7 @@ class PluginJamfProfile extends Profile
       $matrix_options['title'] = __('Jamf plugin');
       $profile->displayRightsChoiceMatrix($rights, $matrix_options);
 
-      if ($canedit) {
+      if ($can_edit) {
          echo "<tr class='tab_bg_1'>";
          echo "<td colspan='4' class='center'>";
          echo Html::hidden('id', ['value' => $profiles_id]);
