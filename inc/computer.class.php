@@ -75,12 +75,12 @@ class PluginJamfComputer extends PluginJamfAbstractDevice
       $out .= '<td>' .Html::convDateTime($match['sync_date']). '</td></tr>';
 
       $out .= '<tr><td>' .__('Jamf last inventory', 'jamf'). '</td>';
-      $out .= '<td>'.Html::convDateTime($match['last_inventory']). '</td>';
+      $out .= '<td>'.PluginJamfToolbox::utcToLocal($match['last_inventory']). '</td>';
       $out .= '<td>'.__('Jamf import date', 'jamf'). '</td>';
-      $out .= '<td>' .Html::convDateTime($match['entry_date']). '</td></tr>';
+      $out .= '<td>' .PluginJamfToolbox::utcToLocal($match['entry_date']). '</td></tr>';
 
       $out .= '<tr><td>'.__('Enrollment date', 'jamf').'</td>';
-      $out .= '<td>'.Html::convDateTime($match['enroll_date']).'</td>';
+      $out .= '<td>'.PluginJamfToolbox::utcToLocal($match['enroll_date']).'</td>';
       $out .= '<td>'.__('Supervised', 'jamf').'</td>';
       $out .= '<td>'.$getYesNo($match['supervised']).'</td></tr>';
 

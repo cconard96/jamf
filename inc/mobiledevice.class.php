@@ -78,12 +78,12 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
       $out .= '<td>' .Html::convDateTime($match['sync_date']). '</td></tr>';
 
       $out .= '<tr><td>' .__('Jamf last inventory', 'jamf'). '</td>';
-      $out .= '<td>'.Html::convDateTime($match['last_inventory']). '</td>';
+      $out .= '<td>'.PluginJamfToolbox::utcToLocal($match['last_inventory']). '</td>';
       $out .= '<td>'.__('Jamf import date', 'jamf'). '</td>';
-      $out .= '<td>' .Html::convDateTime($match['entry_date']). '</td></tr>';
+      $out .= '<td>' .PluginJamfToolbox::utcToLocal($match['entry_date']). '</td></tr>';
 
       $out .= '<tr><td>'.__('Enrollment date', 'jamf').'</td>';
-      $out .= '<td>'.Html::convDateTime($match['enroll_date']).'</td>';
+      $out .= '<td>'.PluginJamfToolbox::utcToLocal($match['enroll_date']).'</td>';
       $out .= '<td>'.__('Shared device', 'jamf').'</td>';
       $out .= '<td>'.$match['shared']. '</td></tr>';
 
@@ -134,7 +134,7 @@ JAVASCRIPT;
          $out .= '<td>'.$getYesNo($match['lost_mode_enforced']). '</td></tr>';
 
          $out .= '<tr><td>'.__('Enable date', 'jamf'). '</td>';
-         $out .= '<td>'.Html::convDateTime($match['lost_mode_enable_date']). '</td></tr>';
+         $out .= '<td>'.PluginJamfToolbox::utcToLocal($match['lost_mode_enable_date']). '</td></tr>';
 
          $out .= '<tr><td>'.__('Message', 'jamf'). '</td>';
          $out .= '<td>'.$match['lost_mode_message']. '</td>';
@@ -152,7 +152,7 @@ JAVASCRIPT;
          $out .= '<tr><td>'.__('Speed', 'jamf'). '</td>';
          $out .= '<td>'.$match['lost_location_speed']. '</td>';
          $out .= '<td>'.__('Lost location date'). '</td>';
-         $out .= '<td>'.Html::convDateTime($match['lost_location_date']). '</td></tr>';
+         $out .= '<td>'.PluginJamfToolbox::utcToLocal($match['lost_location_date']). '</td></tr>';
       }
 
       echo $out;

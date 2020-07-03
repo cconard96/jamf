@@ -209,12 +209,11 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync {
          $infocom_changes = [];
          if (!empty($purchasing['po_date_utc'])) {
             $purchase_date = PluginJamfToolbox::utcToLocal(new DateTime($purchasing['po_date_utc']));
-            $purchase_date_str = $purchase_date->format('Y-m-d H:i:s');
-            $infocom_changes['buy_date'] = $purchase_date_str;
+            $infocom_changes['buy_date'] = $purchase_date;
             if (!empty($purchasing['warranty_expires_utc'])) {
-               $infocom_changes['warranty_date'] = $purchase_date_str;
+               $infocom_changes['warranty_date'] = $purchase_date;
                $warranty_expiration = PluginJamfToolbox::utcToLocal(new DateTime($purchasing['warranty_expires_utc']));
-               $diff = date_diff($warranty_expiration, $purchase_date);
+               $diff = date_diff(new DateTime($warranty_expiration), new DateTime($purchase_date));
                $warranty_length = $diff->m + ($diff->y * 12);
                $infocom_changes['warranty_duration'] = $warranty_length;
             }
@@ -399,16 +398,16 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync {
       try {
          $general = $this->data['general'];
          if (!empty($general['last_inventory_update_utc'])) {
-            $last_inventory = PluginJamfToolbox::utcToLocal(new DateTime($general['last_inventory_update_utc']));
-            $this->jamfplugin_item_changes['last_inventory'] = $last_inventory->format("Y-m-d H:i:s");
+            $last_inventory = new DateTime($general['last_inventory_update_utc']);
+            $this->jamfplugin_item_changes['last_inventory'] = $last_inventory;
          }
          if (!empty($general['initial_entry_date_utc'])) {
-            $entry_date = PluginJamfToolbox::utcToLocal(new DateTime($general['initial_entry_date_utc']));
-            $this->jamfplugin_item_changes['entry_date'] = $entry_date->format("Y-m-d H:i:s");
+            $entry_date = new DateTime($general['initial_entry_date_utc']);
+            $this->jamfplugin_item_changes['entry_date'] = $entry_date;
          }
          if (!empty($general['last_enrollment_utc'])) {
-            $enroll_date = PluginJamfToolbox::utcToLocal(new DateTime($general['last_enrollment_utc']));
-            $this->jamfplugin_item_changes['enroll_date'] = $enroll_date->format("Y-m-d H:i:s");
+            $enroll_date = new DateTime($general['last_enrollment_utc']);
+            $this->jamfplugin_item_changes['enroll_date'] = $enroll_date;
          }
 
          $this->jamfplugin_item_changes['jamf_items_id'] = $general['id'];
