@@ -32,7 +32,7 @@ class PluginJamfComputer extends PluginJamfAbstractDevice
 
    public static function getTypeName($nb = 1)
    {
-      return _n('Jamf computer', 'Jamf computers', $nb, 'jamf');
+      return _nx('itemtype', 'Jamf computer', 'Jamf computers', $nb, 'jamf');
    }
 
    /**
@@ -68,35 +68,35 @@ class PluginJamfComputer extends PluginJamfAbstractDevice
       }
       $match = reset($match);
 
-      $out .= "<tr><th colspan='4'>".__('Jamf General Information', 'jamf'). '</th></tr>';
-      $out .= '<tr><td>' .__('Import date', 'jamf'). '</td>';
+      $out .= "<tr><th colspan='4'>"._x('form_section', 'Jamf General Information', 'jamf'). '</th></tr>';
+      $out .= '<tr><td>' ._x('field','Import date', 'jamf'). '</td>';
       $out .= '<td>' .Html::convDateTime($match['import_date']). '</td>';
-      $out .= '<td>' .__('Last sync', 'jamf'). '</td>';
+      $out .= '<td>' ._x('field','Last sync', 'jamf'). '</td>';
       $out .= '<td>' .Html::convDateTime($match['sync_date']). '</td></tr>';
 
-      $out .= '<tr><td>' .__('Jamf last inventory', 'jamf'). '</td>';
+      $out .= '<tr><td>' ._x('field','Jamf last inventory', 'jamf'). '</td>';
       $out .= '<td>'.PluginJamfToolbox::utcToLocal($match['last_inventory']). '</td>';
-      $out .= '<td>'.__('Jamf import date', 'jamf'). '</td>';
+      $out .= '<td>'._x('field','Jamf import date', 'jamf'). '</td>';
       $out .= '<td>' .PluginJamfToolbox::utcToLocal($match['entry_date']). '</td></tr>';
 
-      $out .= '<tr><td>'.__('Enrollment date', 'jamf').'</td>';
+      $out .= '<tr><td>'._x('field','Enrollment date', 'jamf').'</td>';
       $out .= '<td>'.PluginJamfToolbox::utcToLocal($match['enroll_date']).'</td>';
-      $out .= '<td>'.__('Supervised', 'jamf').'</td>';
+      $out .= '<td>'._x('field','Supervised', 'jamf').'</td>';
       $out .= '<td>'.$getYesNo($match['supervised']).'</td></tr>';
 
-      $out .= '<tr><td>'.__('Managed', 'jamf').'</td>';
+      $out .= '<tr><td>'._x('field','Managed', 'jamf').'</td>';
       $out .= '<td>'.$getYesNo($match['managed']).'</td>';
-      $out .= '<td>'.__('Activation locked', 'jamf').'</td>';
+      $out .= '<td>'._x('field','Activation locked', 'jamf').'</td>';
       $out .= '<td>'.$getYesNo($match['activation_lock_enabled']).'</td></tr>';
 
       $link = self::getJamfDeviceURL($match['jamf_items_id']);
-      $view_msg = __('View in Jamf', 'jamf');
+      $view_msg = _x('action', 'View in Jamf', 'jamf');
       $out .= "<tr><td colspan='4' class='center'>";
       $out .= "<a class='vsubmit' href='{$link}' target='_blank'>{$view_msg}</a>";
 
       if ($item->canUpdate()) {
          $onclick = "syncDevice(\"{$item::getType()}\", {$item->getID()}); return false;";
-         $out .= "&nbsp;&nbsp;<a class='vsubmit' onclick='{$onclick}'>".__('Sync now', 'jamf'). '</a>';
+         $out .= "&nbsp;&nbsp;<a class='vsubmit' onclick='{$onclick}'>"._x('action', 'Sync now', 'jamf'). '</a>';
          $ajax_url = $CFG_GLPI['root_doc']. '/plugins/jamf/ajax/sync.php';
          $js = <<<JAVASCRIPT
                function syncDevice(itemtype, items_id) {

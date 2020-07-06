@@ -63,7 +63,7 @@ class PluginJamfAPIClassic
          return null;
       }
       if ($httpcode == 500) {
-         throw new RuntimeException(__('Unknown JSS API Error'));
+         throw new RuntimeException(_x('error', 'Unknown JSS API Error', 'jamf'));
       }
 
       return ($raw ? $response : json_decode($response, true));

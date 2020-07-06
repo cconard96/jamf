@@ -33,7 +33,7 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
 
    public static function getTypeName($nb = 1)
    {
-      return _n('Jamf mobile device', 'Jamf mobile devices', $nb, 'jamf');
+      return _nx('itemtype', 'Jamf mobile device', 'Jamf mobile devices', $nb, 'jamf');
    }
 
    public static function showForItem(array $params)
@@ -54,7 +54,7 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
       $out = '';
       if ($item::getType() === 'Phone') {
          $uuid = PluginJamfExtField::getValue('Phone', $item->getID(), 'uuid');
-         $out .= '<tr><td>' . __('UUID', 'jamf') . '</td><td>';
+         $out .= '<tr><td>' . _x('field', 'UUID', 'jamf') . '</td><td>';
          $out .= Html::input('_plugin_jamf_uuid', [
             'value' => $uuid
          ]);
@@ -71,40 +71,40 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
       }
       $match = reset($match);
 
-      $out .= "<tr><th colspan='4'>".__('Jamf General Information', 'jamf'). '</th></tr>';
-      $out .= '<tr><td>' .__('Import date', 'jamf'). '</td>';
+      $out .= "<tr><th colspan='4'>"._x('form_section', 'Jamf General Information', 'jamf'). '</th></tr>';
+      $out .= '<tr><td>' ._x('field', 'Import date', 'jamf'). '</td>';
       $out .= '<td>' .Html::convDateTime($match['import_date']). '</td>';
-      $out .= '<td>' .__('Last sync', 'jamf'). '</td>';
+      $out .= '<td>' ._x('field', 'Last sync', 'jamf'). '</td>';
       $out .= '<td>' .Html::convDateTime($match['sync_date']). '</td></tr>';
 
-      $out .= '<tr><td>' .__('Jamf last inventory', 'jamf'). '</td>';
+      $out .= '<tr><td>' ._x('field', 'Jamf last inventory', 'jamf'). '</td>';
       $out .= '<td>'.PluginJamfToolbox::utcToLocal($match['last_inventory']). '</td>';
-      $out .= '<td>'.__('Jamf import date', 'jamf'). '</td>';
+      $out .= '<td>'._x('field', 'Jamf import date', 'jamf'). '</td>';
       $out .= '<td>' .PluginJamfToolbox::utcToLocal($match['entry_date']). '</td></tr>';
 
-      $out .= '<tr><td>'.__('Enrollment date', 'jamf').'</td>';
+      $out .= '<tr><td>'._x('field', 'Enrollment date', 'jamf').'</td>';
       $out .= '<td>'.PluginJamfToolbox::utcToLocal($match['enroll_date']).'</td>';
-      $out .= '<td>'.__('Shared device', 'jamf').'</td>';
+      $out .= '<td>'._x('field', 'Shared device', 'jamf').'</td>';
       $out .= '<td>'.$match['shared']. '</td></tr>';
 
-      $out .= '<tr><td>'.__('Supervised', 'jamf').'</td>';
+      $out .= '<tr><td>'._x('field', 'Supervised', 'jamf').'</td>';
       $out .= '<td>'.$getYesNo($match['supervised']).'</td>';
-      $out .= '<td>'.__('Managed', 'jamf').'</td>';
+      $out .= '<td>'._x('field', 'Managed', 'jamf').'</td>';
       $out .= '<td>'.$getYesNo($match['managed']).'</td></tr>';
 
-      $out .= '<td>'.__('Cloud backup enabled', 'jamf').'</td>';
+      $out .= '<td>'._x('field', 'Cloud backup enabled', 'jamf').'</td>';
       $out .= '<td>'.$getYesNo($match['cloud_backup_enabled']).'</td>';
-      $out .= '<td>'.__('Activation locked', 'jamf').'</td>';
+      $out .= '<td>'._x('field', 'Activation locked', 'jamf').'</td>';
       $out .= '<td>'.$getYesNo($match['activation_lock_enabled']).'</td></tr>';
 
       $link = self::getJamfDeviceURL($match['jamf_items_id']);
-      $view_msg = __('View in Jamf', 'jamf');
+      $view_msg = _x('action', 'View in Jamf', 'jamf');
       $out .= "<tr><td colspan='4' class='center'>";
       $out .= "<a class='vsubmit' href='{$link}' target='_blank'>{$view_msg}</a>";
 
       if ($item->canUpdate()) {
          $onclick = "syncDevice(\"{$item::getType()}\", {$item->getID()}); return false;";
-         $out .= "&nbsp;&nbsp;<a class='vsubmit' onclick='{$onclick}'>".__('Sync now', 'jamf'). '</a>';
+         $out .= "&nbsp;&nbsp;<a class='vsubmit' onclick='{$onclick}'>"._x('action', 'Sync now', 'jamf'). '</a>';
          $ajax_url = $CFG_GLPI['root_doc']. '/plugins/jamf/ajax/sync.php';
          $js = <<<JAVASCRIPT
                function syncDevice(itemtype, items_id) {
@@ -123,35 +123,35 @@ JAVASCRIPT;
       }
       $out .= '</td></tr>';
 
-      $out .= "<tr><th colspan='4'>".__('Jamf Lost Mode Information', 'jamf'). '</th></tr>';
+      $out .= "<tr><th colspan='4'>"._x('form_section', 'Jamf Lost Mode Information', 'jamf'). '</th></tr>';
       $enabled = $match['lost_mode_enabled'];
       if (!$enabled || ($enabled != 'true')) {
-         $out .= "<tr class='center'><td colspan='4'>".__('Lost mode is not enabled'). '</td></tr>';
+         $out .= "<tr class='center'><td colspan='4'>"._x('field', 'Lost mode is not enabled'). '</td></tr>';
       } else {
-         $out .= '<tr><td>'.__('Enabled', 'jamf'). '</td>';
+         $out .= '<tr><td>'._x('field', 'Enabled', 'jamf'). '</td>';
          $out .= '<td>'.$enabled. '</td>';
-         $out .= '<td>'.__('Enforced', 'jamf'). '</td>';
+         $out .= '<td>'._x('field', 'Enforced', 'jamf'). '</td>';
          $out .= '<td>'.$getYesNo($match['lost_mode_enforced']). '</td></tr>';
 
-         $out .= '<tr><td>'.__('Enable date', 'jamf'). '</td>';
+         $out .= '<tr><td>'._x('field', 'Enable date', 'jamf'). '</td>';
          $out .= '<td>'.PluginJamfToolbox::utcToLocal($match['lost_mode_enable_date']). '</td></tr>';
 
-         $out .= '<tr><td>'.__('Message', 'jamf'). '</td>';
+         $out .= '<tr><td>'._x('field', 'Message', 'jamf'). '</td>';
          $out .= '<td>'.$match['lost_mode_message']. '</td>';
-         $out .= '<td>'.__('Phone', 'jamf'). '</td>';
+         $out .= '<td>'._x('field', 'Phone', 'jamf'). '</td>';
          $out .= '<td>'.$match['lost_mode_phone']. '</td></tr>';
 
          $lat = $match['lost_location_latitude'];
          $long = $match['lost_location_longitude'];
-         $out .= '<td>'.__('GPS'). '</td><td>';
+         $out .= '<td>'._x('field', 'GPS'). '</td><td>';
          $out .= Html::link("$lat, $long", "https://www.google.com/maps/place/$lat,$long", [
             'display'   => false
          ]);
-         $out .= '<tr><td>'.__('Altitude'). '</td>';
+         $out .= '<tr><td>'._x('field', 'Altitude'). '</td>';
          $out .= '<td>'.$match['lost_location_altitude']. '</td>';
-         $out .= '<tr><td>'.__('Speed', 'jamf'). '</td>';
+         $out .= '<tr><td>'._x('field', 'Speed', 'jamf'). '</td>';
          $out .= '<td>'.$match['lost_location_speed']. '</td>';
-         $out .= '<td>'.__('Lost location date'). '</td>';
+         $out .= '<td>'._x('field', 'Lost location date'). '</td>';
          $out .= '<td>'.PluginJamfToolbox::utcToLocal($match['lost_location_date']). '</td></tr>';
       }
 
@@ -239,17 +239,17 @@ JAVASCRIPT;
 
       $cards['plugin_jamf_mobile_lost'] = [
          'widgettype'  => ['bigNumber'],
-         'label'       => __('Jamf Lost Mobile Device Count'),
+         'label'       => _x('dashboard', 'Jamf Lost Mobile Device Count', 'jamf'),
          'provider'    => 'PluginJamfMobileDevice::cardLostModeProvider'
       ];
       $cards['plugin_jamf_mobile_managed'] = [
          'widgettype'  => ['bigNumber'],
-         'label'       => __('Jamf Managed Mobile Device Count'),
+         'label'       => _x('dashboard', 'Jamf Managed Mobile Device Count', 'jamf'),
          'provider'    => 'PluginJamfMobileDevice::cardManagedProvider'
       ];
       $cards['plugin_jamf_mobile_supervised'] = [
          'widgettype'  => ['bigNumber'],
-         'label'       => __('Jamf Supervised Mobile Device Count'),
+         'label'       => _x('dashboard', 'Jamf Supervised Mobile Device Count', 'jamf'),
          'provider'    => 'PluginJamfMobileDevice::cardSupervisedProvider'
       ];
 
@@ -270,7 +270,7 @@ JAVASCRIPT;
       ]);
 
       return [
-         'label' => __('Jamf Lost Mobile Device Count'),
+         'label' => _x('dashboard', 'Jamf Lost Mobile Device Count', 'jamf'),
          'number' => $iterator->next()['cpt']
       ];
    }
@@ -289,7 +289,7 @@ JAVASCRIPT;
       ]);
 
       return [
-         'label' => __('Jamf Managed Mobile Device Count'),
+         'label' => _x('dashboard', 'Jamf Managed Mobile Device Count', 'jamf'),
          'number' => $iterator->next()['cpt']
       ];
    }
@@ -307,7 +307,7 @@ JAVASCRIPT;
          'WHERE' => ['supervised' => 1],
       ]);
       return [
-         'label'  => __('Jamf Supervised Mobile Device Count'),
+         'label'  => _x('dashboard', 'Jamf Supervised Mobile Device Count', 'jamf'),
          'number' => $iterator->next()['cpt']
       ];
    }

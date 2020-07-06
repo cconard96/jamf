@@ -211,10 +211,12 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
    {
       global $DB;
 
+      /** @var CommonDBTM $item */
       $item = new $itemtype();
 
       if (!$item->getFromDB($items_id)) {
-         Toolbox::logError("Attempted to sync non-existent $itemtype with ID {$items_id}");
+         $itemtype_name = $item::getTypeName(1);
+         Toolbox::logError(_x('error', "Attempted to sync non-existent {$itemtype_name} with ID {$items_id}", 'jamf'));
          return false;
       }
 

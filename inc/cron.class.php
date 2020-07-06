@@ -30,7 +30,7 @@ final class PluginJamfCron extends CommonGLPI
 
    public static function getTypeName($nb = 0)
    {
-      return __('Jamf plugin', 'jamf');
+      return _x('plugin_info', 'Jamf plugin', 'jamf');
    }
 
    public static function cronSyncJamf(CronTask $task)

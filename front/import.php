@@ -44,12 +44,12 @@ echo "<form>";
 echo "<div class='center'><table id='import_table' class='tab_cadre' style='width: 50%'>";
 echo "<thead>";
 echo "<th>{$check_all}</th>";
-echo "<th>".__('Jamf ID')."</th>";
-echo "<th>".__('Jamf Type')."</th>";
-echo "<th>".__('Name')."</th>";
-echo "<th>".__('Type')."</th>";
-echo "<th>".__('UDID')."</th>";
-echo "<th>".__('Discovery Date')."</th>";
+echo "<th>"._x('field', 'Jamf ID', 'jamf')."</th>";
+echo "<th>"._x('field', 'Jamf Type', 'jamf')."</th>";
+echo "<th>"._x('field', 'Name', 'jamf')."</th>";
+echo "<th>"._x('field', 'Type', 'jamf')."</th>";
+echo "<th>"._x('field', 'UDID', 'jamf')."</th>";
+echo "<th>"._x('field', 'Discovery Date', 'jamf')."</th>";
 echo "</thead><tbody>";
 while ($data = $pending->next()) {
    $rowid = $data['jamf_items_id'];
@@ -71,12 +71,12 @@ while ($data = $pending->next()) {
 }
 echo "</tbody></table><br>";
 
-echo "<a class='vsubmit' onclick='importDevices(); return false;'>".__('Import')."</a>";
-echo "&nbsp;<a class='vsubmit' onclick='discoverNow(); return false;'>".__('Discover now')."</a>";
+echo "<a class='vsubmit' onclick='importDevices(); return false;'>"._x('action', 'Import', 'jamf')."</a>";
+echo "&nbsp;<a class='vsubmit' onclick='discoverNow(); return false;'>"._x('action', 'Discover now', 'jamf')."</a>";
 echo "</div>";
 $ajax_root = $CFG_GLPI['root_doc']."/plugins/jamf/ajax/";
-$import_msg = __('Importing...');
-$discover_msg = __('Discovering...');
+$import_msg = _x('action', 'Importing', 'jamf') . '...';
+$discover_msg = _x('action', 'Discovering', 'jamf') . '...';
 $js = <<<JAVASCRIPT
       function importDevices() {
          var import_ids = $(':checkbox:checked').filter(':not([name^="_checkall"])').map(function(){
@@ -126,6 +126,6 @@ echo Html::scriptBlock($js);
 $position = "position: fixed; top: 0; left: 0; right: 0; bottom: 0;";
 $style = "display: none; {$position} width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 2; cursor: progress;";
 echo "<div id='loading-overlay' style='{$style}'><table class='tab_cadre' style='margin-top: 10%;'>";
-echo "<thead><tr><th class='center'><h3>".__('Importing devices...', 'jamf')."</h3></th></tr></thead>";
+echo "<thead><tr><th class='center'><h3>".$import_msg."</h3></th></tr></thead>";
 echo "</table></div>";
 Html::footer();

@@ -33,7 +33,7 @@ class PluginJamfItem_ExtensionAttribute extends CommonDBChild {
 
     public static function getTypeName($nb = 1)
     {
-        return _n('Extension attribute', 'Extension attributes', $nb, 'jamf');
+        return _nx('itemtype', 'Extension attribute', 'Extension attributes', $nb, 'jamf');
     }
 
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
@@ -77,9 +77,9 @@ class PluginJamfItem_ExtensionAttribute extends CommonDBChild {
 
         echo "<table class='tab_cadre_fixe'>";
         echo "<thead>";
-        echo "<th>".__('Name', 'jamf')."</th>";
-        echo "<th>".__('Type', 'jamf')."</th>";
-        echo "<th>".__('Value', 'jamf')."</th>";
+        echo "<th>"._x('field', 'Name', 'jamf')."</th>";
+        echo "<th>"._x('field', 'Type', 'jamf')."</th>";
+        echo "<th>"._x('field', 'Value', 'jamf')."</th>";
         echo "</thead>";
         echo "<tbody>";
         foreach ($attributes as $attribute) {
