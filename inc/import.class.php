@@ -30,6 +30,6 @@ class PluginJamfImport extends CommonDBTM {
 
    public static function getTypeName($nb = 0)
    {
-      return _n('Pending import', 'Pending imports', $nb, 'jamf');
+      return _nx('itemtype', 'Pending import', 'Pending imports', $nb, 'jamf');
    }
 }

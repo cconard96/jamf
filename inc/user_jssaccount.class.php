@@ -37,7 +37,7 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
 
    public static function getTypeName($nb = 0)
    {
-      return _n('JSS Account Link', 'JSS Account Links', $nb, 'jamf');
+      return _nx('itemtype', 'JSS Account Link', 'JSS Account Links', $nb, 'jamf');
    }
 
    public function prepareInputForUpdate($input)
@@ -174,7 +174,7 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
       }
       if (count($matches) === 0) {
          // No JSS account link
-         Toolbox::logError("Attempt to use JSS user rights without a linked account");
+         Toolbox::logError(_x('error', 'Attempt to use JSS user rights without a linked account', 'jamf'));
          return false;
       }
       $user_jssaccount->getFromDB(reset($matches)['id']);
@@ -210,14 +210,14 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
 
       echo Html::hidden('users_id', ['value' => $item->getID()]);
       echo "<table class='tab_cadre_fixe'><tr>";
-      echo "<td>".__('JSS Account', 'jamf')."</td><td>";
+      echo "<td>"._x('itemtype', 'JSS Account', 'jamf')."</td><td>";
       Dropdown::showFromArray('jssaccounts_id', $values, [
          'display_emptychoice'   => true,
          'value'                 => isset($mylink) ? $mylink['jssaccounts_id'] : 0
       ]);
       echo "</td><td></td><td></td></td></tr><tr><td class='tab_bg_2 center' colspan='4'>";
       if ($canedit) {
-         $title = __('Update account link', 'jamf');
+         $title = _x('action', 'Update account link', 'jamf');
          echo "<input title='{$title}' type='submit' name='update' value='" . _sx('button', 'Save') . "' class='submit'/>";
       }
       echo "</td></tr></table>";
@@ -227,7 +227,7 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
 
       if ($mylink !== null) {
          $link = self::getJSSAccountURL($mylink['jssaccounts_id']);
-         $view_msg = __('View in Jamf', 'jamf');
+         $view_msg = _x('action', 'View in Jamf', 'jamf');
          echo "<table class='tab_cadre_fixe'><tr><td colspan='4' class='center'>";
          echo "<a class='vsubmit' href='{$link}' target='_blank'>{$view_msg}</a>";
          echo "</td></tr></table>";

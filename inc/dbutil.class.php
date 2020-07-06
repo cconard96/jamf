@@ -40,9 +40,8 @@
 
         $res = $DB->query('DROP TABLE'.$DB::quoteName($table));
         if (!$res) {
-           //TRANS: %1$s is the description, %2$s is the query, %3$s is the error message
             $message = sprintf(
-                __('%1$s - Error during the drop of the table %2$s - Error is %3$s'),
+                _x('error', '%1$s - Error during the drop of the table %2$s - Error is %3$s', 'jamf'),
                 $message,
                 $table,
                 $DB->error()

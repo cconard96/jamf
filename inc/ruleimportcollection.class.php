@@ -32,6 +32,6 @@
 
    public function getTitle()
    {
-      return __('Device import rules', 'jamf');
+      return PluginJamfRuleImport::getTypeName();
    }
  }
