@@ -150,10 +150,10 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
          return;
       }
       $ext_attr = new PluginJamfExtensionAttribute();
-      $all_attributes = PluginJamfAPIClassic::getItems($api_itemtype);
+      $all_attributes = static::$api_classic::getItems($api_itemtype);
       if (is_array($all_attributes)) {
          foreach ($all_attributes as $attribute) {
-            $attr = PluginJamfAPIClassic::getItems($api_itemtype, ['id' => $attribute['id']]);
+            $attr = static::$api_classic::getItems($api_itemtype, ['id' => $attribute['id']]);
             $input = [
                'jamf_id'      => $attr['id'],
                'itemtype'     => static::$jamfplugin_itemtype::getType(),

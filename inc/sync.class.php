@@ -105,6 +105,10 @@ abstract class PluginJamfSync
     */
    protected $db;
 
+   protected static $api_classic = PluginJamfAPIClassic::class;
+
+   protected static $api_pro = PluginJamfAPIPro::class;
+
    /**
     * PluginJamfSync constructor.
     * @param CommonDBTM|null $item

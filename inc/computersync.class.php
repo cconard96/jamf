@@ -133,7 +133,7 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync {
       try {
          $applications = $this->data['software']['applications'];
          foreach ($applications as $application) {
-            $software_data = PluginJamfAPIClassic::getItems('mobiledeviceapplications', [
+            $software_data = static::$api_classic::getItems('mobiledeviceapplications', [
                'application'  => $application['name'],
                'version'      => $application['version']
             ]);
@@ -464,7 +464,7 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync {
       global $DB;
 
       $volume = 0;
-      $jamf_devices = PluginJamfAPIClassic::getItems('computers');
+      $jamf_devices = static::$api_classic::getItems('computers');
       if ($jamf_devices === null || !count($jamf_devices)) {
          // API error or device no longer exists in Jamf
          return -1;
@@ -528,7 +528,7 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync {
       }
       $item = new $itemtype();
 
-      $jamf_item = PluginJamfAPIClassic::getItems('computers', ['id' => $jamf_items_id]);
+      $jamf_item = static::$api_classic::getItems('computers', ['id' => $jamf_items_id]);
       if ($jamf_item === null) {
          // API error or device no longer exists in Jamf
          return false;
@@ -617,7 +617,7 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync {
       }
       $jamf_item = $iterator->next();
 
-      return PluginJamfAPIClassic::getItems('computers', ['id' => $jamf_item['jamf_items_id']]);
+      return static::$api_classic::getItems('computers', ['id' => $jamf_item['jamf_items_id']]);
    }
 
    public static function getSupportedGlpiItemtypes(): array
