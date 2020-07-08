@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<account>
+    <id>2</id>
+    <name>testtech</name>
+    <directory_user>false</directory_user>
+    <full_name>Test Technician</full_name>
+    <email/>
+    <email_address/>
+    <password_sha256 since="9.32">fb51ba4173a5613db2c79c8c12741b803239583ffeb966946a230d9aeecd417d</password_sha256>
+    <enabled>Enabled</enabled>
+    <force_password_change>false</force_password_change>
+    <access_level>Group Access</access_level>
+    <privilege_set>Custom</privilege_set>
+    <groups>
+        <group>
+            <id>1</id>
+            <name>Elementary Technicians</name>
+            <site>
+                <id>-1</id>
+                <name>None</name>
+            </site>
+            <privileges>
+                <jss_objects>
+                    <privilege>Read Mobile Device Extension Attributes</privilege>
+                    <privilege>Read Mobile Devices</privilege>
+                    <privilege>Read Computers</privilege>
+                    <privilege>Read Mobile Device Applications</privilege>
+                </jss_objects>
+                <jss_settings/>
+                <recon/>
+                <casper_admin/>
+                <casper_remote/>
+                <casper_imaging/>
+            </privileges>
+        </group>
+        <group>
+            <id>2</id>
+            <name>AnotherGroup</name>
+            <site>
+                <id>-1</id>
+                <name>None</name>
+            </site>
+            <privileges>
+                <jss_objects/>
+                <jss_settings/>
+                <recon/>
+                <casper_admin/>
+                <casper_remote/>
+                <casper_imaging/>
+            </privileges>
+        </group>
+    </groups>
+</account>

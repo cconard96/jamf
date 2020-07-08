@@ -26,6 +26,7 @@ use Glpi\Event;
 class PluginJamfMobileSync extends PluginJamfDeviceSync {
 
    protected static $jamfplugin_itemtype = 'PluginJamfMobileDevice';
+   protected static $jamf_itemtype = 'MobileDevice';
 
    protected function syncGeneral(): PluginJamfDeviceSync
    {
@@ -648,7 +649,7 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
       return $volume;
    }
 
-   public static function import(string $itemtype, int $jamf_items_id): bool
+   public static function import(string $itemtype, int $jamf_items_id, $use_transaction = true): bool
    {
       global $DB;
 
@@ -718,7 +719,10 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
          return false;
       }
 
-      $DB->beginTransaction();
+      if ($use_transaction) {
+         $DB->beginTransaction();
+      }
+
       // Import new device
       $items_id = $item->add([
          'name'         => $DB->escape($jamf_item['general']['name']),
@@ -728,11 +732,12 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
       ]);
       if ($items_id) {
          // Link
-         $jamf_computer = new PluginJamfComputer();
+         $jamf_computer = new PluginJamfMobileDevice();
          $jamf_computer->add([
-            'itemtype'  => $item::getType(),
-            'items_id'  => $items_id,
-            'udid'      => $jamf_item['general']['udid']
+            'itemtype'        => $item::getType(),
+            'items_id'        => $items_id,
+            'udid'            => $jamf_item['general']['udid'],
+            'jamf_items_id'   => $jamf_item['general']['id'],
          ]);
          if (self::sync($itemtype, $items_id, false)) {
             $DB->update('glpi_plugin_jamf_mobiledevices', [
@@ -742,12 +747,18 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
                'items_id' => $items_id
             ]);
             $DB->delete(PluginJamfImport::getTable(), ['jamf_items_id' => $jamf_items_id]);
-            $DB->commit();
+            if ($use_transaction) {
+               $DB->commit();
+            }
          } else {
-            $DB->rollBack();
+            if ($use_transaction) {
+               $DB->rollBack();
+            }
          }
       } else {
-         $DB->rollBack();
+         if ($use_transaction) {
+            $DB->rollBack();
+         }
          return false;
       }
       return true;
@@ -758,7 +769,7 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
       global $DB;
 
       $iterator = $DB->request([
-         'SELECT' => ['udid'],
+         //'SELECT' => ['udid'],
          'FROM'   => PluginJamfMobileDevice::getTable(),
          'WHERE'  => [
             'itemtype'  => $itemtype,
@@ -771,7 +782,7 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
       }
       $jamf_item = $iterator->next();
 
-      return static::$api_classic::getItems('mobiledevices', ['udid' => $jamf_item['udid']]);
+      return static::$api_classic::getItems('mobiledevices', ['id' => $jamf_item['jamf_items_id']]);
    }
 
    public static function getSupportedGlpiItemtypes(): array

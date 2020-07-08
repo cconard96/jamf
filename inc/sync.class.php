@@ -210,14 +210,15 @@ abstract class PluginJamfSync
          return $item;
       }
 
-      $item->getFromDB(reset($item_matches)['id']);
-      $item->update($state);
+      $match = reset($item_matches);
+      $item->getFromDB($match['id']);
+      $item->update(['id' => $match['id']] + $state);
       return $item;
    }
 
    abstract public static function discover(): bool;
 
-   abstract public static function import(string $itemtype, int $jamf_items_id): bool;
+   abstract public static function import(string $itemtype, int $jamf_items_id, $use_transaction = true): bool;
 
    abstract public static function syncAll(): int;
 

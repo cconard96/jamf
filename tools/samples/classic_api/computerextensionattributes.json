@@ -1,0 +1,24 @@
+{
+  "computer_extension_attributes": [
+    {
+      "id": 16,
+      "name": "Battery Cycle Count",
+      "enabled": true
+    },
+    {
+      "id": 1,
+      "name": "Get Application's Developer Name",
+      "enabled": true
+    },
+    {
+      "id": 15,
+      "name": "JNUC-2019-LabUser",
+      "enabled": true
+    },
+    {
+      "id": 2,
+      "name": "Usage Policy Violation",
+      "enabled": true
+    }
+  ]
+}

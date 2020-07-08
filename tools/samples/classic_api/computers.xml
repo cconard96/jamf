@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <computers>
-    <size>135</size>
+    <size>5</size>
     <computer>
         <id>33</id>
         <name>Computer 2</name>
