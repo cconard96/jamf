@@ -1,0 +1,14 @@
+{
+  "computer_extension_attribute": {
+    "id": 15,
+    "name": "JNUC-2019-LabUser",
+    "enabled": true,
+    "description": "The name of the lab attendee who created this computer",
+    "data_type": "String",
+    "input_type": {
+      "type": "Text Field"
+    },
+    "inventory_display": "Extension Attributes",
+    "recon_display": "Extension Attributes"
+  }
+}

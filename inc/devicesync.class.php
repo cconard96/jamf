@@ -136,6 +136,8 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
 
    public static function syncExtensionAttributeDefinitions(): void
    {
+      global $DB;
+
       switch (static::$jamf_itemtype) {
          case 'Computer':
             $api_itemtype = 'computerextensionattributes';
@@ -158,9 +160,9 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
                'jamf_id'      => $attr['id'],
                'itemtype'     => static::$jamfplugin_itemtype::getType(),
                'jamf_type'    => static::$jamf_itemtype,
-               'name'         => $attr['name'],
-               'description'  => $attr['description'],
-               'data_type'    => $attr['data_type']
+               'name'         => $DB->escape($attr['name']),
+               'description'  => $DB->escape($attr['description']),
+               'data_type'    => $DB->escape($attr['data_type'])
             ];
             $ext_attr->addOrUpdate($input);
          }
@@ -207,7 +209,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
     * @return bool True if the update was successful.
     * @throws Exception Any exception that occurs during the update process.
     */
-   final public static function sync(string $itemtype, int $items_id, bool $use_transaction = true): bool
+   public static function sync(string $itemtype, int $items_id, bool $use_transaction = true): bool
    {
       global $DB;
 

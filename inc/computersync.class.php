@@ -26,6 +26,7 @@ use Glpi\Event;
 class PluginJamfComputerSync extends PluginJamfDeviceSync {
 
    protected static $jamfplugin_itemtype = 'PluginJamfComputer';
+   protected static $jamf_itemtype = 'Computer';
 
    protected function syncGeneral(): PluginJamfDeviceSync
    {
@@ -94,9 +95,9 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync {
       try {
          $hardware = $this->data['hardware'];
          $os = $this->applyDesiredState('OperatingSystem', [
-            'name'      => $hardware['os_type'],
+            'name'      => $hardware['os_name'],
          ], [
-            'name'      => $hardware['os_type'],
+            'name'      => $hardware['os_name'],
             'comment'   => 'Created by Jamf Plugin for GLPI'
          ]);
 
@@ -402,7 +403,7 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync {
             $this->jamfplugin_item_changes['last_inventory'] = $last_inventory;
          }
          if (!empty($general['initial_entry_date_utc'])) {
-            $entry_date = new DateTime($general['initial_entry_date_utc']);
+            $entry_date = $general['initial_entry_date_utc'];
             $this->jamfplugin_item_changes['entry_date'] = $entry_date;
          }
          if (!empty($general['last_enrollment_utc'])) {
@@ -518,7 +519,7 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync {
       return $volume;
    }
 
-   public static function import(string $itemtype, int $jamf_items_id): bool
+   public static function import(string $itemtype, int $jamf_items_id, $use_transaction = true): bool
    {
       global $DB;
 
@@ -563,7 +564,9 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync {
          return false;
       }
 
-      $DB->beginTransaction();
+      if ($use_transaction) {
+         $DB->beginTransaction();
+      }
       // Import new device
       $items_id = $item->add([
          'name'         => $DB->escape($jamf_item['general']['name']),
@@ -588,12 +591,18 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync {
                'items_id' => $items_id
             ]);
             $DB->delete(PluginJamfImport::getTable(), ['jamf_items_id' => $jamf_items_id]);
-            $DB->commit();
+            if ($use_transaction) {
+               $DB->commit();
+            }
          } else {
-            $DB->rollBack();
+            if ($use_transaction) {
+               $DB->rollBack();
+            }
          }
       } else {
-         $DB->rollBack();
+         if ($use_transaction) {
+            $DB->rollBack();
+         }
          return false;
       }
       return true;

@@ -40,16 +40,16 @@ class PluginJamfAPIClassic
     * @return mixed JSON string or associative array depending on the value of $raw.
     * @since 1.0.0
     */
-   private static function get(string $endpoint, $raw = false, $response_type = 'application/json')
+   protected static function get(string $endpoint, $raw = false, $response_type = 'application/json')
    {
-      if (!self::$connection) {
-         self::$connection = new PluginJamfConnection();
+      if (!static::$connection) {
+         static::$connection = new PluginJamfConnection();
       }
-      $url = (self::$connection)->getAPIUrl($endpoint);
+      $url = (static::$connection)->getAPIUrl($endpoint);
       $curl = curl_init($url);
       // Set the username and password in an authentication header
-      self::$connection->setCurlAuth($curl);
-      self::$connection->setCurlSecurity($curl);
+      static::$connection->setCurlAuth($curl);
+      static::$connection->setCurlSecurity($curl);
       curl_setopt($curl, CURLOPT_HTTPHEADER, [
          'Content-Type: application/json',
          "Accept: {$response_type}"
@@ -76,16 +76,16 @@ class PluginJamfAPIClassic
     * @return int|bool True if successful, or the HTTP return code if it is not 201.
     * @since 1.1.0
     */
-   private static function add(string $endpoint, string $payload)
+   protected static function add(string $endpoint, string $payload)
    {
-      if (!self::$connection) {
-         self::$connection = new PluginJamfConnection();
+      if (!static::$connection) {
+         static::$connection = new PluginJamfConnection();
       }
-      $url = (self::$connection)->getAPIUrl($endpoint);
+      $url = (v::$connection)->getAPIUrl($endpoint);
       $curl = curl_init($url);
       // Set the username and password in an authentication header
-      self::$connection->setCurlAuth($curl);
-      self::$connection->setCurlSecurity($curl);
+      static::$connection->setCurlAuth($curl);
+      static::$connection->setCurlSecurity($curl);
       curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
       curl_setopt($curl, CURLOPT_HTTPHEADER, [
          'Content-Type: application/xml',
@@ -104,18 +104,18 @@ class PluginJamfAPIClassic
     * @return int|bool True if successful, or the HTTP return code if it is not 201.
     * @since 1.1.0
     */
-   private static function update(string $endpoint, array $data)
+   protected static function update(string $endpoint, array $data)
    {
-      if (!self::$connection) {
-         self::$connection = new PluginJamfConnection();
+      if (!static::$connection) {
+         static::$connection = new PluginJamfConnection();
       }
-      $url = (self::$connection)->getAPIUrl($endpoint);
+      $url = (static::$connection)->getAPIUrl($endpoint);
       $curl = curl_init($url);
       // Set the username and password in an authentication header
-      self::$connection->setCurlAuth($curl);
+      static::$connection->setCurlAuth($curl);
       curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
       curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
-      self::$connection->setCurlSecurity($curl);
+      static::$connection->setCurlSecurity($curl);
       curl_setopt($curl, CURLOPT_HTTPHEADER, [
          'Content-Type: application/json',
          'Accept: application/json'
@@ -132,17 +132,17 @@ class PluginJamfAPIClassic
     * @return int|bool True if successful, or the HTTP return code if it is not 200.
     * @since 1.1.0
     */
-   private static function delete(string $endpoint)
+   protected static function delete(string $endpoint)
    {
-      if (!self::$connection) {
-         self::$connection = new PluginJamfConnection();
+      if (!static::$connection) {
+         static::$connection = new PluginJamfConnection();
       }
-      $url = (self::$connection)->getAPIUrl($endpoint);
+      $url = (static::$connection)->getAPIUrl($endpoint);
       $curl = curl_init($url);
       // Set the username and password in an authentication header
-      self::$connection->setCurlAuth($curl);
+      static::$connection->setCurlAuth($curl);
       curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
-      self::$connection->setCurlSecurity($curl);
+      static::$connection->setCurlSecurity($curl);
       curl_exec($curl);
       $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
       curl_close($curl);
@@ -155,7 +155,7 @@ class PluginJamfAPIClassic
     * @return string The constructed parameter string.
     * @since 1.0.0
     */
-   private static function getParamString(array $params = [])
+   protected static function getParamString(array $params = [])
    {
       $param_str = '';
       foreach ($params as $key => $value) {
@@ -177,9 +177,9 @@ class PluginJamfAPIClassic
       if ($user_auth && !PluginJamfUser_JSSAccount::canReadJSSItem($itemtype)) {
          return null;
       }
-      $param_str = self::getParamString($params);
+      $param_str = static::getParamString($params);
       $endpoint = "$itemtype$param_str";
-      $response = self::get($endpoint);
+      $response = static::get($endpoint);
       // Strip first key (usually like mobile_devices or mobile_device)
       // No other first level keys exist
       return ($response !== null && count($response)) ? reset($response) : null;
@@ -207,7 +207,7 @@ class PluginJamfAPIClassic
       }
 
       $endpoint = "$itemtype$param_str";
-      return self::add($endpoint, $payload);
+      return static::add($endpoint, $payload);
    }
 
    /**
@@ -224,9 +224,9 @@ class PluginJamfAPIClassic
       if ($user_auth && !PluginJamfUser_JSSAccount::canUpdateJSSItem($itemtype)) {
          return null;
       }
-      $param_str = self::getParamString($params);
+      $param_str = static::getParamString($params);
       $endpoint = "$itemtype$param_str";
-      return self::update($endpoint, $fields);
+      return static::update($endpoint, $fields);
    }
 
    /**
@@ -242,18 +242,18 @@ class PluginJamfAPIClassic
       if ($user_auth && !PluginJamfUser_JSSAccount::canDeleteJSSItem($itemtype)) {
          return null;
       }
-      $param_str = self::getParamString($params);
+      $param_str = static::getParamString($params);
       $endpoint = "$itemtype$param_str";
-      return self::delete($endpoint);
+      return static::delete($endpoint);
    }
 
-   private static function getJSSGroupActionRights($groupid)
+   protected static function getJSSGroupActionRights($groupid)
    {
-      $response = self::get("accounts/groupid/$groupid");
+      $response = static::get("accounts/groupid/$groupid");
       return $response['group']['privileges']['jss_actions'];
    }
 
-   private static function getGroupAccessRights($account)
+   protected static function getGroupAccessRights($account)
    {
       $rights = [
          'jss_objects'  => [],
@@ -275,7 +275,7 @@ class PluginJamfAPIClassic
          }
          // Why are jss_actions not included in the group when all other rights are?
          // Confirmed bug with developer team. Sound like we need to work around it until the endpoint is in the Pro API.
-         $action_privileges = self::getJSSGroupActionRights(reset($group->id));
+         $action_privileges = static::getJSSGroupActionRights(reset($group->id));
          $rights['jss_actions'] = $action_privileges;
 
          if (isset($group->privileges->jss_settings)) {
@@ -291,7 +291,7 @@ class PluginJamfAPIClassic
       return $rights;
    }
 
-   private static function getUserAccessRights($account)
+   protected static function getUserAccessRights($account)
    {
       $rights = [
          'jss_objects'  => [],
@@ -333,15 +333,15 @@ class PluginJamfAPIClassic
       if ($user_auth && !PluginJamfUser_JSSAccount::canReadJSSItem('accounts')) {
          return null;
       }
-      $response = self::get("accounts/userid/$userid", true, 'application/xml');
+      $response = static::get("accounts/userid/$userid", true, 'application/xml');
       $account = simplexml_load_string($response);
 
       $access_level = reset($account->access_level);
 
       if ($access_level === 'Group Access') {
-         return self::getGroupAccessRights($account);
+         return static::getGroupAccessRights($account);
       }
-      return self::getUserAccessRights($account);
+      return static::getUserAccessRights($account);
    }
 }
 

@@ -1,0 +1,14 @@
+{
+  "computer_extension_attribute": {
+    "id": 16,
+    "name": "Battery Cycle Count",
+    "enabled": true,
+    "description": "Number of charge cycles logged on the current battery",
+    "data_type": "String",
+    "input_type": {
+      "type": "Text Field"
+    },
+    "inventory_display": "General",
+    "recon_display": "Extension Attributes"
+  }
+}

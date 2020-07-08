@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <computer>
     <general>
+        <id>33</id>
         <name>Computer 2</name>
         <network_adapter_type/>
         <mac_address>C8:2A:14:0C:43:24</mac_address>

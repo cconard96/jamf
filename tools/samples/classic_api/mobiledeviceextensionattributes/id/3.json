@@ -1,0 +1,12 @@
+{
+  "mobile_device_extension_attribute": {
+    "id": 3,
+    "name": "Asset Selector",
+    "description": "string",
+    "data_type": "String",
+    "input_type": {
+      "type": "Text Field"
+    },
+    "inventory_display": "General"
+  }
+}

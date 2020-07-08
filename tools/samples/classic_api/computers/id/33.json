@@ -1,6 +1,7 @@
 {
   "computer": {
     "general": {
+      "id": "33",
       "name": "Computer 2",
       "network_adapter_type": "",
       "mac_address": "C8:2A:14:0C:43:24",
