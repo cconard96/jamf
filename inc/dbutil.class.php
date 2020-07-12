@@ -38,6 +38,9 @@
     {
         global $DB;
 
+        if (!$DB->tableExists($table)) {
+           return true;
+        }
         $res = $DB->query('DROP TABLE'.$DB::quoteName($table));
         if (!$res) {
             $message = sprintf(
