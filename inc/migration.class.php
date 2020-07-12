@@ -65,7 +65,7 @@ final class PluginJamfMigration {
          // Map versions to functions
          $versionMap = [];
          foreach ($otherMigrationFunctions as $function) {
-            $ver = str_replace('_', '.', $function);
+            $ver = str_replace(['apply_', '_migration', '_'], ['', '', '.'], $function);
             $versionMap[$ver] = $function;
          }
 
@@ -83,6 +83,7 @@ final class PluginJamfMigration {
                continue;
             }
             $this->$func();
+            $this->glpiMigration->executeMigration();
             if ($version !== self::BASE_VERSION) {
                $this->setPluginVersionInDB($version);
             }
@@ -167,7 +168,7 @@ final class PluginJamfMigration {
                   `itunes_store_url` varchar(255) NOT NULL,
                 PRIMARY KEY (`id`)
                ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
-         $DB->queryOrDie($query, 'Error creating JAMF plugin software table' . $this->db->error());
+         $this->db->queryOrDie($query, 'Error creating JAMF plugin software table' . $this->db->error());
       }
 
       $jamfconfig = Config::getConfigurationValues('plugin:Jamf');
@@ -237,9 +238,9 @@ final class PluginJamfMigration {
                 KEY `item` (`itemtype`, `items_id`),
                 UNIQUE `unicity` (`itemtype`, `items_id`, `glpi_plugin_jamf_extensionattributes_id`)
                ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
-         $DB->queryOrDie($query, 'Error creating JAMF plugin item extension attribute table' . $this->db->error());
+         $this->db->queryOrDie($query, 'Error creating JAMF plugin item extension attribute table' . $this->db->error());
       }
-      if (!$DB->tableExists('glpi_plugin_jamf_extfields')) {
+      if (!$this->db->tableExists('glpi_plugin_jamf_extfields')) {
          $query = "CREATE TABLE `glpi_plugin_jamf_extfields` (
                   `id` int(11) NOT NULL auto_increment,
                   `itemtype` varchar(100) NOT NULL,
@@ -250,7 +251,7 @@ final class PluginJamfMigration {
                 KEY `item` (`itemtype`, `items_id`),
                 UNIQUE `unicity` (`itemtype`, `items_id`)
                ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
-         $this->db->queryOrDie($query, 'Error creating JAMF plugin item extension field table' . $DB->error());
+         $this->db->queryOrDie($query, 'Error creating JAMF plugin item extension field table' . $this->db->error());
       }
       if (!$this->db->tableExists('glpi_plugin_jamf_users_jssaccounts')) {
          $query = "CREATE TABLE `glpi_plugin_jamf_users_jssaccounts` (
@@ -259,7 +260,7 @@ final class PluginJamfMigration {
                   `jssaccounts_id` int(11) NOT NULL,
                 PRIMARY KEY (`id`)
                ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
-         $this->db->queryOrDie($query, 'Error creating JAMF plugin jss account link table' . $DB->error());
+         $this->db->queryOrDie($query, 'Error creating JAMF plugin jss account link table' . $this->db->error());
       }
 
       $this->glpiMigration->addConfig([
@@ -311,13 +312,13 @@ final class PluginJamfMigration {
 
       // Drop configs for selecting itemtypes. This is now statically enforced since improvements to the GLPI phone type.
       if (isset($coreConfig['itemtype_iphone'])) {
-         $this->db->delete(Config::class, [
+         $this->db->delete(Config::getTable(), [
             'context'   => 'core',
             'name'      => ['itemtype_iphone', 'itemtype_ipad', 'itemtype_appletv']
          ]);
       }
       if (isset($config['itemtype_iphone'])) {
-         $this->db->delete(Config::class, [
+         $this->db->delete(Config::getTable(), [
             'context'   => 'plugin:Jamf',
             'name'      => ['itemtype_iphone', 'itemtype_ipad', 'itemtype_appletv']
          ]);
@@ -337,10 +338,12 @@ final class PluginJamfMigration {
       if (!$this->db->fieldExists('glpi_plugin_jamf_extensionattributes', 'jamf_type', false)) {
          $this->glpiMigration->addField('glpi_plugin_jamf_extensionattributes', 'jamf_type', 'string', [
             'default'   => 'MobileDevice',
-            'after'     => 'itemtype'
+            'after'     => 'id'
          ]);
          $this->glpiMigration->dropKey('glpi_plugin_jamf_extensionattributes', 'jamf_id');
-         $this->glpiMigration->dropField('glpi_plugin_jamf_extensionattributes', 'itemtype');
+         if ($this->db->fieldExists('glpi_plugin_jamf_extensionattributes', 'itemtype')) {
+            $this->glpiMigration->dropField('glpi_plugin_jamf_extensionattributes', 'itemtype');
+         }
          $this->glpiMigration->addKey('glpi_plugin_jamf_extensionattributes', ['jamf_type', 'jamf_id'], 'unicity', 'UNIQUE');
          $this->glpiMigration->migrationOneTable('glpi_plugin_jamf_extensionattributes');
       }
