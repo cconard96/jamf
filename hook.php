@@ -35,6 +35,7 @@ function plugin_jamf_uninstall()
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_imports');
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_mobiledevices');
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_mobiledevicesoftwares');
+   PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_softwares');
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_extensionattributes');
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_items_extensionattributes');
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_extfields');
