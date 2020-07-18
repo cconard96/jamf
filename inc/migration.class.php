@@ -79,16 +79,15 @@ final class PluginJamfMigration {
          // Call each migration in order starting from the last known version
          foreach ($versionMap as $version => $func) {
             // Last known version is the same or greater than release version
-            if (version_compare($lastKnownVersion, $version) !== -1) {
-               continue;
-            }
-            $this->$func();
-            $this->glpiMigration->executeMigration();
-            if ($version !== self::BASE_VERSION) {
-               $this->setPluginVersionInDB($version);
+            if (version_compare($lastKnownVersion, $version, '<=')) {
+               $this->$func();
+               $this->glpiMigration->executeMigration();
+               if ($version !== self::BASE_VERSION) {
+                  $this->setPluginVersionInDB($version);
+                  $lastKnownVersion = $version;
+               }
             }
          }
-
       }
    }
 
@@ -156,7 +155,7 @@ final class PluginJamfMigration {
                 UNIQUE KEY `unicity` (`itemtype`, `items_id`),
                 KEY `udid` (`udid`)
                ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
-         $this->db->queryOrDie($query, 'Error creating JAMF plugin imports table' . $this->db->error());
+         $this->db->queryOrDie($query, 'Error creating JAMF plugin mobile devices table' . $this->db->error());
       }
 
       // Check software table (Extra data for software). Also check the later name just to avoid useless SQL actions.
@@ -395,10 +394,17 @@ final class PluginJamfMigration {
          $this->db->queryOrDie($query, 'Error creating JAMF plugin computer software table' . $this->db->error());
       }
 
-      $this->db->updateOrDie(CronTask::getTable(), [
-         'itemtype'  => 'PluginJamfCron'
-      ], [
-         'itemtype'  => 'PluginJamfSync'
+      $old_cron = $this->db->request([
+         'SELECT' => ['id'],
+         'FROM'   => CronTask::getTable(),
+         'WHERE'  => ['itemtype' => 'PluginJamfSync']
       ]);
+      if ($old_cron->count()) {
+         $this->db->update(CronTask::getTable(), [
+            'itemtype' => 'PluginJamfCron'
+         ], [
+            'itemtype' => 'PluginJamfSync'
+         ]);
+      }
    }
 }
