@@ -58,6 +58,7 @@ echo "<form>";
 echo "<div class='center'><table id='merge_table' class='tab_cadre' style='width: 50%'>";
 echo "<thead>";
 echo "<th>"._x('field', 'Jamf ID', 'jamf')."</th>";
+echo "<th>"._x('field', 'Jamf Type', 'jamf')."</th>";
 echo "<th>"._x('field', 'Name', 'jamf')."</th>";
 echo "<th>"._x('field', 'Type', 'jamf')."</th>";
 echo "<th>"._x('field', 'UDID', 'jamf')."</th>";
@@ -72,19 +73,27 @@ while ($data = $pending->next()) {
 
    echo "<tr>";
    echo "<td>{$data['jamf_items_id']}</td>";
-   $jamf_link = Html::link($data['name'], PluginJamfMobileDevice::getJamfDeviceURL($data['jamf_items_id']));
+   echo "<td>{$data['jamf_type']}</td>";
+   $plugin_itemtype = 'PluginJamf'.$data['jamf_type'];
+   $jamf_link = Html::link($data['name'], $plugin_itemtype::getJamfDeviceURL($data['jamf_items_id']));
    echo "<td>{$jamf_link}</td>";
    echo "<td>{$data['type']}</td>";
    echo "<td>{$data['udid']}</td>";
    $date_discover = Html::convDateTime($data['date_discover']);
    echo "<td>{$date_discover}</td><td>";
    if ($itemtype === 'Computer') {
-      $guess = $item->find([
-         'OR' => [
-            'uuid' => $data['udid'],
+      if (empty($data['udid'])) {
+         $guess = $item->find([
             'name' => $data['name']
-         ]
-      ], [new QueryExpression("CASE WHEN uuid='".$data['udid']."' THEN 0 ELSE 1 END")], 1);
+         ], [], 1);
+      } else {
+         $guess = $item->find([
+            'OR' => [
+               'uuid' => $data['udid'],
+               'name' => $data['name']
+            ]
+         ], [new QueryExpression("CASE WHEN uuid='" . $data['udid'] . "' THEN 0 ELSE 1 END")], 1);
+      }
 
       $params = [
          'used'   => array_values($computer_ids)
@@ -131,12 +140,15 @@ $js = <<<JAVASCRIPT
          var table = $("#merge_table")[0];
          for (var i = 1, row; row = table.rows[i]; i++) {
             var jamf_id = row.cells[0].innerText;
-            var itemtype = row.cells[2].innerText;
-            var glpi_sel = row.cells[5].childNodes[0].childNodes[0];
-            var glpi_id = glpi_sel.value;
-            if (glpi_id && glpi_id > 0) {
-               data = [];
-               post_data[glpi_id] = {'itemtype': itemtype, 'jamf_id': jamf_id};
+            var jamf_type = row.cells[1].innerText;
+            var itemtype = row.cells[3].innerText;
+            var glpi_sel = row.cells[6].childNodes[0].childNodes[0];
+            if (typeof glpi_sel !== 'undefined') {
+               var glpi_id = glpi_sel.value;
+               if (glpi_id && glpi_id > 0) {
+                  data = [];
+                  post_data[glpi_id] = {'itemtype': itemtype, 'jamf_type': jamf_type, 'jamf_id': jamf_id};
+               }
             }
          }
          $.ajax({

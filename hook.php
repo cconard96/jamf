@@ -43,7 +43,7 @@ function plugin_jamf_uninstall()
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_computers');
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_computersoftwares');
    Config::deleteConfigurationValues('plugin:Jamf');
-   CronTask::unregister('jamf');
+   CronTask::unregister('Jamf');
    return true;
 }
 

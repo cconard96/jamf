@@ -235,8 +235,6 @@ abstract class PluginJamfSync
 
    abstract public static function sync(string $itemtype, int $items_id, bool $use_transaction = true): bool;
 
-   //abstract public static function syncExtensionAttributeDefinitions();
-
    abstract public static function getSupportedGlpiItemtypes(): array;
 
    public static function isSupportedGlpiItemtype(string $itemtype): bool
