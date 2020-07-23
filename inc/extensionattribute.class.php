@@ -42,6 +42,7 @@ class PluginJamfExtensionAttribute extends CommonDBTM {
        }
        //$jamf_id = $input['jamf_id'];
        //unset($input['jamf_id']);
+	unset($input['itemtype']);
        return $DB->updateOrInsert(self::getTable(), $input, [
           'jamf_type'   => $input['jamf_type'] ?? 'MobileDevice',
           'jamf_id'     => $input['jamf_id']

@@ -46,6 +46,7 @@ class PluginJamfAPIClassic
          static::$connection = new PluginJamfConnection();
       }
       $url = (static::$connection)->getAPIUrl($endpoint);
+      Toolbox::logError($url);
       $curl = curl_init($url);
       // Set the username and password in an authentication header
       static::$connection->setCurlAuth($curl);
@@ -55,7 +56,12 @@ class PluginJamfAPIClassic
          "Accept: {$response_type}"
       ]);
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-      $response = curl_exec($curl);
+      curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 5);
+      curl_setopt($curl, CURLOPT_TIMEOUT, 5);
+      curl_setopt($curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+      Toolbox::logError("Pre Curl_EXEC");
+      $response = @curl_exec($curl);
+      Toolbox::logError("Post Curl_EXEC");
       $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
       curl_close($curl);
 
@@ -174,12 +180,16 @@ class PluginJamfAPIClassic
     */
    public static function getItems(string $itemtype, array $params = [], $user_auth = false)
    {
+      Toolbox::logError("getItems");
       if ($user_auth && !PluginJamfUser_JSSAccount::canReadJSSItem($itemtype)) {
          return null;
       }
       $param_str = static::getParamString($params);
       $endpoint = "$itemtype$param_str";
+      Toolbox::logError("get $endpoint");
+      //sleep(1);
       $response = static::get($endpoint);
+      Toolbox::logError("Got Response");
       // Strip first key (usually like mobile_devices or mobile_device)
       // No other first level keys exist
       return ($response !== null && count($response)) ? reset($response) : null;

@@ -48,14 +48,20 @@ if ($_REQUEST['action'] == 'import') {
             'id'  => $_REQUEST['import_ids']
          ]
       ]);
+      $count = $toimport->count();
+      Toolbox::logError("Got list to import $count");
       // Trigger extension attribute definition sync
       PluginJamfMobileSync::syncExtensionAttributeDefinitions();
+      Toolbox::logError("Synced Mobile Extension Attributes");
       PluginJamfComputerSync::syncExtensionAttributeDefinitions();
+      Toolbox::logError("Synced Computer Extension Attributes");
       // Import the requested device(s)
       while ($data = $toimport->next()) {
          if ($data['jamf_type'] === 'MobileDevice') {
+            Toolbox::logError("Pre-import Mobile");
             PluginJamfMobileSync::import($data['type'], $data['jamf_items_id']);
          } else {
+            Toolbox::logError("Pre-import Computer");
             PluginJamfComputerSync::import($data['type'], $data['jamf_items_id']);
          }
       }
