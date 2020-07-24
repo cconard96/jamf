@@ -27,7 +27,3 @@ Only supports mobile devices for now.
 - Each bugfix release will increment the patch version number.
 - Bugfixes for the current and previous major versions of the plugin will be supported at least. Older versions may be supported depending on community interest and my own company's need. This plugin will not be backported to support versions older than 9.4.0.
 - I will strive to have at least a beta release for the latest major version of GLPi within a week of the full release.
-
-## Release Schedule
-- Expect a bugfix release every Sunday evening (Eastern time) if there are any available fixes.
-- Expect a feature release every 30 days (average) depending on how much time I have to implement new features.

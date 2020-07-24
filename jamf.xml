@@ -17,10 +17,9 @@ This is an open source plugin with locale support for English and French only ri
 
 
 Requirements
-- GLPI >= 9.4.0
-- PHP >= 7.0.0 (Notice this differs from GLPI requirements)
-- Jamf Pro >= 10.9.0
-- php simplexml extension. run "composer require ext-simplexml --ignore-platform-reqs" in the root of the site to install the newest version for PHP 7 and ignore GLPI's lower required PHP version.
+- GLPI >= 9.5.0
+- PHP >= 7.2.0
+- Jamf Pro >= 10.20.0
 
 Usage
 - Server/sync configuration is found in Setup > Config under the JAMF Plugin tab.

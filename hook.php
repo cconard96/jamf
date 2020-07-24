@@ -287,7 +287,13 @@ function plugin_jamf_uninstall()
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_items_extensionattributes');
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_extfields');
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_users_jssaccounts');
-   Config::deleteConfigurationValues('plugin:Jamf');
+   Config::deleteConfigurationValues('plugin:Jamf', [
+      'config_class',
+      'default_manufacturer',
+      'iphone_type',
+      'ipad_type',
+      'appletv_type'
+   ]);
    CronTask::unregister('jamf');
    return true;
 }

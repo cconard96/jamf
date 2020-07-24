@@ -375,7 +375,7 @@ class PluginJamfSync extends CommonGLPI
          $this->status['syncSoftware'] = self::STATUS_ERROR;
          return $this;
       }
-      if (!$this->config['sync_software'] || $this->item === null || isset($this->data['applications'])) {
+      if (!$this->config['sync_software'] || $this->item === null || !isset($this->data['applications'])) {
          $this->status['syncSoftware'] = self::STATUS_SKIPPED;
          return $this;
       }

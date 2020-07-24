@@ -183,7 +183,7 @@ class PluginJamfConfig extends CommonDBTM
    {
       $to_hide = ['jsspassword'];
       foreach ($to_hide as $f) {
-         if (in_array($fields, $f, true)) {
+         if (in_array($f, $fields, true)) {
             unset($fields[$f]);
          }
       }
