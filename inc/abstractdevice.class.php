@@ -117,10 +117,16 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
             'items_id'  => $items_id
          ]
       ];
-      $iterator = $DB->request(new QueryUnion([
-         $computer_query,
-         $mobiledevice_query
-      ]));
+      $iterator = $DB->request([
+         'SELECT'    => [
+            new QueryExpression('"MobileDevice" AS jamf_type')
+         ],
+         'FROM'      => 'glpi_plugin_jamf_devices',
+         'WHERE'     => [
+            'itemtype'  => $itemtype,
+            'items_id'  => $items_id
+         ]
+      ]);
       if (count($iterator)) {
          $jamf_type = $iterator->next()['jamf_type'];
          if ($jamf_type === 'Computer') {
@@ -143,21 +149,7 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
       $found_id = null;
 
       if (!$limit_to_type) {
-         $computer_query = [
-            'SELECT'    => [
-               new QueryExpression('"Computer" AS jamf_type'),
-               'id',
-               'itemtype',
-               'items_id',
-               'jamf_items_id'
-            ],
-            'FROM'      => PluginJamfComputer::getTable(),
-            'WHERE'     => [
-               'itemtype'  => $item::getType(),
-               'items_id'  => $item->getID()
-            ]
-         ];
-         $mobiledevice_query = [
+         $iterator = $DB->request([
             'SELECT'    => [
                new QueryExpression('"MobileDevice" AS jamf_type'),
                'id',
@@ -165,16 +157,12 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
                'items_id',
                'jamf_items_id'
             ],
-            'FROM'      => PluginJamfMobileDevice::getTable(),
+            'FROM'      => 'glpi_plugin_jamf_devices',
             'WHERE'     => [
                'itemtype'  => $item::getType(),
                'items_id'  => $item->getID()
             ]
-         ];
-         $iterator = $DB->request(new QueryUnion([
-            $computer_query,
-            $mobiledevice_query
-         ]));
+         ]);
          if (count($iterator)) {
             $jamf_data = $iterator->next();
             if ($jamf_data['jamf_type'] === 'Computer') {

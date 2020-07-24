@@ -21,28 +21,11 @@
  --------------------------------------------------------------------------
  */
 
-/**
- * PluginJamfSoftware class.
- * @since 1.0.0
- */
-class PluginJamfSoftware extends CommonDBTM
-{
+include('../../../inc/includes.php');
+Session::checkRight("plugin_jamf_mobiledevice", CREATE);
+Html::header('Jamf Plugin', '', 'plugins', 'PluginJamfMenu', 'import');
 
-   public static function getTypeName($nb = 0)
-   {
-      return Software::getTypeName($nb);
-   }
+$migration = new PluginJamfMigration('2.0.1');
+$migration->applyMigrations();
 
-   /**
-    * Cleanup relations when an item is purged.
-    * @param CommonDBTM $item
-    */
-   public static function plugin_jamf_purgeSoftware($item)
-   {
-      global $DB;
-
-      $DB->delete(self::getTable(), [
-         'softwares_id' => $item->getID(),
-      ]);
-   }
-}
+Html::footer();

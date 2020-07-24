@@ -105,8 +105,14 @@ abstract class PluginJamfSync
     */
    protected $db;
 
+   /**
+    * @var PluginJamfAPIClassic
+    */
    protected static $api_classic = PluginJamfAPIClassic::class;
 
+   /**
+    * @var PluginJamfAPIPro
+    */
    protected static $api_pro = PluginJamfAPIPro::class;
 
    /**
@@ -128,14 +134,16 @@ abstract class PluginJamfSync
       $this->item = $item;
       $this->data = $data;
       $jamfitem = new static::$jamfplugin_itemtype();
-      $jamf_match = $jamfitem->find([
-         'itemtype' => $item::getType(),
-         'items_id' => $item->getID()], [], 1);
-      if (count($jamf_match)) {
-         $jamf_id = reset($jamf_match)['id'];
-         $jamfitem->getFromDB($jamf_id);
-         $this->jamfplugin_device = $jamfitem;
-      }
+      $jamfitem = PluginJamfAbstractDevice::getJamfItemClassForGLPIItem($item->getType(), $item->getID());
+      $this->jamfplugin_device = $jamfitem;
+//      $jamf_match = $jamfitem->find([
+//         'itemtype' => $item::getType(),
+//         'items_id' => $item->getID()], [], 1);
+//      if (count($jamf_match)) {
+//         $jamf_id = reset($jamf_match)['id'];
+//         $jamfitem->getFromDB($jamf_id);
+//         $this->jamfplugin_device = $jamfitem;
+//      }
    }
 
    /**

@@ -93,8 +93,10 @@ final class PluginJamfMigration {
 
    private function setPluginVersionInDB($version)
    {
-      $this->db->updateOrDie(Config::getTable(), [
-         'value'     => $version
+      $this->db->updateOrInsert(Config::getTable(), [
+         'value'     => $version,
+         'context'   => 'plugin:Jamf',
+         'name'      => 'plugin_version'
       ], [
          'context'   => 'plugin:Jamf',
          'name'      => 'plugin_version'
@@ -191,7 +193,7 @@ final class PluginJamfMigration {
       if (!isset($jamfconfig['plugin_version'])) {
          $this->glpiMigration->addConfig([
             'plugin_version' => '1.0.0'
-         ]);
+         ], 'plugin:Jamf');
       }
 
       // CronTask already makes sure we don't register duplicates
@@ -355,10 +357,11 @@ final class PluginJamfMigration {
          $this->glpiMigration->migrationOneTable('glpi_plugin_jamf_imports');
       }
 
-      // Check computers table (Extra data for computers)
-      if (!$this->db->tableExists('glpi_plugin_jamf_computers')) {
-         $query = "CREATE TABLE `glpi_plugin_jamf_computers` (
+      if (!$this->db->tableExists('glpi_plugin_jamf_devices')) {
+         $query = "CREATE TABLE `glpi_plugin_jamf_devices` (
                   `id` int(11) NOT NULL auto_increment,
+                  `jamf_type` varchar(100) DEFAULT 'MobileDevice',
+                  `jamf_items_id` int(11) NOT NULL DEFAULT -1,
                   `items_id` int(11) NOT NULL,
                   `itemtype` varchar(100) NOT NULL,
                   `udid` varchar(100) NOT NULL,
@@ -370,10 +373,39 @@ final class PluginJamfMigration {
                   `managed` tinyint(1) NOT NULL DEFAULT '0',
                   `supervised` tinyint(1) NOT NULL DEFAULT '0',
                   `activation_lock_enabled` tinyint(1) DEFAULT '0',
-                  `jamf_items_id` int(11) NOT NULL DEFAULT -1,
                 PRIMARY KEY (`id`),
                 UNIQUE KEY `unicity` (`itemtype`, `items_id`),
                 KEY `udid` (`udid`)
+               ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
+         $this->db->queryOrDie($query, 'Error creating JAMF plugin devices table' . $this->db->error());
+
+         $common_fields = ['jamf_items_id','items_id','itemtype','udid','last_inventory','entry_date','enroll_date','import_date','sync_date','managed','supervised','activation_lock_enabled'];
+         $all_mobiledevices = getAllDataFromTable('glpi_plugin_jamf_mobiledevices');
+         $this->glpiMigration->addField('glpi_plugin_jamf_mobiledevices', 'glpi_plugin_jamf_devices_id', 'int');
+         $this->glpiMigration->migrationOneTable('glpi_plugin_jamf_mobiledevices');
+         foreach ($all_mobiledevices as $mobiledevice) {
+            $field_map = [];
+            foreach ($common_fields as $cf) {
+               $field_map[$cf] = $mobiledevice[$cf];
+            }
+            $this->db->insert('glpi_plugin_jamf_devices', $field_map);
+            $this->db->update('glpi_plugin_jamf_mobiledevices', ['glpi_plugin_jamf_devices_id' => $this->db->insertId()], ['id' => $mobiledevice['id']]);
+         }
+
+         foreach ($common_fields as $cf) {
+            $this->glpiMigration->dropField('glpi_plugin_jamf_mobiledevices', $cf);
+         }
+         $this->glpiMigration->migrationOneTable('glpi_plugin_jamf_mobiledevices');
+      }
+
+
+      // Check computers table (Extra data for computers)
+      if (!$this->db->tableExists('glpi_plugin_jamf_computers')) {
+         $query = "CREATE TABLE `glpi_plugin_jamf_computers` (
+                  `id` int(11) NOT NULL auto_increment,
+                  `glpi_plugin_jamf_devices_id` int(11) NOT NULL,
+                PRIMARY KEY (`id`),
+                UNIQUE KEY `glpi_plugin_jamf_devices_id` (`glpi_plugin_jamf_devices_id`)
                ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
          $this->db->queryOrDie($query, 'Error creating JAMF plugin computers table' . $this->db->error());
       }

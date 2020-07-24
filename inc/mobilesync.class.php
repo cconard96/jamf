@@ -153,6 +153,8 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
 
    protected function syncSoftware(): PluginJamfDeviceSync
    {
+      global $DB;
+
       if (!$this->config['sync_software'] || $this->item === null || !isset($this->data['applications'])) {
          $this->status['syncSoftware'] = self::STATUS_SKIPPED;
          return $this;
@@ -161,9 +163,11 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
          $applications = $this->data['applications'];
          $software = new Software();
          $softwareversion = new SoftwareVersion();
-         $jamf_software = new PluginJamfSoftware();
+         $jamf_software = new PluginJamfMobileDeviceSoftware();
          foreach ($applications as $application) {
             $jamfsoftware_matches = $jamf_software->find(['bundle_id' => $application['identifier']]);
+            // Find all linked software not currently installed on this device through Jamf
+
             if (!count($jamfsoftware_matches)) {
                $software_data = static::$api_classic::getItems('mobiledeviceapplications', [
                   'bundleid' => $application['identifier'],
@@ -172,12 +176,17 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
                if (is_null($software_data) || !isset($software_data['general'])) {
                   continue;
                }
-               $software_id = $software->add([
-                  'name' => $this->db->escape($software_data['general']['name']),
-                  'comment' => $this->db->escape($software_data['general']['description']),
-                  'entities_id' => $this->item->fields['entities_id'],
-                  'is_recursive' => $this->item->fields['is_recursive']
-               ]);
+               $software_matches = $software->find(['name' => $software_data['general']['name']]);
+               if (!count($software_matches)) {
+                  $software_id = $software->add([
+                     'name' => $this->db->escape($software_data['general']['name']),
+                     'comment' => $this->db->escape($software_data['general']['description']),
+                     'entities_id' => $this->item->fields['entities_id'],
+                     'is_recursive' => $this->item->fields['is_recursive']
+                  ]);
+               } else {
+                  $software_id = reset($software_matches)['id'];
+               }
                $jamf_software->add([
                   'softwares_id' => $software_id,
                   'bundle_id' => $application['identifier'],
@@ -200,6 +209,9 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
                $softwareversion_id = $softwareversion->add($version_input);
             } else {
                $softwareversion_id = array_keys($softwareversion_matches)[0];
+            }
+            if (!$softwareversion_id) {
+               continue;
             }
             $item_softwareversion = new Item_SoftwareVersion();
             $item_softwareversion_matches = $item_softwareversion->find([
@@ -768,19 +780,21 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
    {
       global $DB;
 
-      $iterator = $DB->request([
-         //'SELECT' => ['udid'],
-         'FROM'   => PluginJamfMobileDevice::getTable(),
-         'WHERE'  => [
-            'itemtype'  => $itemtype,
-            'items_id'  => $items_id
-         ]
-      ]);
-
-      if (!count($iterator)) {
-         return [];
-      }
-      $jamf_item = $iterator->next();
+//      $iterator = $DB->request([
+//         //'SELECT' => ['udid'],
+//         'FROM'   => PluginJamfMobileDevice::getTable(),
+//         'WHERE'  => [
+//            'itemtype'  => $itemtype,
+//            'items_id'  => $items_id
+//         ]
+//      ]);
+//
+//      if (!count($iterator)) {
+//         return [];
+//      }
+      $item = new $itemtype();
+      $item->getFromDB($items_id);
+      $jamf_item = PluginJamfAbstractDevice::getJamfItemForGLPIItem($item);
 
       return static::$api_classic::getItems('mobiledevices', ['id' => $jamf_item['jamf_items_id']]);
    }

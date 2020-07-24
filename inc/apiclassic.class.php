@@ -81,7 +81,7 @@ class PluginJamfAPIClassic
       if (!static::$connection) {
          static::$connection = new PluginJamfConnection();
       }
-      $url = (v::$connection)->getAPIUrl($endpoint);
+      $url = (static::$connection)->getAPIUrl($endpoint);
       $curl = curl_init($url);
       // Set the username and password in an authentication header
       static::$connection->setCurlAuth($curl);

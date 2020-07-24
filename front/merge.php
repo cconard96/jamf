@@ -38,20 +38,25 @@ $pending = $DB->request([
    'LIMIT'  => $_SESSION['glpilist_limit']
 ]);
 
-$linked_computers = $mobiledevice->find([
-   'itemtype'  => 'Computer'
+$linked_computers = $DB->request([
+   'SELECT' => ['items_id'],
+   'FROM'   => 'glpi_plugin_jamf_devices',
+   'WHERE'  => ['itemtype' => 'Computer']
 ]);
-$linked_phones = $mobiledevice->find([
-   'itemtype'  => 'Phone'
+$linked_phones = $DB->request([
+   'SELECT' => ['items_id'],
+   'FROM'   => 'glpi_plugin_jamf_devices',
+   'WHERE'  => ['itemtype' => 'Phone']
 ]);
 
-$computer_ids = array_map(static function($a) {
-   return $a['items_id'];
-}, $linked_computers);
-
-$phone_ids = array_map(static function($a) {
-   return $a['items_id'];
-}, $linked_phones);
+$computer_ids = [];
+while ($data = $linked_computers->next()) {
+   $computer_ids[] = $data['items_id'];
+}
+$phone_ids = [];
+while ($data = $linked_phones->next()) {
+   $phone_ids[] = $data['items_id'];
+}
 
 Html::printPager($start, $importcount, "{$CFG_GLPI['root_doc']}/plugins/jamf/front/merge.php", '');
 echo "<form>";

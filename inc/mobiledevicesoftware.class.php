@@ -21,28 +21,6 @@
  --------------------------------------------------------------------------
  */
 
-/**
- * PluginJamfSoftware class.
- * @since 1.0.0
- */
-class PluginJamfSoftware extends CommonDBTM
-{
+class PluginJamfMobileDeviceSoftware extends PluginJamfSoftware {
 
-   public static function getTypeName($nb = 0)
-   {
-      return Software::getTypeName($nb);
-   }
-
-   /**
-    * Cleanup relations when an item is purged.
-    * @param CommonDBTM $item
-    */
-   public static function plugin_jamf_purgeSoftware($item)
-   {
-      global $DB;
-
-      $DB->delete(self::getTable(), [
-         'softwares_id' => $item->getID(),
-      ]);
-   }
 }

@@ -36,9 +36,25 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
       return _nx('itemtype', 'Jamf mobile device', 'Jamf mobile devices', $nb, 'jamf');
    }
 
+   public function post_getFromDB()
+   {
+      global $DB;
+
+      parent::post_getFromDB();
+      $device = $DB->request([
+         'SELECT' => [],
+         'FROM'   => 'glpi_plugin_jamf_devices',
+         'WHERE'  => [
+            'id'  => $this->fields['glpi_plugin_jamf_devices_id']
+         ]
+      ]);
+
+      $this->fields = array_merge($this->fields, $device->next());
+   }
+
    public static function showForItem(array $params)
    {
-      global $CFG_GLPI;
+      global $CFG_GLPI, $DB;
 
       /** @var CommonDBTM $item */
       $item = $params['item'];
@@ -61,15 +77,29 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
          $out .= '</td></tr>';
       }
       $mobiledevice = new self();
+      $device_matches = $DB->request([
+         'SELECT' => ['*'],
+         'FROM'   => 'glpi_plugin_jamf_devices',
+         'WHERE'  => [
+            'itemtype' => $item::getType(),
+            'items_id' => $item->getID()
+         ]
+      ]);
+      if (!$device_matches->count()) {
+         echo $out;
+         return false;
+      }
+      $device_match = $device_matches->next();
       $match = $mobiledevice->find([
-         'itemtype' => $item::getType(),
-         'items_id' => $item->getID()]);
+         'glpi_plugin_jamf_devices_id' => $device_match['id']
+      ]);
 
       if (!count($match)) {
          echo $out;
          return false;
       }
       $match = reset($match);
+      $match = array_merge($match, $device_match);
 
       $out .= "<tr><th colspan='4'>"._x('form_section', 'Jamf General Information', 'jamf'). '</th></tr>';
       $out .= '<tr><td>' ._x('field', 'Import date', 'jamf'). '</td>';
