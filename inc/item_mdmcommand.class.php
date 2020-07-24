@@ -32,7 +32,7 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
 
    public static function getTypeName($nb = 0)
    {
-      return _n('MDM command', 'MDM commands', $nb, 'jamf');
+      return _nx('itemtype', 'MDM command', 'MDM commands', $nb, 'jamf');
    }
 
    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
@@ -147,14 +147,14 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
 
       $item_commands = $mobiledevice->getMDMCommands();
 
-      echo "<h3>" . __('Pending Commands', 'jamf') . "</h3>";
+      echo "<h3>" . _x('form_section', 'Pending Commands', 'jamf') . "</h3>";
       echo "<table class='tab_cadre_fixe'>";
       echo "<thead>";
-      echo "<th>".__('Command', 'jamf')."</th>";
-      echo "<th>".__('Status', 'jamf')."</th>";
-      echo "<th>".__('Date issued', 'jamf')."</th>";
-      echo "<th>".__('Date of last push', 'jamf')."</th>";
-      echo "<th>".__('Username', 'jamf')."</th>";
+      echo "<th>"._x('field', 'Command', 'jamf')."</th>";
+      echo "<th>"._x('field', 'Status', 'jamf')."</th>";
+      echo "<th>"._x('field', 'Date issued', 'jamf')."</th>";
+      echo "<th>"._x('field', 'Date of last push', 'jamf')."</th>";
+      echo "<th>"._x('field', 'Username', 'jamf')."</th>";
       echo "</thead>";
       echo "<tbody>";
       foreach ($item_commands['pending'] as $entry) {
@@ -166,14 +166,14 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
       echo "</tbody>";
       echo "</table>";
 
-      echo "<h3>" . __('Failed Commands', 'jamf') . "</h3>";
+      echo "<h3>" ._x('form_section', 'Failed Commands', 'jamf') . "</h3>";
       echo "<table class='tab_cadre_fixe'>";
       echo "<thead>";
-      echo "<th>".__('Command', 'jamf')."</th>";
-      echo "<th>".__('Error', 'jamf')."</th>";
-      echo "<th>".__('Date issued', 'jamf')."</th>";
-      echo "<th>".__('Date of last push', 'jamf')."</th>";
-      echo "<th>".__('Username', 'jamf')."</th>";
+      echo "<th>"._x('field', 'Command', 'jamf')."</th>";
+      echo "<th>"._x('field', 'Error', 'jamf')."</th>";
+      echo "<th>"._x('field', 'Date issued', 'jamf')."</th>";
+      echo "<th>"._x('field', 'Date of last push', 'jamf')."</th>";
+      echo "<th>"._x('field', 'Username', 'jamf')."</th>";
       echo "</thead>";
       echo "<tbody>";
       foreach ($item_commands['failed'] as $entry) {

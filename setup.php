@@ -64,7 +64,7 @@ function plugin_init_jamf() {
 function plugin_version_jamf() {
    
    return [
-      'name' => __('JAMF Plugin for GLPI', 'jamf'),
+      'name'    => _x('plugin_info', 'JAMF Plugin for GLPI', 'jamf'),
       'version' => PLUGIN_JAMF_VERSION,
       'author'  => 'Curtis Conard',
       'license' => 'GPLv2',

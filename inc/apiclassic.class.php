@@ -73,7 +73,7 @@ class PluginJamfAPIClassic
                   throw new PluginJamfRateLimitException($fault['faultstring']);
             }
          }
-         throw new RuntimeException(__('Unknown JSS API Error'));
+         throw new RuntimeException(_x('error', 'Unknown JSS API Error', 'jamf'));
       }
 
       return ($raw ? $response : json_decode($response, true));

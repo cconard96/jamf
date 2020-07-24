@@ -419,9 +419,6 @@ class PluginJamfSync extends CommonGLPI
                   'entities_id' => $this->item->fields['entities_id'],
                   'is_recursive' => $this->item->fields['is_recursive']
                ];
-               if (isset($os_id)) {
-                  $version_input['operatingsystems_id'] = $os_id;
-               }
                $softwareversion_id = $softwareversion->add($version_input);
             } else {
                $softwareversion_id = array_keys($softwareversion_matches)[0];
@@ -1007,9 +1004,12 @@ class PluginJamfSync extends CommonGLPI
    public static function syncMobileDevice(PluginJamfMobileDevice $mobiledevice): bool
    {
       $itemtype = $mobiledevice->fields['itemtype'];
+
+      /** @var CommonDBTM $item */
       $item = new $itemtype();
       if (!$item->getFromDB($mobiledevice->fields['items_id'])) {
-         Toolbox::logError("Attempted to sync non-existent $itemtype with ID {$mobiledevice->fields['items_id']}");
+         $itemtype_name = $item::getTypeName(1);
+         Toolbox::logError(_x('error', "Attempted to sync non-existent {$itemtype_name} with ID {$items_id}", 'jamf'));
          return false;
       }
       $data = PluginJamfAPIClassic::getItems('mobiledevices', ['udid' => $mobiledevice->fields['udid']]);

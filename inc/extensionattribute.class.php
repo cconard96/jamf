@@ -30,7 +30,7 @@ class PluginJamfExtensionAttribute extends CommonDBTM {
 
     public static function getTypeName($nb = 1)
     {
-        return __('Extension attribute', 'Extension attributes', $nb, 'jamf');
+       return _nx('itemtype', 'Extension attribute', 'Extension attributes', $nb, 'jamf');
     }
 
     public function addOrUpdate($input)
@@ -60,7 +60,7 @@ class PluginJamfExtensionAttribute extends CommonDBTM {
           $slug = strtolower(str_replace(' ', '_', $data['name']));
           $cards["plugin_jamf_extensionattribute_{$slug}"] = [
              'widgettype'  => ['halfdonut'],
-             'label'       => sprintf(__('Jamf Attribute - %s'), $data['name']),
+             'label'       => sprintf(_x('dashboard', 'Jamf Attribute - %s', 'jamf'), $data['name']),
              'provider'    => 'PluginJamfExtensionAttribute::cardProvider',
              'args'        => ['name' => $data['name']]
           ];
@@ -102,7 +102,7 @@ class PluginJamfExtensionAttribute extends CommonDBTM {
           ];
        }
        return [
-          'label' => sprintf(__('Jamf Attribute - %s'), $name),
+          'label' => sprintf(_x('dashboard', 'Jamf Attribute - %s', 'jamf'), $name),
           'data'  => $card_data
        ];
     }

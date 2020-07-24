@@ -36,7 +36,7 @@ class PluginJamfProfile extends Profile
 
    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
    {
-      return self::createTabEntry('Jamf');
+      return self::createTabEntry(_x('plugin_info', 'Jamf plugin', 'jamf'));
    }
 
    public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
@@ -78,7 +78,7 @@ class PluginJamfProfile extends Profile
          'label' => PluginJamfMobileDevice::getTypeName(Session::getPluralNumber()),
          'field' => 'plugin_jamf_mobiledevice'],
          ['itemtype' => 'PluginJamfRuleImport',
-            'label' => _n('Import rule', 'Import rules', Session::getPluralNumber(), 'jamf'),
+            'label' => _nx('right', 'Import rule', 'Import rules', Session::getPluralNumber(), 'jamf'),
             'field' => 'plugin_jamf_ruleimport'],
          ['itemtype' => 'PluginJamfUser_JSSAccount',
             'label' => PluginJamfUser_JSSAccount::getTypeName(Session::getPluralNumber()),
@@ -86,7 +86,7 @@ class PluginJamfProfile extends Profile
          ['itemtype' => 'PluginJamfItem_MDMCommand',
             'label' => PluginJamfItem_MDMCommand::getTypeName(Session::getPluralNumber()),
             'field' => PluginJamfItem_MDMCommand::$rightname]];
-      $matrix_options['title'] = __('Jamf plugin');
+      $matrix_options['title'] = _x('plugin_info', 'Jamf plugin', 'jamf');
       $profile->displayRightsChoiceMatrix($rights, $matrix_options);
 
       if ($canedit
@@ -131,7 +131,7 @@ class PluginJamfProfile extends Profile
          'label' => PluginJamfMobileDevice::getTypeName(Session::getPluralNumber()),
          'field' => 'plugin_jamf_mobiledevice',
          'rights' => [READ => __('Read')]]];
-      $matrix_options['title'] = __('Jamf plugin');
+      $matrix_options['title'] = _x('plugin_info', 'Jamf plugin', 'jamf');
       $profile->displayRightsChoiceMatrix($rights, $matrix_options);
 
       if ($canedit) {

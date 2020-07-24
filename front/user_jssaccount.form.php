@@ -29,7 +29,7 @@ global $DB;
 if ($_POST['jssaccounts_id'] == 0) {
    $DB->delete(PluginJamfUser_JSSAccount::getTable(), ['users_id' => $_POST['users_id']]);
    Event::log($_POST["users_id"], "user", 2, "security",
-      sprintf(__('%s remove a link to a JSS account from a user'), $_SESSION["glpiname"]));
+      sprintf(_x('event', '%s remove a link to a JSS account from a user', 'jamf'), $_SESSION["glpiname"]));
    Html::back();
 } else {
    $result = $DB->updateOrInsert(PluginJamfUser_JSSAccount::getTable(), [
@@ -40,7 +40,7 @@ if ($_POST['jssaccounts_id'] == 0) {
    ]);
    if ($result) {
       Event::log($_POST["users_id"], "user", 2, "security",
-         sprintf(__('%s links a JSS account to a user'), $_SESSION["glpiname"]));
+         sprintf(_x('event', '%s links a JSS account to a user', 'jamf'), $_SESSION["glpiname"]));
       Html::back();
    }
 }

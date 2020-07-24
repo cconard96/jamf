@@ -33,7 +33,7 @@
 
    public function getTitle()
    {
-      return __('Device import rules', 'jamf');
+      return _x('itemtype', 'Device import rules', 'jamf');
    }
 
    public function maxActionsCount()
@@ -45,25 +45,25 @@
    {
       $criterias = [];
       $criterias['name']['field'] = 'name';
-      $criterias['name']['name']  = __('Name');
+      $criterias['name']['name']  = _x('field', 'Name', 'jamf');
       $criterias['name']['table'] = '';
 
       $criterias['itemtype']['field'] = 'itemtype';
-      $criterias['itemtype']['name']  = __('Item type');
+      $criterias['itemtype']['name']  = _x('field', 'Item type', 'jamf');
       $criterias['itemtype']['table'] = '';
       $criterias['itemtype']['allow_condition'] = [Rule::PATTERN_IS, Rule::PATTERN_IS_NOT];
 
       $criterias['last_inventory']['field'] = 'last_inventory';
-      $criterias['last_inventory']['name']  = __('Last inventory');
+      $criterias['last_inventory']['name']  = _x('field', 'Last inventory', 'jamf');
       $criterias['last_inventory']['table'] = '';
 
       $criterias['managed']['field'] = 'managed';
-      $criterias['managed']['name']  = __('Managed');
+      $criterias['managed']['name']  = _x('field', 'Managed', 'jamf');
       $criterias['managed']['type']  = 'yesno';
       $criterias['managed']['table'] = '';
 
       $criterias['supervised']['field'] = 'supervised';
-      $criterias['supervised']['name']  = __('Supervised');
+      $criterias['supervised']['name']  = _x('field', 'Supervised', 'jamf');
       $criterias['supervised']['type']  = 'yesno';
       $criterias['supervised']['table'] = '';
       return $criterias;
@@ -72,7 +72,7 @@
    public function getActions()
    {
       $actions = [];
-      $actions['_import']['name']  = __('Import');
+      $actions['_import']['name']  = _x('action', 'Import', 'jamf');
       $actions['_import']['type']  = 'yesno';
       return $actions;
    }
