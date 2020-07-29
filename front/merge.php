@@ -53,7 +53,9 @@ $phone_ids = array_map(static function($a) {
    return $a['items_id'];
 }, $linked_phones);
 
-Html::printPager($start, $importcount, "{$CFG_GLPI['root_doc']}/plugins/jamf/front/merge.php", '');
+$ajax_url = Plugin::getWebDir('jamf') . '/ajax/merge.php';
+
+Html::printPager($start, $importcount, $ajax_url, '');
 echo "<form>";
 echo "<div class='center'><table id='merge_table' class='tab_cadre' style='width: 50%'>";
 echo "<thead>";
@@ -124,7 +126,6 @@ echo "</tbody></table><br>";
 
 echo "<a class='vsubmit' onclick='mergeDevices(); return false;'>"._x('action', 'Merge', 'jamf')."</a>";
 echo "</div>";
-$ajax_url = $CFG_GLPI['root_doc']."/plugins/jamf/ajax/merge.php";
 $js = <<<JAVASCRIPT
       function mergeDevices() {
          var post_data = [];
@@ -154,7 +155,7 @@ $js = <<<JAVASCRIPT
       }
 JAVASCRIPT;
 Html::closeForm();
-Html::printPager($start, $importcount, "{$CFG_GLPI['root_doc']}/plugins/jamf/front/merge.php", '');
+Html::printPager($start, $importcount, $ajax_url, '');
 echo Html::scriptBlock($js);
 
 // Create loading indicator

@@ -110,7 +110,7 @@ class PluginJamfMobileDevice extends CommonDBChild
 
       if ($item->canUpdate()) {
          $out .= "&nbsp;&nbsp;<a class='vsubmit' onclick='syncDevice(&quot;{$item::getType()}&quot;, {$item->getID()}); return false;'>"._x('action', 'Sync now', 'jamf')."</a>";
-         $ajax_url = $CFG_GLPI['root_doc']."/plugins/jamf/ajax/sync.php";
+         $ajax_url = Plugin::getWebDir('jamf') . '/ajax/sync.php';
          $js = <<<JAVASCRIPT
                function syncDevice(itemtype, items_id) {
                   $.ajax({

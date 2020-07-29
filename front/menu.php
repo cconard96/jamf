@@ -27,10 +27,11 @@ Html::header('Jamf Plugin', '', 'plugins', 'PluginJamfMenu', 'import');
 
 global $CFG_GLPI;
 
+$plugin_dir = Plugin::getWebDir('jamf');
 $links = [];
 if (Session::haveRight('plugin_jamf_mobiledevice', CREATE)) {
    $links[] = Html::link(_x('menu', 'Import devices', 'jamf'), PluginJamfImport::getSearchURL());
-   $links[] = Html::link(_x('menu', 'Merge existing devices', 'jamf'), "{$CFG_GLPI['root_doc']}/plugins/jamf/front/merge.php");
+   $links[] = Html::link(_x('menu', 'Merge existing devices', 'jamf'), "{$plugin_dir}/front/merge.php");
 }
 if (Session::haveRight('config', UPDATE)) {
    $links[] = Html::link(_x('action', 'Configure plugin', 'jamf'), Config::getFormURL()."?forcetab=PluginJamfConfig$1");

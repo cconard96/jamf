@@ -53,34 +53,36 @@ Versioning/Support
       <version>
          <num>2.0.0</num>
          <compatibility>~9.5.0</compatibility>
+         <download_url>https://github.com/cconard96/jamf/releases/download/v2.0.0/jamf-2.0.0.zip</download_url>
       </version>
       <version>
          <num>1.2.1</num>
-         <compatibility>9.4</compatibility>
+         <compatibility>~9.4.0</compatibility>
+         <download_url>https://github.com/cconard96/jamf/releases/download/v1.2.1/jamf-1.2.1.zip</download_url>
       </version>
       <version>
         <num>1.2.0</num>
-        <compatibility>9.4</compatibility>
+        <compatibility>~9.4.0</compatibility>
       </version>
       <version>
         <num>1.1.2</num>
-        <compatibility>9.4</compatibility>
+        <compatibility>~9.4.0</compatibility>
       </version>
       <version>
         <num>1.1.1</num>
-        <compatibility>9.4</compatibility>
+        <compatibility>~9.4.0</compatibility>
       </version>
       <version>
         <num>1.1.0</num>
-        <compatibility>9.4</compatibility>
+        <compatibility>~9.4.0</compatibility>
       </version>
       <version>
         <num>1.0.1</num>
-        <compatibility>9.4</compatibility>
+        <compatibility>~9.4.0</compatibility>
       </version>
       <version>
         <num>1.0.0</num>
-        <compatibility>9.4</compatibility>
+        <compatibility>~9.4.0</compatibility>
       </version>
    </versions>
    <langs>
