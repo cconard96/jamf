@@ -188,6 +188,7 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
       $jamf_id = $mobiledevice->fields['jamf_items_id'];
       $itemtype = 'MobileDevice';
       $items_id = $mobiledevice->getID();
+      $ajax_root = Plugin::getWebDir('jamf') . '/ajax/';
       $js = <<<JAVASCRIPT
          $(function(){
             jamfPlugin = new JamfPlugin();
@@ -195,7 +196,8 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
                commands: $commands_json,
                jamf_id: $jamf_id,
                itemtype: "$itemtype",
-               items_id: $items_id
+               items_id: $items_id,
+               ajax_root: $ajax_root
             });
          });
 JAVASCRIPT;

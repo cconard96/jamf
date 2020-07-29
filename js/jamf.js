@@ -53,8 +53,8 @@
             self.jamf_id = args.jamf_id;
             self.itemtype = args.itemtype;
             self.items_id = args.items_id;
+            self.ajax_root = args.ajax_root;
          }
-         self.ajax_root = CFG_GLPI.root_doc + "/plugins/jamf/ajax/";
       };
 
       this.onMDMCommandButtonClick = function(command, event) {
