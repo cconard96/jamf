@@ -324,7 +324,6 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22002' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'last_inventory',
-               'name'            => 'Jamf - ' .__('Last inventory', 'jamf'),
                'name'            => 'Jamf - ' ._x('field', 'Last inventory', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
@@ -333,7 +332,6 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22003' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'entry_date',
-               'name'            => 'Jamf - ' .__('Import date', 'jamf'),
                'name'            => 'Jamf - ' ._x('field', 'Import date', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
@@ -342,7 +340,6 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22004' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'enroll_date',
-               'name'            => 'Jamf - ' .__('Enrollment date', 'jamf'),
                'name'            => 'Jamf - ' ._x('field', 'Enrollment date', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
@@ -351,7 +348,6 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22005' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'managed',
-               'name'            => 'Jamf - ' .__('Managed', 'jamf'),
                'name'            => 'Jamf - ' ._x('field', 'Managed', 'jamf'),
                'datatype'        => 'bool',
                'massiveaction'   => false,
@@ -360,7 +356,6 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22006' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'supervised',
-               'name'            => 'Jamf - ' .__('Supervised', 'jamf'),
                'name'            => 'Jamf - ' ._x('field', 'Supervised', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
@@ -369,7 +364,6 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22007' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'cloud_backup_enabled',
-               'name'            => 'Jamf - ' .__('Cloud backup enabled', 'jamf'),
                'name'            => 'Jamf - ' ._x('field', 'Cloud backup enabled', 'jamf'),
                'datatype'        => 'bool',
                'massiveaction'   => false,
@@ -378,7 +372,6 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22008' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'activation_lock_enabled',
-               'name'            => 'Jamf - ' .__('Activation lock enabled', 'jamf'),
                'name'            => 'Jamf - ' ._x('field', 'Activation lock enabled', 'jamf'),
                'datatype'        => 'bool',
                'massiveaction'   => false,
@@ -387,7 +380,6 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22009' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'lost_mode_enabled',
-               'name'            => 'Jamf - ' .__('Lost mode enabled', 'jamf'),
                'name'            => 'Jamf - ' ._x('field', 'Lost mode enabled', 'jamf'),
                'datatype'        => 'text',
                'massiveaction'   => false,
@@ -396,7 +388,6 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22010' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'lost_mode_enforced',
-               'name'            => 'Jamf - ' .__('Lost mode enforced', 'jamf'),
                'name'            => 'Jamf - ' ._x('field', 'Lost mode enforced', 'jamf'),
                'datatype'        => 'bool',
                'massiveaction'   => false,
@@ -405,7 +396,6 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22011' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'lost_mode_enable_date',
-               'name'            => 'Jamf - ' .__('Lost mode enable date', 'jamf'),
                'name'            => 'Jamf - ' ._x('field', 'Lost mode enable date', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
@@ -414,7 +404,6 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22012' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'lost_mode_message',
-               'name'            => 'Jamf - ' .__('Lost mode message', 'jamf'),
                'name'            => 'Jamf - ' ._x('field', 'Lost mode message', 'jamf'),
                'datatype'        => 'text',
                'massiveaction'   => false,
@@ -423,7 +412,6 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22013' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'lost_mode_phone',
-               'name'            => 'Jamf - ' .__('Lost mode phone', 'jamf'),
                'name'            => 'Jamf - ' ._x('field', 'Lost mode phone', 'jamf'),
                'datatype'        => 'text',
                'massiveaction'   => false,
@@ -432,7 +420,6 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22014' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'lost_location_latitude',
-               'name'            => 'Jamf - ' .__('Lost mode latitude', 'jamf'),
                'name'            => 'Jamf - ' ._x('field', 'Lost mode latitude', 'jamf'),
                'datatype'        => 'text',
                'massiveaction'   => false,
@@ -441,7 +428,6 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22015' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'lost_location_longitude',
-               'name'            => 'Jamf - ' .__('Lost mode longitude', 'jamf'),
                'name'            => 'Jamf - ' ._x('field', 'Lost mode longitude', 'jamf'),
                'datatype'        => 'text',
                'massiveaction'   => false,
@@ -450,7 +436,6 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22016' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'lost_location_altitude',
-               'name'            => 'Jamf - ' .__('Lost mode altitude', 'jamf'),
                'name'            => 'Jamf - ' ._x('field', 'Lost mode altitude', 'jamf'),
                'datatype'        => 'text',
                'massiveaction'   => false,
@@ -459,7 +444,6 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22017' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'lost_location_speed',
-               'name'            => 'Jamf - ' .__('Lost mode speed', 'jamf'),
                'name'            => 'Jamf - ' ._x('field', 'Lost mode speed', 'jamf'),
                'datatype'        => 'text',
                'massiveaction'   => false,
@@ -468,7 +452,6 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22018' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'lost_location_date',
-               'name'            => 'Jamf - ' .__('Lost mode location date', 'jamf'),
                'name'            => 'Jamf - ' ._x('field', 'Lost mode location date', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
@@ -477,7 +460,6 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22019' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'import_date',
-               'name'            => 'Jamf - ' .__('Import date', 'jamf'),
                'name'            => 'Jamf - ' ._x('field', 'Import date', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
@@ -486,7 +468,6 @@ function plugin_jamf_getAddSearchOptions($itemtype)
             '22020' => [
                'table'           => 'glpi_plugin_jamf_mobiledevices',
                'field'           => 'sync_date',
-               'name'            => 'Jamf - ' .__('Sync date', 'jamf'),
                'name'            => 'Jamf - ' ._x('field', 'Sync date', 'jamf'),
                'datatype'        => 'datetime',
                'massiveaction'   => false,
