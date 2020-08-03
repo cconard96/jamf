@@ -1009,6 +1009,7 @@ class PluginJamfSync extends CommonGLPI
       $item = new $itemtype();
       if (!$item->getFromDB($mobiledevice->fields['items_id'])) {
          $itemtype_name = $item::getTypeName(1);
+         $items_id = $mobiledevice->fields['items_id'];
          Toolbox::logError(_x('error', "Attempted to sync non-existent {$itemtype_name} with ID {$items_id}", 'jamf'));
          return false;
       }
