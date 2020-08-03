@@ -39,7 +39,7 @@ class PluginJamfMobileDevice extends CommonDBChild
 
    /**
     * Display the extra information for mobile devices on the main Computer or Phone tab.
-    * @param type $params
+    * @param array $params
     * @return void|bool
     */
    public static function showForComputerOrPhoneMain($params)
@@ -177,7 +177,7 @@ JAVASCRIPT;
 
    /**
     * Cleanup relations when an item is purged.
-    * @global type $DB
+    * @global CommonDBTM $DB
     * @param CommonDBTM $item
     */
    private static function purgeItemCommon(CommonDBTM $item)
@@ -192,8 +192,7 @@ JAVASCRIPT;
 
    /**
     * Cleanup relations when a Computer is purged.
-    * @global type $DB
-    * @param CommonDBTM $item
+    * @param Computer $item
     */
    public static function plugin_jamf_purgeComputer(Computer $item)
    {
@@ -202,8 +201,8 @@ JAVASCRIPT;
 
    /**
     * Cleanup relations when a Phone is purged.
-    * @global type $DB
-    * @param CommonDBTM $item
+    * @global DBmysql $DB
+    * @param Phone $item
     */
    public static function plugin_jamf_purgePhone(Phone $item)
    {
