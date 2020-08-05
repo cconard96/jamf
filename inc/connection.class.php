@@ -35,7 +35,7 @@ class PluginJamfConnection {
    public function __construct()
    {
       $jamf_config = Config::getConfigurationValues('plugin:Jamf', [
-         'jssserver', 'jssuser', 'jsspassword']);
+         'jssserver', 'jssuser', 'jsspassword', 'jssignorecert']);
       $this->config = $jamf_config;
       $this->config['jsspassword'] = Toolbox::decrypt($this->config['jsspassword'], GLPIKEY);
    }
