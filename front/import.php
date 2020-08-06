@@ -69,8 +69,8 @@ while ($data = $pending->next()) {
 }
 echo "</tbody></table><br>";
 
-echo "<a class='vsubmit' onclick='importDevices(); return false;'>"._x('action', 'Import', 'jamf')."</a>";
-echo "&nbsp;<a class='vsubmit' onclick='discoverNow(); return false;'>"._x('action', 'Discover now', 'jamf')."</a>";
+echo "<a class='vsubmit' onclick='importDevices(); return false;' title='"._x('tooltip', 'Import selected', 'jamf')."'>"._x('action', 'Import', 'jamf')."</a>";
+echo "&nbsp;<a class='vsubmit' onclick='discoverNow(); return false;' title='"._x('tooltip', 'Discover new devices (and import if set to auto-import)', 'jamf')."'>"._x('action', 'Discover now', 'jamf')."</a>";
 echo "</div>";
 $ajax_root = Plugin::getWebDir('jamf') . '/ajax/';
 $import_msg = _x('action', 'Importing', 'jamf') . '...';
