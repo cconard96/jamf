@@ -1084,11 +1084,14 @@ class PluginJamfSync extends CommonGLPI
    {
       global $DB;
 
+      Toolbox::logDebug('Starting Jamf import cron');
       $jamf_devices = PluginJamfAPIClassic::getItems('mobiledevices');
       if (is_null($jamf_devices) || !count($jamf_devices)) {
          // API error or device no longer exists in Jamf
+         Toolbox::logDebug('No devices in Jamf or an API error occured');
          return 0;
       }
+      Toolbox::logDebug('Found ' . count($jamf_devices) . ' devices in Jamf');
       $imported = [];
       $iterator = $DB->request([
          'SELECT' => ['udid'],
@@ -1110,6 +1113,7 @@ class PluginJamfSync extends CommonGLPI
          if (in_array($jamf_device['udid'], $imported)) {
             // Already imported
          } else {
+            Toolbox::logDebug('A new device with UDID ' . $jamf_device['udid'] . 'was found');
             $itemtype = strpos($jamf_device['model_identifier'], 'iPhone') !== false ? ($config['itemtype_iphone'] ?? 'Phone') :
                (strpos($jamf_device['model_identifier'], 'AppleTV') !== false ? ($config['itemtype_appletv'] ?? 'Computer') :
                ($config['itemtype_ipad'] ?? 'Computer'));
@@ -1126,9 +1130,12 @@ class PluginJamfSync extends CommonGLPI
                   // Some other error
                }
             } else {
+               Toolbox::logDebug('Skipping auto-import');
                if (array_key_exists($jamf_device['udid'], $pending_import)) {
+                  Toolbox::logDebug('Device already staged for import');
                   // Already pending
                } else {
+                  Toolbox::logDebug('Staging for manual import');
                   $DB->insert('glpi_plugin_jamf_imports', [
                      'jamf_items_id' => $jamf_device['id'],
                      'name' => $DB->escape($jamf_device['name']),
