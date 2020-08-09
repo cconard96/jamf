@@ -45,6 +45,7 @@ echo "<div class='center'><table id='import_table' class='tab_cadre' style='widt
 echo "<thead>";
 echo "<th>{$check_all}</th>";
 echo "<th>"._x('field', 'Jamf ID', 'jamf')."</th>";
+echo "<th>"._x('field', 'Jamf Type', 'jamf')."</th>";
 echo "<th>"._x('field', 'Name', 'jamf')."</th>";
 echo "<th>"._x('field', 'Type', 'jamf')."</th>";
 echo "<th>"._x('field', 'UDID', 'jamf')."</th>";
@@ -53,39 +54,43 @@ echo "</thead><tbody>";
 while ($data = $pending->next()) {
    $rowid = $data['jamf_items_id'];
    echo "<tr>";
-   $import_checkbox = Html::input("import{$rowid}", [
+   $import_checkbox = Html::input("import_{$data['id']}", [
       'type'      => 'checkbox',
       'display'   => false
    ]);
    echo "<td>{$import_checkbox}</td>";
    echo "<td>{$data['jamf_items_id']}</td>";
-   $jamf_link = Html::link($data['name'], PluginJamfMobileDevice::getJamfDeviceURL($data['jamf_items_id']));
+   echo "<td>{$data['jamf_type']}</td>";
+   $plugin_itemtype = 'PluginJamf'.$data['jamf_type'];
+   $jamf_link = Html::link($data['name'], $plugin_itemtype::getJamfDeviceURL($data['jamf_items_id']));
    echo "<td>{$jamf_link}</td>";
    echo "<td>{$data['type']}</td>";
-   echo "<td>{$data['udid']}</td>";
+   $udid = !empty($data['udid']) ? $data['udid'] : '<i>('._x('message', 'Not collected during discovery', 'jamf').')</i>';
+   echo "<td>{$udid}</td>";
    $date_discover = Html::convDateTime($data['date_discover']);
    echo "<td>{$date_discover}</td>";
    echo "</tr>";
 }
 echo "</tbody></table><br>";
 
-echo "<a class='vsubmit' onclick='importDevices(); return false;' title='"._x('tooltip', 'Import selected', 'jamf')."'>"._x('action', 'Import', 'jamf')."</a>";
-echo "&nbsp;<a class='vsubmit' onclick='discoverNow(); return false;' title='"._x('tooltip', 'Discover new devices (and import if set to auto-import)', 'jamf')."'>"._x('action', 'Discover now', 'jamf')."</a>";
+echo "<a class='vsubmit' onclick='importDevices(); return false;'>"._x('action', 'Import', 'jamf')."</a>";
+echo "&nbsp;<a class='vsubmit' onclick='discoverNow(); return false;'>"._x('action', 'Discover now', 'jamf')."</a>";
 echo "</div>";
-$ajax_root = Plugin::getWebDir('jamf') . '/ajax/';
+$ajax_root = $CFG_GLPI['root_doc']."/plugins/jamf/ajax/";
 $import_msg = _x('action', 'Importing', 'jamf') . '...';
 $discover_msg = _x('action', 'Discovering', 'jamf') . '...';
 $js = <<<JAVASCRIPT
       function importDevices() {
-         var ids = $(':checkbox:checked').map(function(){ return this.name.replace("import",""); }).toArray();
-         var post_data = [];
-         post_data['action'] = "import";
-         post_data['item_ids'] = ids;
-
+         var import_ids = $(':checkbox:checked').filter(':not([name^="_checkall"])').map(function(){
+            return this.name.replace("import","").substring(1).split('_');
+         }).toArray();
          $.ajax({
             type: "POST",
             url: "{$ajax_root}import.php",
-            data: {action: "import", item_ids: ids},
+            data: {
+               action: "import",
+               import_ids: import_ids
+            },
             contentType: 'application/json',
             beforeSend: function() {
               showLoading("{$import_msg}");

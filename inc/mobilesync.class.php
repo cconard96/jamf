@@ -350,7 +350,7 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
             $lost_location_date = $security['lost_location_utc'];
             $this->jamfplugin_item_changes['lost_location_date'] = $lost_location_date;
          }
-         $this->jamfplugin_item_changes['activation_lock_enabled'] = $security['activation_lock_enabled'];
+         $this->commondevice_changes['activation_lock_enabled'] = $security['activation_lock_enabled'];
          $this->jamfplugin_item_changes['lost_mode_enabled'] = $security['lost_mode_enabled'];
          $this->jamfplugin_item_changes['lost_mode_enforced'] = $security['lost_mode_enforced'];
          $this->jamfplugin_item_changes['lost_mode_message'] = $security['lost_mode_message'];
@@ -513,21 +513,23 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
          $general = $this->data['general'];
          if (!empty($general['last_inventory_update_utc'])) {
             $last_inventory = $general['last_inventory_update_utc'];
-            $this->jamfplugin_item_changes['last_inventory'] = $last_inventory;
+            $this->commondevice_changes['last_inventory'] = $last_inventory;
          }
          if (!empty($general['initial_entry_date_utc'])) {
             $entry_date = $general['initial_entry_date_utc'];
-            $this->jamfplugin_item_changes['entry_date'] = $entry_date;
+            $this->commondevice_changes['entry_date'] = $entry_date;
          }
          if (!empty($general['last_enrollment_utc'])) {
             $enroll_date = $general['last_enrollment_utc'];
-            $this->jamfplugin_item_changes['enroll_date'] = $enroll_date;
+            $this->commondevice_changes['enroll_date'] = $enroll_date;
          }
 
-         $this->jamfplugin_item_changes['jamf_items_id'] = $general['id'];
-         $this->jamfplugin_item_changes['udid'] = $general['udid'];
-         $this->jamfplugin_item_changes['managed'] = $general['managed'];
-         $this->jamfplugin_item_changes['supervised'] = $general['supervised'];
+         $this->commondevice_changes['itemtype'] = $this->item::getType();
+         $this->commondevice_changes['items_id'] = $this->item->getID();
+         $this->commondevice_changes['jamf_items_id'] = $general['id'];
+         $this->commondevice_changes['udid'] = $general['udid'];
+         $this->commondevice_changes['managed'] = $general['managed'];
+         $this->commondevice_changes['supervised'] = $general['supervised'];
          $this->jamfplugin_item_changes['shared'] = $general['shared'];
          $this->jamfplugin_item_changes['cloud_backup_enabled'] = $general['cloud_backup_enabled'];
       } catch (Exception $e) {
@@ -615,7 +617,8 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
       $imported = [];
       $iterator = $DB->request([
          'SELECT' => ['udid'],
-         'FROM' => PluginJamfMobileDevice::getTable()
+         'FROM'   => 'glpi_plugin_jamf_devices',
+         'WHERE'  => ['jamf_type' => static::$jamf_itemtype]
       ]);
       while ($data = $iterator->next()) {
          $imported[] = $data['udid'];
@@ -744,21 +747,38 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
       ]);
       if ($items_id) {
          // Link
-         $jamf_computer = new PluginJamfMobileDevice();
-         $jamf_computer->add([
+         $r = $DB->insert('glpi_plugin_jamf_devices', [
             'itemtype'        => $item::getType(),
             'items_id'        => $items_id,
             'udid'            => $jamf_item['general']['udid'],
-            'jamf_items_id'   => $jamf_item['general']['id'],
+            'jamf_type'       => static::$jamf_itemtype,
+            'jamf_items_id'   => $jamf_item['general']['id']
          ]);
+         if ($r === false) {
+            if ($use_transaction) {
+               $DB->rollBack();
+            }
+            return false;
+         }
+         $device_id = $DB->insertId();
+         $jamf_mobiledevice = new PluginJamfMobileDevice();
+         $r2 = $jamf_mobiledevice->add([
+            'glpi_plugin_jamf_devices_id' => $device_id
+         ]);
+         if ($r2 === false) {
+            if ($use_transaction) {
+               $DB->rollBack();
+            }
+            return false;
+         }
          if (self::sync($itemtype, $items_id, false)) {
-            $DB->update('glpi_plugin_jamf_mobiledevices', [
+            $DB->update('glpi_plugin_jamf_devices', [
                'import_date' => $_SESSION['glpi_currenttime']
             ], [
                'itemtype' => $itemtype,
                'items_id' => $items_id
             ]);
-            $DB->delete(PluginJamfImport::getTable(), ['jamf_items_id' => $jamf_items_id]);
+            $DB->delete(PluginJamfImport::getTable(), ['jamf_type' => static::$jamf_itemtype, 'jamf_items_id' => $jamf_items_id]);
             if ($use_transaction) {
                $DB->commit();
             }
@@ -780,21 +800,19 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
    {
       global $DB;
 
-//      $iterator = $DB->request([
-//         //'SELECT' => ['udid'],
-//         'FROM'   => PluginJamfMobileDevice::getTable(),
-//         'WHERE'  => [
-//            'itemtype'  => $itemtype,
-//            'items_id'  => $items_id
-//         ]
-//      ]);
-//
-//      if (!count($iterator)) {
-//         return [];
-//      }
-      $item = new $itemtype();
-      $item->getFromDB($items_id);
-      $jamf_item = PluginJamfAbstractDevice::getJamfItemForGLPIItem($item);
+      $iterator = $DB->request([
+         'SELECT' => ['jamf_items_id'],
+         'FROM'   => 'glpi_plugin_jamf_devices',
+         'WHERE'  => [
+            'itemtype'  => $itemtype,
+            'items_id'  => $items_id
+         ]
+      ]);
+
+      if (!count($iterator)) {
+         return [];
+      }
+      $jamf_item = $iterator->next();
 
       return static::$api_classic::getItems('mobiledevices', ['id' => $jamf_item['jamf_items_id']]);
    }

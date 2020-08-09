@@ -23,6 +23,7 @@
 
 abstract class PluginJamfDeviceSync extends PluginJamfSync {
 
+   protected $commondevice_changes = [];
    /**
     * Sync general information such as name, serial number, etc.
     * All synced fields here are on the main GLPI item and not a plugin item type.
@@ -158,7 +159,6 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
             $attr = static::$api_classic::getItems($api_itemtype, ['id' => $attribute['id']]);
             $input = [
                'jamf_id'      => $attr['id'],
-               'itemtype'     => static::$jamfplugin_itemtype::getType(),
                'jamf_type'    => static::$jamf_itemtype,
                'name'         => $DB->escape($attr['name']),
                'description'  => $DB->escape($attr['description']),
@@ -264,6 +264,66 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
          }
          return false;
       }
+   }
+
+   /**
+    * Apply all pending changes and retry deferred tasks.
+    * @since 1.1.0
+    * @return array STATUS_OK if the sync was successful, STATUS_ERROR otherwise.
+    */
+   protected function finalizeSync()
+   {
+      if ($this->dummySync) {
+         return $this->status;
+      }
+      $this->commondevice_changes['sync_date'] = $_SESSION['glpi_currenttime'];
+      $this->item->update([
+            'id' => $this->item->getID()
+         ] + $this->item_changes);
+      foreach ($this->extitem_changes as $key => $value) {
+         PluginJamfExtField::setValue($this->item::getType(), $this->item->getID(), $key, $value);
+      }
+      $this->db->updateOrInsert('glpi_plugin_jamf_devices', $this->commondevice_changes, [
+         'itemtype' => $this->item::getType(),
+         'items_id' => $this->item->getID()
+      ]);
+      $device_id = -1;
+      $iterator = $this->db->request([
+         'SELECT' => ['id'],
+         'FROM'   => 'glpi_plugin_jamf_devices',
+         'WHERE'  => [
+            'itemtype' => $this->item::getType(),
+            'items_id' => $this->item->getID()
+         ]
+      ]);
+      if (count($iterator)) {
+         $device_id = $iterator->next()['id'];
+      }
+      $this->db->updateOrInsert(static::$jamfplugin_itemtype::getTable(), $this->jamfplugin_item_changes, [
+         'glpi_plugin_jamf_devices_id' => $device_id
+      ]);
+
+      if ($this->jamfplugin_device === null) {
+         $jamf_item = new static::$jamfplugin_itemtype();
+         $jamf_match = $jamf_item->find([
+            'itemtype' => $this->item::getType(),
+            'items_id' => $this->item->getID()], [], 1);
+         if (count($jamf_match)) {
+            $jamf_item->getFromDB(reset($jamf_match)['id']);
+            $this->jamfplugin_device = $jamf_item;
+         }
+      }
+
+      // Re-run all deferred tasks
+      $deferred = array_keys($this->status, self::STATUS_DEFERRED);
+      foreach ($deferred as $task) {
+         if (method_exists($this, $task)) {
+            $this->$task();
+         } else {
+            $this->status[$task] = self::STATUS_ERROR;
+         }
+      }
+      return $this->status;
    }
 
    /**

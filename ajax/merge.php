@@ -36,9 +36,10 @@ parse_str($input, $_REQUEST);
 if (!isset($_REQUEST['action'])) {
    throw new RuntimeException('Required argument missing!');
 }
-if ($_REQUEST['action'] == 'merge') {
+if ($_REQUEST['action'] === 'merge') {
    // Trigger extension attribute definition sync
-   PluginJamfSync::syncExtensionAttributeDefinitions();
+   PluginJamfMobileSync::syncExtensionAttributeDefinitions();
+   PluginJamfComputerSync::syncExtensionAttributeDefinitions();
    // An array of item IDs is required
    if (isset($_REQUEST['item_ids']) && is_array($_REQUEST['item_ids'])) {
       foreach ($_REQUEST['item_ids'] as $glpi_id => $data) {
@@ -53,12 +54,18 @@ if ($_REQUEST['action'] == 'merge') {
             throw new RuntimeException('Invalid itemtype!');
          }
          $item = new $itemtype();
-         $mobiledevice = new PluginJamfMobileDevice();
+         /** @var PluginJamfAbstractDevice $plugin_itemtype */
+         $plugin_itemtype = 'PluginJamf'.$data['jamf_type'];
+         /** @var PluginJamfDeviceSync $plugin_sync_itemtype */
+         $plugin_sync_itemtype = 'PluginJamf'.$data['jamf_type'].'Sync';
+         if ($data['jamf_type'] === 'MobileDevice') {
+            $plugin_sync_itemtype = 'PluginJamfMobileSync';
+         }
 
          $jamf_item = PluginJamfAPIClassic::getItems('mobiledevices', ['id' => $jamf_id]);
-         if (is_null($jamf_item)) {
+         if ($jamf_item === null) {
             // API error or device no longer exists in Jamf
-            throw new RuntimeException('Jamf API error or item no logner exists!');
+            throw new RuntimeException('Jamf API error or item no longer exists!');
          }
 
          // Run import rules on merged devices manually since this doesn't go through the usual import process
@@ -80,15 +87,29 @@ if ($_REQUEST['action'] == 'merge') {
 
          $DB->beginTransaction();
          try {
+            // Link
+            $plugin_item = new $plugin_itemtype();
+            $plugin_item->add([
+               'itemtype'        => $itemtype,
+               'items_id'        => $glpi_id,
+               'jamf_items_id'   => $data['jamf_id'],
+            ]);
+
+            // Sync
+            $sync_result = $plugin_sync_itemtype::sync($itemtype, $glpi_id, false);
+
             // Update merged device and then delete the pending import
-            if (PluginJamfSync::updateComputerOrPhoneFromArray($itemtype, $glpi_id, $jamf_item, false)) {
-               $DB->update('glpi_plugin_jamf_mobiledevices', [
+            if ($sync_result) {
+               $DB->update($plugin_itemtype::getTable(), [
                   'import_date'  => $_SESSION['glpi_currenttime']
                ], [
                   'itemtype' => $itemtype,
                   'items_id' => $glpi_id
                ]);
-               $DB->delete(PluginJamfImport::getTable(), ['jamf_items_id' => $jamf_id]);
+               $DB->delete(PluginJamfImport::getTable(), [
+                  'jamf_type' => $data['jamf_type'],
+                  'jamf_items_id' => $jamf_id
+               ]);
                $DB->commit();
             } else {
                $DB->rollBack();
@@ -96,7 +117,7 @@ if ($_REQUEST['action'] == 'merge') {
          } catch (Exception $e) {
             $DB->rollBack();
          }
-         
+
       }
    } else {
       throw new RuntimeException('Required argument missing!');

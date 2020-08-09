@@ -29,6 +29,7 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
    static public $itemtype = 'itemtype';
    static public $items_id = 'items_id';
    static public $jamftype_name = null;
+   public static $mustBeAttached = false;
 
    /**
     * Display the extra information for Jamf devices on the main Computer or Phone tab.
@@ -55,10 +56,20 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
    {
       global $DB;
 
-      $DB->delete(static::getTable(), [
-         'itemtype' => $item::getType(),
-         'items_id' => $item->getID()
-      ]);
+      $jamf_class = static::getJamfItemClassForGLPIItem($item::getType(), $item->getID());
+      $jamf_item = $jamf_class::getJamfItemForGLPIItem($item);
+      if ($jamf_item === null) {
+         return;
+      }
+      $device = $jamf_item->getJamfDeviceData();
+      if (!empty($device)) {
+         $DB->delete('glpi_plugin_jamf_devices', [
+            'id' => $device['id']
+         ]);
+         $DB->delete($jamf_item::getTable(), [
+            'glpi_plugin_jamf_devices_id' => $device['id']
+         ]);
+      }
    }
 
    /**
@@ -97,29 +108,9 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
    {
       global $DB;
 
-      $computer_query = [
-         'SELECT'    => [
-            new QueryExpression('"Computer" AS jamf_type')
-         ],
-         'FROM'      => PluginJamfComputer::getTable(),
-         'WHERE'     => [
-            'itemtype'  => $itemtype,
-            'items_id'  => $items_id
-         ]
-      ];
-      $mobiledevice_query = [
-         'SELECT'    => [
-            new QueryExpression('"MobileDevice" AS jamf_type')
-         ],
-         'FROM'      => PluginJamfMobileDevice::getTable(),
-         'WHERE'     => [
-            'itemtype'  => $itemtype,
-            'items_id'  => $items_id
-         ]
-      ];
       $iterator = $DB->request([
          'SELECT'    => [
-            new QueryExpression('"MobileDevice" AS jamf_type')
+            'jamf_type'
          ],
          'FROM'      => 'glpi_plugin_jamf_devices',
          'WHERE'     => [
@@ -151,13 +142,21 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
       if (!$limit_to_type) {
          $iterator = $DB->request([
             'SELECT'    => [
-               new QueryExpression('"MobileDevice" AS jamf_type'),
-               'id',
+               'jamf_type',
+               static::getTable().'.id',
                'itemtype',
                'items_id',
                'jamf_items_id'
             ],
             'FROM'      => 'glpi_plugin_jamf_devices',
+            'LEFT JOIN' => [
+               static::getTable() => [
+                  'ON'  => [
+                     static::getTable()         => 'glpi_plugin_jamf_devices_id',
+                     'glpi_plugin_jamf_devices' => 'id'
+                  ]
+               ]
+            ],
             'WHERE'     => [
                'itemtype'  => $item::getType(),
                'items_id'  => $item->getID()
@@ -188,6 +187,19 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
       $item = new $itemtype();
       $item->getFromDB($this->fields['items_id']);
       return $item;
+   }
+
+   public function getJamfDeviceData() {
+      global $DB;
+
+      $iterator = $DB->request([
+         'FROM'   => 'glpi_plugin_jamf_devices',
+         'WHERE'  => ['id' => $this->fields['glpi_plugin_jamf_devices_id']]
+      ]);
+      if (count($iterator)) {
+         return $iterator->next();
+      }
+      return [];
    }
 
    abstract public function getMDMCommands();

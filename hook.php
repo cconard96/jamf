@@ -242,3 +242,13 @@ function plugin_jamf_dashboardCards()
 
    return $cards;
 }
+
+function plugin_jamf_showJamfInfoForItem(array $params)
+{
+   $item = $params['item'];
+   /** @var PluginJamfAbstractDevice $jamf_class */
+   $jamf_class = PluginJamfAbstractDevice::getJamfItemClassForGLPIItem($item::getType(), $item->getID());
+   if ($jamf_class !== null) {
+      return $jamf_class::showForItem($params);
+   }
+}

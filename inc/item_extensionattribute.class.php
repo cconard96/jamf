@@ -26,67 +26,72 @@
  *
  * @since 1.1.0
  */
-class PluginJamfItem_ExtensionAttribute extends CommonDBChild {
+class PluginJamfItem_ExtensionAttribute extends CommonDBChild
+{
 
-    static public $itemtype = 'itemtype';
-    static public $items_id = 'items_id';
+   static public $itemtype = 'itemtype';
+   static public $items_id = 'items_id';
 
-    public static function getTypeName($nb = 1)
-    {
-        return _nx('itemtype', 'Extension attribute', 'Extension attributes', $nb, 'jamf');
-    }
+   public static function getTypeName($nb = 1)
+   {
+      return _nx('itemtype', 'Extension attribute', 'Extension attributes', $nb, 'jamf');
+   }
 
-    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
-    {
-        if (!PluginJamfMobileDevice::canView()) {
-            return false;
-        }
-        return self::createTabEntry(self::getTypeName(2), self::countForJamfItem(PluginJamfMobileDevice::getType(), $item));
-    }
+   public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
+   {
+      /** @var PluginJamfAbstractDevice $jamf_class */
+      $jamf_class = PluginJamfAbstractDevice::getJamfItemClassForGLPIItem($item::getType(), $item->getID());
+      if ($jamf_class === null || !$jamf_class::canView()) {
+         return false;
+      }
+      return self::createTabEntry(self::getTypeName(2), self::countForJamfItem($jamf_class, $item));
+   }
 
-    public static function countForJamfItem($jamf_itemtype, $item)
-    {
-       return countElementsInTable($jamf_itemtype::getTable(), [
-          'itemtype' => $item->getType(),
-          'items_id' => $item->getID()
-       ]);
-    }
+   public static function countForJamfItem($jamf_itemtype, $item)
+   {
+      return countElementsInTable('glpi_plugin_jamf_devices', [
+         'itemtype' => $item->getType(),
+         'items_id' => $item->getID()
+      ]);
+   }
 
-    public static function countForItem(CommonDBTM $item)
-    {
-        return countElementsInTable([self::getTable()], ['itemtype' => $item->getType(), 'items_id' => $item->getID()]);
-    }
+   public static function countForItem(CommonDBTM $item)
+   {
+      return countElementsInTable(['glpi_plugin_jamf_devices'], ['itemtype' => $item->getType(), 'items_id' => $item->getID()]);
+   }
 
-    public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
-    {
-        return self::showForItem($item);
-    }
+   public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
+   {
+      return self::showForItem($item);
+   }
 
-    public static function showForItem(CommonDBTM $item)
-    {
-        if (!PluginJamfMobileDevice::canView()) {
-            return false;
-        }
+   public static function showForItem(CommonDBTM $item)
+   {
+      /** @var PluginJamfAbstractDevice $jamf_class */
+      $jamf_class = PluginJamfAbstractDevice::getJamfItemClassForGLPIItem($item::getType(), $item->getID());
+      if ($jamf_class === null || !$jamf_class::canView()) {
+         return false;
+      }
 
-        $mobiledevice = PluginJamfMobileDevice::getJamfItemForGLPIItem($item);
-        if ($mobiledevice === null) {
-            return false;
-        }
+      $mobiledevice = $jamf_class::getJamfItemForGLPIItem($item);
+      if ($mobiledevice === null) {
+         return false;
+      }
 
-        $attributes = $mobiledevice->getExtensionAttributes();
+      $attributes = $mobiledevice->getExtensionAttributes();
 
-        echo "<table class='tab_cadre_fixe'>";
-        echo "<thead>";
-        echo "<th>"._x('field', 'Name', 'jamf')."</th>";
-        echo "<th>"._x('field', 'Type', 'jamf')."</th>";
-        echo "<th>"._x('field', 'Value', 'jamf')."</th>";
-        echo "</thead>";
-        echo "<tbody>";
-        foreach ($attributes as $attribute) {
-            echo "<tr><td>{$attribute['name']}</td><td>{$attribute['data_type']}</td><td>{$attribute['value']}</td></tr>";
-        }
-        echo "</tbody>";
-        echo "</table>";
-        return true;
-    }
+      echo "<table class='tab_cadre_fixe'>";
+      echo "<thead>";
+      echo "<th>" . _x('field', 'Name', 'jamf') . "</th>";
+      echo "<th>" . _x('field', 'Type', 'jamf') . "</th>";
+      echo "<th>" . _x('field', 'Value', 'jamf') . "</th>";
+      echo "</thead>";
+      echo "<tbody>";
+      foreach ($attributes as $attribute) {
+         echo "<tr><td>{$attribute['name']}</td><td>{$attribute['data_type']}</td><td>{$attribute['value']}</td></tr>";
+      }
+      echo "</tbody>";
+      echo "</table>";
+      return true;
+   }
 }

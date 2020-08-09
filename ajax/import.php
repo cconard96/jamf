@@ -39,20 +39,25 @@ if (!isset($_REQUEST['action'])) {
 
 if ($_REQUEST['action'] == 'import') {
    // An array of item IDs is required
-   if (isset($_REQUEST['item_ids']) && is_array($_REQUEST['item_ids'])) {
+   if (isset($_REQUEST['import_ids']) && is_array($_REQUEST['import_ids'])) {
       // Get data for each item to import
       $toimport = $DB->request([
-         'SELECT' => ['type', 'jamf_items_id'],
+         'SELECT' => ['type', 'jamf_type', 'jamf_items_id'],
          'FROM'   => PluginJamfImport::getTable(),
          'WHERE'  => [
-            'jamf_items_id'  => $_REQUEST['item_ids']
+            'id'  => $_REQUEST['import_ids']
          ]
       ]);
       // Trigger extension attribute definition sync
-      PluginJamfSync::syncExtensionAttributeDefinitions();
+      PluginJamfMobileSync::syncExtensionAttributeDefinitions();
+      PluginJamfComputerSync::syncExtensionAttributeDefinitions();
       // Import the requested device(s)
       while ($data = $toimport->next()) {
-         PluginJamfSync::importMobileDevice($data['type'], $data['jamf_items_id']);
+         if ($data['jamf_type'] === 'MobileDevice') {
+            PluginJamfMobileSync::import($data['type'], $data['jamf_items_id']);
+         } else {
+            PluginJamfComputerSync::import($data['type'], $data['jamf_items_id']);
+         }
       }
    } else {
       throw new RuntimeException('Required argument missing!');

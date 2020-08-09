@@ -32,7 +32,7 @@ function plugin_init_jamf() {
    $PLUGIN_HOOKS['add_css']['jamf'][] = 'css/jamf.css';
    $PLUGIN_HOOKS['add_javascript']['jamf'][] = 'js/jamf.min.js';
    Plugin::registerClass('PluginJamfConfig', ['addtabon' => 'Config']);
-   $PLUGIN_HOOKS['post_item_form']['jamf'] = ['PluginJamfMobileDevice', 'showForComputerOrPhoneMain'];
+   $PLUGIN_HOOKS['post_item_form']['jamf'] = 'plugin_jamf_showJamfInfoForItem';
    $PLUGIN_HOOKS['pre_item_update']['jamf']['Phone'] = ['PluginJamfMobileDevice', 'preUpdatePhone'];
    $PLUGIN_HOOKS['undiscloseConfigValue']['jamf'] = [PluginJamfConfig::class, 'undiscloseConfigValue'];
    Plugin::registerClass('PluginJamfRuleImportCollection', ['rulecollections_types' => true]);
@@ -51,8 +51,8 @@ function plugin_init_jamf() {
    }
    $PLUGIN_HOOKS['post_init']['jamf'] = 'plugin_jamf_postinit';
    $PLUGIN_HOOKS['item_purge']['jamf'] = [
-      'Computer'  => ['PluginJamfMobileDevice', 'plugin_jamf_purgeComputer'],
-      'Phone'     => ['PluginJamfMobileDevice', 'plugin_jamf_purgePhone'],
+      'Computer'  => ['PluginJamfAbstractDevice', 'plugin_jamf_purgeComputer'],
+      'Phone'     => ['PluginJamfAbstractDevice', 'plugin_jamf_purgePhone'],
       'Software'  => ['PluginJamfSoftware', 'plugin_jamf_purgeSoftware']
    ];
    $PLUGIN_HOOKS['pre_item_update']['jamf']['Config'] = ['PluginJamfConfig', 'plugin_jamf_preitemupdate'];
