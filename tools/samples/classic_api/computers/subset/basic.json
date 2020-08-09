@@ -1,0 +1,74 @@
+{
+  "computers": [
+    {
+      "id": 33,
+      "name": "Computer 2",
+      "managed": false,
+      "username": "user17",
+      "model": "MacBookPro8,1",
+      "department": "",
+      "building": "Minneapolis",
+      "mac_address": "C8:2A:14:0C:43:24",
+      "udid": "CA40DA58-60A3-11E4-90B8-12DF261F2C7E",
+      "serial_number": "CA40DA6C60A3",
+      "report_date_utc": "2020-03-16T17:04:32.764+0000",
+      "report_date_epoch": 1584378272764
+    },
+    {
+      "id": 38,
+      "name": "Computer 3",
+      "managed": false,
+      "username": "user28",
+      "model": "iMac12,1",
+      "department": "",
+      "building": "",
+      "mac_address": "40:6C:8F:0F:AA:99",
+      "udid": "CA40DB0C-60A3-11E4-90B8-12DF261F2C7E",
+      "serial_number": "CA40DB2060A3",
+      "report_date_utc": "2020-03-16T17:04:34.573+0000",
+      "report_date_epoch": 1584378274573
+    },
+    {
+      "id": 39,
+      "name": "Computer 4",
+      "managed": false,
+      "username": "user52",
+      "model": "MacBookPro10,1",
+      "department": "",
+      "building": "Minneapolis",
+      "mac_address": "20:C9:D0:44:B7:C3",
+      "udid": "CA40F998-60A3-11E4-90B8-12DF261F2C7E",
+      "serial_number": "CA40F9A260A3",
+      "report_date_utc": "2020-03-16T17:04:35.935+0000",
+      "report_date_epoch": 1584378275935
+    },
+    {
+      "id": 40,
+      "name": "Computer 5",
+      "managed": false,
+      "username": "user59",
+      "model": "MacBookPro11,1",
+      "department": "",
+      "building": "Minneapolis",
+      "mac_address": "B8:E8:56:43:56:40",
+      "udid": "CA40DB98-60A3-11E4-90B8-12DF261F2C7E",
+      "serial_number": "CA40DBA260A3",
+      "report_date_utc": "2020-03-16T17:04:37.340+0000",
+      "report_date_epoch": 1584378277340
+    },
+    {
+      "id": 43,
+      "name": "Computer 6",
+      "managed": false,
+      "username": "user78",
+      "model": "MacBookPro11,1",
+      "department": "",
+      "building": "",
+      "mac_address": "3C:15:C2:C6:14:4E",
+      "udid": "CA40DC10-60A3-11E4-90B8-12DF261F2C7E",
+      "serial_number": "CA40DC1A60A3",
+      "report_date_utc": "2020-03-16T17:04:38.531+0000",
+      "report_date_epoch": 1584378278531
+    }
+  ]
+}

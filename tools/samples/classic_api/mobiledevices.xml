@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mobile_devices>
+    <size>116</size>
+    <mobile_device>
+        <id>28</id>
+        <name>Device 2</name>
+        <device_name>Device 2</device_name>
+        <udid>ca44c88e60a311e490b812df261f2c7e</udid>
+        <serial_number>CA44C89860A3</serial_number>
+        <phone_number>612-605-6625</phone_number>
+        <wifi_mac_address>AC:3C:0B:5E:50:93</wifi_mac_address>
+        <managed>true</managed>
+        <supervised>false</supervised>
+        <model>iPad mini (CDMA)</model>
+        <model_identifier>iPad2,7</model_identifier>
+        <modelDisplay deprecated="9.4">iPad mini (CDMA)</modelDisplay>
+        <model_display>iPad mini (CDMA)</model_display>
+        <username>user71</username>
+    </mobile_device>
+    <mobile_device>
+        <id>35</id>
+        <name>Device 3</name>
+        <device_name>Device 3</device_name>
+        <udid>ca44c96060a311e490b812df261f2c7e</udid>
+        <serial_number>CA44C96A60A3</serial_number>
+        <phone_number>612-605-6625</phone_number>
+        <wifi_mac_address>54:EA:A8:3A:DC:E3</wifi_mac_address>
+        <managed>true</managed>
+        <supervised>false</supervised>
+        <model>iPhone 5 (CDMA)</model>
+        <model_identifier>iPhone5,2</model_identifier>
+        <modelDisplay deprecated="9.4">iPhone 5 (CDMA)</modelDisplay>
+        <model_display>iPhone 5 (CDMA)</model_display>
+        <username>user48</username>
+    </mobile_device>
+    <mobile_device>
+        <id>48</id>
+        <name>Device 4</name>
+        <device_name>Device 4</device_name>
+        <udid>ca44ca8c60a311e490b812df261f2c7e</udid>
+        <serial_number>CA44CA9660A3</serial_number>
+        <phone_number>612-605-6625</phone_number>
+        <wifi_mac_address>5C:96:9D:15:B7:CF</wifi_mac_address>
+        <managed>true</managed>
+        <supervised>false</supervised>
+        <model>iPad mini (CDMA)</model>
+        <model_identifier>iPad2,7</model_identifier>
+        <modelDisplay deprecated="9.4">iPad mini (CDMA)</modelDisplay>
+        <model_display>iPad mini (CDMA)</model_display>
+        <username>user82</username>
+    </mobile_device>
+    <mobile_device>
+        <id>49</id>
+        <name>Device 5</name>
+        <device_name>Device 5</device_name>
+        <udid>ca44cafa60a311e490b812df261f2c7e</udid>
+        <serial_number>CA44CB0460A3</serial_number>
+        <phone_number>612-605-6625</phone_number>
+        <wifi_mac_address>70:DE:E2:89:96:C6</wifi_mac_address>
+        <managed>true</managed>
+        <supervised>false</supervised>
+        <model>iPad 2 (Wi-Fi)</model>
+        <model_identifier>iPad2,1</model_identifier>
+        <modelDisplay deprecated="9.4">iPad 2 (Wi-Fi)</modelDisplay>
+        <model_display>iPad 2 (Wi-Fi)</model_display>
+        <username>user82</username>
+    </mobile_device>
+    <mobile_device>
+        <id>50</id>
+        <name>Device 6</name>
+        <device_name>Device 6</device_name>
+        <udid>ca44cb6860a311e490b812df261f2c7e</udid>
+        <serial_number>CA44CB7260A3</serial_number>
+        <phone_number>612-605-6625</phone_number>
+        <wifi_mac_address>18:20:32:B1:AB:5F</wifi_mac_address>
+        <managed>true</managed>
+        <supervised>false</supervised>
+        <model>iPad 2 (Wi-Fi)</model>
+        <model_identifier>iPad2,1</model_identifier>
+        <modelDisplay deprecated="9.4">iPad 2 (Wi-Fi)</modelDisplay>
+        <model_display>iPad 2 (Wi-Fi)</model_display>
+        <username>user82</username>
+    </mobile_device>
+</mobile_devices>

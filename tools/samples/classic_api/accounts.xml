@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<accounts>
+    <users>
+        <user>
+            <id>1</id>
+            <name>jamfadmin</name>
+        </user>
+        <user>
+            <id>2</id>
+            <name>testtech</name>
+        </user>
+    </users>
+    <groups>
+        <group>
+            <id>1</id>
+            <name>Elementary Technicians</name>
+            <site>
+                <id>-1</id>
+                <name>None</name>
+            </site>
+        </group>
+        <group>
+            <id>2</id>
+            <name>AnotherGroup</name>
+            <site>
+                <id>-1</id>
+                <name>None</name>
+            </site>
+        </group>
+    </groups>
+</accounts>
