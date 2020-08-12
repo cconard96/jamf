@@ -57,6 +57,9 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
       global $DB;
 
       $jamf_class = static::getJamfItemClassForGLPIItem($item::getType(), $item->getID());
+      if (!is_string($jamf_class)) {
+         return;
+      }
       $jamf_item = $jamf_class::getJamfItemForGLPIItem($item);
       if ($jamf_item === null) {
          return;
@@ -203,4 +206,37 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
    }
 
    abstract public function getMDMCommands();
+
+   public function getExtensionAttributes()
+   {
+      global $DB;
+
+      $ext_table = PluginJamfExtensionAttribute::getTable();
+      $item_ext_table = PluginJamfItem_ExtensionAttribute::getTable();
+
+      $iterator = $DB->request([
+         'SELECT' => [
+            'name', 'data_type', 'value'
+         ],
+         'FROM'   => $ext_table,
+         'LEFT JOIN'  => [
+            $item_ext_table => [
+               'FKEY'   => [
+                  $ext_table       => 'id',
+                  $item_ext_table  => 'glpi_plugin_jamf_extensionattributes_id'
+               ]
+            ]
+         ],
+         'WHERE'  => [
+            $item_ext_table.'.itemtype'   => static::getType(),
+            'items_id'   => $this->getID()
+         ]
+      ]);
+
+      $attributes = [];
+      while ($data = $iterator->next()) {
+         $attributes[] = $data;
+      }
+      return $attributes;
+   }
 }

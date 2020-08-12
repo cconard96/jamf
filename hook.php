@@ -62,7 +62,14 @@ function plugin_jamf_getDatabaseRelations()
             'glpi_plugin_jamf_softwares' => 'softwares_id'
          ],
          'glpi_computers' => [
-            'glpi_plugin_jamf_mobiledevices' => 'computers_id',
+            'glpi_plugin_jamf_devices' => ['items_id', 'itemtype'],
+         ],
+         'glpi_phones' => [
+            'glpi_plugin_jamf_devices' => ['items_id', 'itemtype'],
+         ],
+         'glpi_plugin_jamf_devices' => [
+            'glpi_plugin_jamf_computers' => 'glpi_plugin_jamf_devices_id',
+            'glpi_plugin_jamf_mobiledevices' => 'glpi_plugin_jamf_devices_id'
          ]
       ];
    }

@@ -118,39 +118,6 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
 //       return null;
 //   }
 
-   public function getExtensionAttributes()
-   {
-       global $DB;
-
-       $ext_table = PluginJamfExtensionAttribute::getTable();
-       $item_ext_table = PluginJamfItem_ExtensionAttribute::getTable();
-
-       $iterator = $DB->request([
-           'SELECT' => [
-               'name', 'data_type', 'value'
-           ],
-           'FROM'   => $ext_table,
-           'LEFT JOIN'  => [
-               $item_ext_table => [
-                   'FKEY'   => [
-                       $ext_table       => 'id',
-                       $item_ext_table  => 'glpi_plugin_jamf_extensionattributes_id'
-                   ]
-               ]
-           ],
-           'WHERE'  => [
-               $item_ext_table.'.itemtype'   => self::getType(),
-               'items_id'   => $this->getID()
-           ]
-       ]);
-
-       $attributes = [];
-       while ($data = $iterator->next()) {
-           $attributes[] = $data;
-       }
-       return $attributes;
-   }
-
    public static function preUpdatePhone($item) {
       if (isset($item->input['_plugin_jamf_uuid'])) {
          PluginJamfExtField::setValue($item::getType(), $item->getID(), 'uuid', $item->input['_plugin_jamf_uuid']);

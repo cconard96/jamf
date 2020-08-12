@@ -133,8 +133,8 @@ abstract class PluginJamfSync
       $this->config = PluginJamfConfig::getConfig();
       $this->item = $item;
       $this->data = $data;
-      $jamfitem = new static::$jamfplugin_itemtype();
-      $jamfitem = PluginJamfAbstractDevice::getJamfItemClassForGLPIItem($item->getType(), $item->getID());
+      $jamfitem = static::$jamfplugin_itemtype::getJamfItemForGLPIItem($item);
+      //$jamfitem = new static::$jamfplugin_itemtype();
       $this->jamfplugin_device = $jamfitem;
 //      $jamf_match = $jamfitem->find([
 //         'itemtype' => $item::getType(),

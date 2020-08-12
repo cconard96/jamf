@@ -302,7 +302,7 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
       if (!$this->config['sync_general'] || !isset($this->data['extension_attributes'])) {
          $this->status['syncExtensionAttributes'] = self::STATUS_SKIPPED;
          return $this;
-      } else if ($this->config['sync_general'] && $this->jamfplugin_device === null) {
+      } else if ($this->config['sync_general'] && ($this->jamfplugin_device === null || empty($this->jamfplugin_device->fields))) {
          $this->status['syncExtensionAttributes'] = self::STATUS_DEFERRED;
          return $this;
       }
@@ -313,7 +313,6 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
          foreach ($extension_attributes as $attr) {
             $attr_match = $ext_attribute->find([
                'jamf_id' => $attr['id'],
-               'itemtype' => $this->jamfplugin_device::getType(),
                'jamf_type' => 'MobileDevice'
             ], [], 1);
 

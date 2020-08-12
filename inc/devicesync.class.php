@@ -248,8 +248,13 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
             ->finalizeSync();
          // Evaluate final sync result. If any errors exist, count as failure.
          // Any tasks that are still deferred are also counted as failures.
-         $failed = array_keys($sync_result, [self::STATUS_ERROR, self::STATUS_DEFERRED]);
+         $failed = array_filter($sync_result, static function($v) {
+            return in_array($v, [self::STATUS_ERROR, self::STATUS_DEFERRED], true);
+         }, ARRAY_FILTER_USE_BOTH);
          if (count($failed) !== 0) {
+            if ($use_transaction) {
+               $DB->rollBack();
+            }
             throw new RuntimeException('One or more sync actions failed [' . implode(', ', $failed) . ']');
          }
 
@@ -303,7 +308,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
          'glpi_plugin_jamf_devices_id' => $device_id
       ]);
 
-      if ($this->jamfplugin_device === null) {
+      if ($this->jamfplugin_device === null || empty($this->jamfplugin_device->fields)) {
          $jamf_item = new static::$jamfplugin_itemtype();
          $jamf_match = $jamf_item->find([
             'itemtype' => $this->item::getType(),
@@ -322,6 +327,12 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
          } else {
             $this->status[$task] = self::STATUS_ERROR;
          }
+      }
+
+      // If anything is still deferred, treat it as an error
+      $deferred = array_keys($this->status, self::STATUS_DEFERRED);
+      foreach ($deferred as $task) {
+         $this->status[$task] = self::STATUS_ERROR;
       }
       return $this->status;
    }
