@@ -55,24 +55,24 @@ function plugin_jamf_uninstall()
 
 function plugin_jamf_getDatabaseRelations()
 {
-   $plugin = new Plugin();
-   if ($plugin->isActivated('jamf')) {
-      return [
-         'glpi_softwares' => [
-            'glpi_plugin_jamf_softwares' => 'softwares_id'
-         ],
-         'glpi_computers' => [
-            'glpi_plugin_jamf_devices' => ['items_id', 'itemtype'],
-         ],
-         'glpi_phones' => [
-            'glpi_plugin_jamf_devices' => ['items_id', 'itemtype'],
-         ],
-         'glpi_plugin_jamf_devices' => [
-            'glpi_plugin_jamf_computers' => 'glpi_plugin_jamf_devices_id',
-            'glpi_plugin_jamf_mobiledevices' => 'glpi_plugin_jamf_devices_id'
-         ]
-      ];
-   }
+//   $plugin = new Plugin();
+//   if ($plugin->isActivated('jamf')) {
+//      return [
+//         'glpi_softwares' => [
+//            'glpi_plugin_jamf_softwares' => 'softwares_id'
+//         ],
+//         'glpi_computers' => [
+//            'glpi_plugin_jamf_devices' => ['items_id', 'itemtype'],
+//         ],
+//         'glpi_phones' => [
+//            'glpi_plugin_jamf_devices' => ['items_id', 'itemtype'],
+//         ],
+//         'glpi_plugin_jamf_devices' => [
+//            'glpi_plugin_jamf_computers' => 'glpi_plugin_jamf_devices_id',
+//            'glpi_plugin_jamf_mobiledevices' => 'glpi_plugin_jamf_devices_id'
+//         ]
+//      ];
+//   }
    return [];
 }
 
