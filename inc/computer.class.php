@@ -39,8 +39,9 @@ class PluginJamfComputer extends PluginJamfAbstractDevice
     * Display the extra information for Jamf computers on the main Computer tab.
     * @param array $params
     * @return void|bool Displays HTML only if a supported item is in the params parameter. If there is any issue, false is returned.
-    * @since 1.0.0
+    * @throws Exception
     * @since 2.0.0 Renamed from showForComputerOrPhoneMain to showForItem
+    * @since 1.0.0
     */
    public static function showForItem(array $params)
    {

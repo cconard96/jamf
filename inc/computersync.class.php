@@ -457,6 +457,29 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync {
             'is_recursive'       => 1,
          ]);
       }
+      $storage = $hardware['storage'];
+      if (!empty($storage)) {
+         foreach ($storage as $disk) {
+            foreach ($disk['partitions'] as $partition) {
+               // Volume
+               $this->applyDesiredState(Item_Disk::class, [
+                  'itemtype'     => $this->item::getType(),
+                  'items_id'     => $this->item->getID(),
+                  'mountpoint'   => '',
+                  'name'         => $partition['name']
+               ], [
+                  'itemtype'     => $this->item::getType(),
+                  'items_id'     => $this->item->getID(),
+                  'name'         => $partition['name'],
+                  'mountpoint'   => '',
+                  'totalsize'    => (($partition['partition_capacity_mb'] / 1000) / 1000),
+                  'freesize'     => (($partition['available_mb'] / 1000) / 1000),
+                  'entities_id'  => $this->item->fields['entities_id'],
+                  'is_dynamic'   => 1,
+               ]);
+            }
+         }
+      }
 
       $this->status['syncComponents'] = self::STATUS_OK;
       return $this;
