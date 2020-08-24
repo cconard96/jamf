@@ -43,6 +43,10 @@ function plugin_jamf_uninstall()
    PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_devices');
    Config::deleteConfigurationValues('plugin:Jamf', [
       'config_class',
+      'jssserver', 'jssuser', 'jsspassword', 'jssignorecert',
+      'sync_interval', 'sync_general', 'sync_os',
+      'sync_software', 'sync_financial', 'sync_user', 'sync_components',
+      'user_sync_mode', 'autoimport', 'default_status',
       'default_manufacturer',
       'iphone_type',
       'ipad_type',
