@@ -272,7 +272,7 @@ final class PluginJamfMigration {
 
       // Fix missing Jamf ID field
       if (!$this->db->fieldExists('glpi_plugin_jamf_mobiledevices', 'jamf_items_id', false)) {
-         $this->glpiMigration->addField('glpi_plugin_jamf_mobiledevices', 'jamf_items_id', 'integer', ['default' => -1]);
+         $this->glpiMigration->addField('glpi_plugin_jamf_mobiledevices', 'jamf_items_id', 'integer', ['value' => -1]);
          $this->glpiMigration->migrationOneTable('glpi_plugin_jamf_mobiledevices');
          $mobiledevice = new PluginJamfMobileDevice();
          // Find all devices that don't have the jamf id recorded, and retrieve it.
@@ -340,7 +340,7 @@ final class PluginJamfMigration {
    public function apply_2_1_0_migration() {
       if (!$this->db->fieldExists('glpi_plugin_jamf_extensionattributes', 'jamf_type', false)) {
          $this->glpiMigration->addField('glpi_plugin_jamf_extensionattributes', 'jamf_type', 'string', [
-            'default'   => 'MobileDevice',
+            'value'   => 'MobileDevice',
             'after'     => 'id'
          ]);
          $this->glpiMigration->dropKey('glpi_plugin_jamf_extensionattributes', 'jamf_id');
@@ -353,7 +353,7 @@ final class PluginJamfMigration {
 
       if (!$this->db->fieldExists('glpi_plugin_jamf_imports', 'jamf_type', false)) {
          $this->glpiMigration->addField('glpi_plugin_jamf_imports', 'jamf_type', 'string', [
-            'default'   => 'MobileDevice',
+            'value'   => 'MobileDevice',
             'after'     => 'id'
          ]);
          $this->glpiMigration->migrationOneTable('glpi_plugin_jamf_imports');
