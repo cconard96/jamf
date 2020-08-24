@@ -59,6 +59,10 @@ function plugin_init_jamf() {
 
    // Dashboards
    $PLUGIN_HOOKS['dashboard_cards']['jamf'] = 'plugin_jamf_dashboardCards';
+
+   // Sodium/password fields hook thing... :face_vomiting:!
+   // WHY DID GLPI EVER A SHARED KEY BEFORE!!! AGHHHHHHHHHH!
+   $PLUGIN_HOOKS['secured_configs']['Jamf'] = ['jsspassword'];
 }
 
 function plugin_version_jamf() {

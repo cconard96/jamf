@@ -439,5 +439,16 @@ final class PluginJamfMigration {
             'itemtype' => 'PluginJamfSync'
          ]);
       }
+
+      $old_jsspassword = Config::getConfigurationValues('plugin:Jamf', 'jsspassword')['jsspassword'];
+      if (!empty($old_jsspassword)) {
+         $this->db->update(Config::getTable(), [
+            'value' => Toolbox::sodiumEncrypt(Toolbox::decrypt($old_jsspassword))
+         ], [
+            'context' => 'plugin:Jamf',
+            'name' => 'jsspassword'
+         ]);
+      }
+      unset($old_jsspassword);
    }
 }
