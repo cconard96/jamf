@@ -74,7 +74,7 @@ class PluginJamfConfig extends CommonDBTM
       echo Html::input('jsspassword', ['type' => 'password', 'value' => $config['jsspassword']]);
       echo '</td>';
       echo '<td>' ._x('config', 'Ignore JSS Certificate', 'jamf'). '</td><td>';
-      Dropdown::showYesNo('jssignorecert', $config['jssignorecert']);
+      Dropdown::showYesNo('jssignorecert', $config['jssignorecert'] ?? 0);
       echo '</td></tr>';
       echo '</table>';
 
@@ -150,7 +150,7 @@ class PluginJamfConfig extends CommonDBTM
       echo '<tr><td>' ._x('config', 'Default status', 'jamf'). '</td><td>';
       State::dropdown([
          'name'      => 'default_status',
-         'value'     => $config['default_status'],
+         'value'     => $config['default_status'] ?? false,
          'entity'    => 0,
          'condition' => [
             'is_visible_computer'   => 1,
