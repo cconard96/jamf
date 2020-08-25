@@ -41,23 +41,19 @@ class PluginJamfItem_ExtensionAttribute extends CommonDBChild
    {
       /** @var PluginJamfAbstractDevice $jamf_class */
       $jamf_class = PluginJamfAbstractDevice::getJamfItemClassForGLPIItem($item::getType(), $item->getID());
+      $jamf_item = $jamf_class::getJamfItemForGLPIItem($item);
       if ($jamf_class === null || !$jamf_class::canView()) {
          return false;
       }
-      return self::createTabEntry(self::getTypeName(2), self::countForJamfItem($jamf_class, $item));
+      return self::createTabEntry(self::getTypeName(2), self::countForJamfItem($jamf_item));
    }
 
-   public static function countForJamfItem($jamf_itemtype, $item)
+   public static function countForJamfItem($jamf_item)
    {
-      return countElementsInTable('glpi_plugin_jamf_devices', [
-         'itemtype' => $item->getType(),
-         'items_id' => $item->getID()
+      return countElementsInTable(self::getTable(), [
+         'itemtype' => $jamf_item::getType(),
+         'items_id' => $jamf_item->getID()
       ]);
-   }
-
-   public static function countForItem(CommonDBTM $item)
-   {
-      return countElementsInTable(['glpi_plugin_jamf_devices'], ['itemtype' => $item->getType(), 'items_id' => $item->getID()]);
    }
 
    public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
