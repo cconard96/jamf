@@ -37,7 +37,8 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
 
    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
    {
-      if (!PluginJamfMobileDevice::canView()) {
+      $jamf_class = PluginJamfAbstractDevice::getJamfItemClassForGLPIItem($item::getType(), $item->getID());
+      if ($jamf_class === null || !PluginJamfMobileDevice::canView()) {
          return false;
       }
       return self::getTypeName(2);
