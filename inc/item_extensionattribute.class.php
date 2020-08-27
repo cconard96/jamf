@@ -41,6 +41,9 @@ class PluginJamfItem_ExtensionAttribute extends CommonDBChild
    {
       /** @var PluginJamfAbstractDevice $jamf_class */
       $jamf_class = PluginJamfAbstractDevice::getJamfItemClassForGLPIItem($item::getType(), $item->getID());
+      if ($jamf_class === null) {
+         return false;
+      }
       $jamf_item = $jamf_class::getJamfItemForGLPIItem($item);
       if ($jamf_class === null || !$jamf_class::canView()) {
          return false;
