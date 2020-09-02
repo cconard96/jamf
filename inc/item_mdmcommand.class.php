@@ -186,7 +186,8 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
       echo "</tbody>";
       echo "</table>";
       $commands_json = json_encode($commands, JSON_FORCE_OBJECT);
-      $jamf_id = $mobiledevice->fields['jamf_items_id'];
+      $device_data = $mobiledevice->getJamfDeviceData();
+      $jamf_id = $device_data['jamf_items_id'];
       $itemtype = 'MobileDevice';
       $items_id = $mobiledevice->getID();
       $js = <<<JAVASCRIPT
