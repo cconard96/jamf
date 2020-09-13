@@ -57,6 +57,7 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
    public static function getApplicableCommands(PluginJamfMobileDevice $mobiledevice) {
       if (PluginJamfUser_JSSAccount::hasLink()) {
          $allcommands = PluginJamfMDMCommand::getAvailableCommands();
+         $device_data = $mobiledevice->getJamfDeviceData();
 
          foreach ($allcommands as $command => &$params) {
             if (isset($params['requirements'])) {
@@ -64,14 +65,14 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
                // DB call: 1 cost, API call: 2 cost
                // Check supervised - Cost: 0
                if (isset($params['requirements']['supervised']) &&
-                  $params['requirements']['supervised'] != $mobiledevice->fields['supervised']) {
+                  $params['requirements']['supervised'] != $device_data['supervised']) {
                   unset($allcommands[$command]);
                   continue;
                }
 
                // Check managed - Cost: 0
                if (isset($params['requirements']['managed']) &&
-                  $params['requirements']['managed'] != $mobiledevice->fields['managed']) {
+                  $params['requirements']['managed'] != $device_data['managed']) {
                   unset($allcommands[$command]);
                   continue;
                }

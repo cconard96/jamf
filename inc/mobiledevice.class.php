@@ -125,9 +125,10 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
    }
 
    public function getGLPIItem() {
-      $itemtype = $this->fields['itemtype'];
+      $device_data = $this->getJamfDeviceData();
+      $itemtype = $device_data['itemtype'];
       $item = new $itemtype();
-      $item->getFromDB($this->fields['items_id']);
+      $item->getFromDB($device_data['items_id']);
       return $item;
    }
 
@@ -147,7 +148,7 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
    public function getSpecificType()
    {
       $item = $this->getGLPIItem();
-      $modelclass = $this->fields['itemtype'].'Model';
+      $modelclass = $this->getJamfDeviceData()['itemtype'].'Model';
       if ($item->fields[getForeignKeyFieldForItemType($modelclass)] > 0) {
          /** @var CommonDropdown $model */
          $model = new $modelclass();
