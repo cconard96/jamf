@@ -81,9 +81,9 @@ $fields = array_flip($fields);
 array_walk_recursive($fields, [$general, 'addChild']);
 $mobile_devices = $payload->addChild('mobile_devices');
 foreach ($items as $item) {
-   $jamf_id = $item->fields['jamf_items_id'];
+   $device_data = $item->getJamfDeviceData();
+   $jamf_id = $device_data['jamf_items_id'];
    $m = $mobile_devices->addChild('mobile_device');
    $m->addChild('id', $jamf_id);
 }
-
 echo PluginJamfAPIClassic::addItem('mobiledevicecommands', $payload->asXML(), true);
