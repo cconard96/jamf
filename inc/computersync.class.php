@@ -126,6 +126,8 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync {
 
    protected function syncSoftware(): PluginJamfDeviceSync
    {
+      global $DB;
+
       if (!$this->config['sync_software'] || $this->item === null || !isset($this->data['software']['applications'])) {
          $this->status['syncSoftware'] = self::STATUS_SKIPPED;
          return $this;
@@ -167,6 +169,36 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync {
                'softwareversions_id'   => $software_version->getID(),
                'entities_id'           => $this->item->fields['entities_id'],
                'is_recursive'          => $this->item->fields['is_recursive']
+            ]);
+         }
+
+         // Unlink software that isn't installed anymore
+         $installed_bundles = array_column($applications, 'identifier');
+         $inventoried_software = PluginJamfComputerSoftware::getForGlpiItem($this->item);
+         // We don't need to worry about versions because Apple mobile devices cannot have multiple installs for the same bundle id, so no multiple version support
+         $to_remove_software = array_filter($inventoried_software, static function($software) use ($installed_bundles) {
+            return !in_array($software['bundle_id'], $installed_bundles, true);
+         });
+         foreach ($to_remove_software as $to_remove) {
+            $DB->delete(Item_SoftwareVersion::getTable(), [
+               SoftwareVersion::getTable().'.softwares_id' => $to_remove['softwares_id'],
+               'itemtype'     => $this->item::getType(),
+               'items_id'     => $this->item->getID()
+            ], [
+               'LEFT JOIN' => [
+                  SoftwareVersion::getTable() => [
+                     'ON'  => [
+                        SoftwareVersion::getTable()      => 'id',
+                        Item_SoftwareVersion::getTable() => 'softwareversions_id'
+                     ]
+                  ],
+                  Software::getTable() => [
+                     'ON'  => [
+                        Software::getTable()             => 'id',
+                        SoftwareVersion::getTable()      => 'softwares_id'
+                     ]
+                  ],
+               ]
             ]);
          }
       } catch (Exception $e) {
