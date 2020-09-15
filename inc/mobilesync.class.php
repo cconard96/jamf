@@ -246,9 +246,10 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
       try {
          $location = $this->data['location'];
          $user = new User();
-         $users_id = $user->find(['name' => $location['username']]);
-         if ($users_id) {
-            $this->item_changes['users_id'] = $users_id;
+         $user_match = $user->find(['name' => $location['username']]);
+         if (count($user_match)) {
+            $user_match = reset($user_match);
+            $this->item_changes['users_id'] = $user_match['id'];
          }
       } catch (Exception $e) {
          $this->status['syncUser'] = self::STATUS_ERROR;
