@@ -164,9 +164,9 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
          $software = new Software();
          $softwareversion = new SoftwareVersion();
          $jamf_software = new PluginJamfMobileDeviceSoftware();
+
          foreach ($applications as $application) {
             $jamfsoftware_matches = $jamf_software->find(['bundle_id' => $application['identifier']]);
-            // Find all linked software not currently installed on this device through Jamf
 
             if (!count($jamfsoftware_matches)) {
                $software_data = static::$api_classic::getItems('mobiledeviceapplications', [
@@ -229,6 +229,37 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
                ]);
             }
          }
+
+         // Unlink software that isn't installed anymore
+         $installed_bundles = array_column($applications, 'identifier');
+         $inventoried_software = PluginJamfMobileDeviceSoftware::getForGlpiItem($this->item);
+         // We don't need to worry about versions because Apple mobile devices cannot have multiple installs for the same bundle id, so no multiple version support
+         $to_remove_software = array_filter($inventoried_software, static function($software) use ($installed_bundles) {
+            return !in_array($software['bundle_id'], $installed_bundles, true);
+         });
+         foreach ($to_remove_software as $to_remove) {
+            $DB->delete(Item_SoftwareVersion::getTable(), [
+               SoftwareVersion::getTable().'.softwares_id' => $to_remove['softwares_id'],
+               'itemtype'     => $this->item::getType(),
+               'items_id'     => $this->item->getID()
+            ], [
+               'LEFT JOIN' => [
+                  SoftwareVersion::getTable() => [
+                     'ON'  => [
+                        SoftwareVersion::getTable()      => 'id',
+                        Item_SoftwareVersion::getTable() => 'softwareversions_id'
+                     ]
+                  ],
+                  Software::getTable() => [
+                     'ON'  => [
+                        Software::getTable()             => 'id',
+                        SoftwareVersion::getTable()      => 'softwares_id'
+                     ]
+                  ],
+               ]
+            ]);
+         }
+
       } catch (Exception $e) {
          $this->status['syncSoftware'] = self::STATUS_ERROR;
          return $this;
@@ -447,10 +478,13 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
                ]);
             } else {
                $ip_matches = reset($ip_matches);
-               $ipaddress->getFromDB($ip_matches['id']);
-               $ipaddress->update([
-                  'name'  => $general['ip_address']
-               ]);
+               if (isset($ip_matches['id'])) {
+                  $ipaddress->getFromDB($ip_matches['id']);
+                  $ipaddress->update([
+                     'id'     => $ip_matches['id'],
+                     'name'   => $general['ip_address']
+                  ]);
+               }
             }
          }
 
