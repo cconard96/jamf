@@ -42,8 +42,48 @@ class PluginJamfSoftware extends CommonDBTM
    {
       global $DB;
 
-      $DB->delete(self::getTable(), [
+      $DB->delete(static::getTable(), [
          'softwares_id' => $item->getID(),
       ]);
+   }
+
+   public static function getForGlpiItem(CommonDBTM $item): array
+   {
+      global $DB;
+
+      $iterator = $DB->request([
+         'SELECT'    => [static::getTable().'.*'],
+         'FROM'      => static::getTable(),
+         'LEFT JOIN' => [
+            Software::getTable()             => [
+               'ON'  => [
+                  Software::getTable()             => 'id',
+                  static::getTable()               => 'softwares_id'
+               ]
+            ],
+            SoftwareVersion::getTable()      => [
+               'ON'  => [
+                  Software::getTable()             => 'id',
+                  SoftwareVersion::getTable()      => 'softwares_id'
+               ]
+            ],
+            Item_SoftwareVersion::getTable() => [
+               'ON'  => [
+                  SoftwareVersion::getTable()      => 'id',
+                  Item_SoftwareVersion::getTable() => 'softwareversions_id'
+               ]
+            ]
+         ],
+         'WHERE'  => [
+            'itemtype'  => $item::getType(),
+            'items_id'  => $item->getID()
+         ]
+      ]);
+
+      $result = [];
+      while ($data = $iterator->next()) {
+         $result[] = $data;
+      }
+      return $result;
    }
 }
