@@ -23,6 +23,12 @@
 
 use Glpi\Event;
 include ('../../../inc/includes.php');
+
+$plugin = new Plugin();
+if (!$plugin->isActivated('jamf')) {
+   Html::displayNotFoundError();
+}
+
 Session::checkRight(PluginJamfUser_JSSAccount::$rightname, UPDATE);
 
 global $DB;

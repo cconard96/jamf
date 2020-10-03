@@ -23,6 +23,11 @@
 
 include ('../../../inc/includes.php');
 
+$plugin = new Plugin();
+if (!$plugin->isActivated('jamf')) {
+   Html::displayNotFoundError();
+}
+
 $rulecollection = new PluginJamfRuleImportCollection($_SESSION['glpiactive_entity']);
 
 include (GLPI_ROOT . "/front/rule.common.form.php");

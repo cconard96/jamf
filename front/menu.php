@@ -23,6 +23,11 @@
 
 include('../../../inc/includes.php');
 
+$plugin = new Plugin();
+if (!$plugin->isActivated('jamf')) {
+   Html::displayNotFoundError();
+}
+
 Html::header('Jamf Plugin', '', 'plugins', 'PluginJamfMenu', 'import');
 
 global $CFG_GLPI;

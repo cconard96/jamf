@@ -22,6 +22,12 @@
  */
 
 include('../../../inc/includes.php');
+
+$plugin = new Plugin();
+if (!$plugin->isActivated('jamf')) {
+   Html::displayNotFoundError();
+}
+
 Session::checkRight("plugin_jamf_mobiledevice", CREATE);
 Html::header('Jamf Plugin', '', 'plugins', 'PluginJamfMenu', 'import');
 
