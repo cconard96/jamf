@@ -180,7 +180,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
       static::syncExtensionAttributeDefinitions();
       $iterator = $DB->request([
          'SELECT' => ['itemtype', 'items_id'],
-         'FROM' => (static::$jamfplugin_itemtype)::getTable(),
+         'FROM' => 'glpi_plugin_jamf_devices',
          'WHERE' => [
             new QueryExpression("sync_date < NOW() - INTERVAL {$config['sync_interval']} MINUTE")
          ]
