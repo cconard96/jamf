@@ -249,7 +249,7 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
 
    public static function showForItem(array $params)
    {
-      global $CFG_GLPI;
+      global $CFG_GLPI, $DB;
 
       /** @var CommonDBTM $item */
       $item = $params['item'];

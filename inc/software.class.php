@@ -42,9 +42,13 @@ class PluginJamfSoftware extends CommonDBTM
    {
       global $DB;
 
-      $DB->delete(static::getTable(), [
-         'softwares_id' => $item->getID(),
-      ]);
+      $software_classes = [PluginJamfComputerSoftware::class, PluginJamfMobileDeviceSoftware::class];
+
+      foreach ($software_classes as $software_class) {
+         $DB->delete($software_class::getTable(), [
+            'softwares_id' => $item->getID(),
+         ]);
+      }
    }
 
    public static function getForGlpiItem(CommonDBTM $item): array

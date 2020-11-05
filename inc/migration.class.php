@@ -451,4 +451,56 @@ final class PluginJamfMigration {
       }
       unset($old_jsspassword);
    }
+
+   public function apply_2_1_3_migration() {
+      if ($this->db->tableExists('glpi_plugin_jamf_mobiledevicesoftwares')) {
+         $broken_msoftware_links = $this->db->request([
+            'SELECT' => ['glpi_plugin_jamf_mobiledevicesoftwares.id'],
+            'FROM' => 'glpi_plugin_jamf_mobiledevicesoftwares',
+            'LEFT JOIN' => [
+               'glpi_softwares' => [
+                  'ON' => [
+                     'glpi_plugin_jamf_mobiledevicesoftwares' => 'softwares_id',
+                     'glpi_softwares' => 'id'
+                  ]
+               ]
+            ],
+            'WHERE' => ['glpi_softwares.id' => null]
+         ]);
+         $m_ids = [];
+         while ($data = $broken_msoftware_links->next()) {
+            $m_ids[] = $data['id'];
+         }
+         if (count($m_ids)) {
+            $this->db->delete('glpi_plugin_jamf_mobiledevicesoftwares', [
+               'id' => $m_ids
+            ]);
+         }
+      }
+
+      if ($this->db->tableExists('glpi_plugin_jamf_computersoftwares')) {
+         $broken_csoftware_links = $this->db->request([
+            'SELECT' => ['glpi_plugin_jamf_computersoftwares.id'],
+            'FROM' => 'glpi_plugin_jamf_computersoftwares',
+            'LEFT JOIN' => [
+               'glpi_softwares' => [
+                  'ON' => [
+                     'glpi_plugin_jamf_computersoftwares' => 'softwares_id',
+                     'glpi_softwares' => 'id'
+                  ]
+               ]
+            ],
+            'WHERE' => ['glpi_softwares.id' => null]
+         ]);
+         $c_ids = [];
+         while ($data = $broken_csoftware_links->next()) {
+            $c_ids[] = $data['id'];
+         }
+         if (count($c_ids)) {
+            $this->db->delete('glpi_plugin_jamf_computersoftwares', [
+               'id' => $c_ids
+            ]);
+         }
+      }
+   }
 }
