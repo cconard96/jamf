@@ -302,7 +302,7 @@ msgctxt "itemtype"
 msgid "Jamf mobile device"
 msgid_plural "Jamf mobile devices"
 msgstr[0] "Appareil mobile Jamf"
-msgstr[1] ""
+msgstr[1] "Appareils mobiles Jamf"
 
 #: inc/mobiledevice.class.php:64
 msgid "Yes"
@@ -392,7 +392,7 @@ msgstr "Vitesse"
 
 #: inc/mobiledevice.class.php:144
 msgid "Lost location date"
-msgstr "Lost location date"
+msgstr "Date de localisation perdue"
 
 #: inc/profile.class.php:76
 msgid "Import rule"
@@ -424,11 +424,11 @@ msgstr "Découverte..."
 
 #: 
 msgid "%s remove a link to a JSS account from a user"
-msgstr "%s remove a link to a JSS account from a user"
+msgstr "%s supprime le lien du compte JSS de l'utilisateur"
 
 #: 
 msgid "%s links a JSS account to a user"
-msgstr "%s links a JSS account to a user"
+msgstr "%s lie un compte JSS pour un utilisateur"
 
 #: 
 msgid "Pending Commands"
@@ -500,7 +500,7 @@ msgstr "Effacer l'appareil"
 
 #: 
 msgid "Preserve data plan"
-msgstr "Preserve data plan"
+msgstr "Plan de conservation des données"
 
 #: 
 msgid "Disallow proximity setup"
@@ -520,7 +520,7 @@ msgstr "Période de grâce (secondes)"
 
 #: 
 msgid "Play lost mode sound"
-msgstr "Play lost mode sound"
+msgstr "Activer le son Mode Perdu"
 
 #: 
 msgid "Restart device"
@@ -662,7 +662,7 @@ msgstr "Failed Commands"
 #: inc/item_mdmcommand.class.php:173
 msgctxt "field"
 msgid "Error"
-msgstr "Error"
+msgstr "Erreur"
 
 #: inc/mobiledevice.class.php:57
 msgctxt "field"
