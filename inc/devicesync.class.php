@@ -190,7 +190,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
       }
       while ($data = $iterator->next()) {
          try {
-            $result = self::sync($data['itemtype'], $data['items_id']);
+            $result = static::sync($data['itemtype'], $data['items_id']);
             if ($result) {
                $volume++;
             }
@@ -223,7 +223,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
       }
 
       $data = static::getJamfDataForSyncingByGlpiItem($itemtype, $items_id);
-      if ($data === null) {
+      if (empty($data)) {
          // API error or device no longer exists in Jamf
          return false;
       }

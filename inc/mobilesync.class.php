@@ -848,7 +848,7 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync {
       }
       $jamf_item = $iterator->next();
 
-      return static::$api_classic::getItems('mobiledevices', ['id' => $jamf_item['jamf_items_id']]);
+      return static::$api_classic::getItems('mobiledevices', ['id' => $jamf_item['jamf_items_id']]) ?? [];
    }
 
    public static function getSupportedGlpiItemtypes(): array

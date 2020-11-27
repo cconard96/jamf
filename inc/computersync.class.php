@@ -701,7 +701,7 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync {
       }
       $jamf_item = $iterator->next();
 
-      return static::$api_classic::getItems('computers', ['id' => $jamf_item['jamf_items_id']]);
+      return static::$api_classic::getItems('computers', ['id' => $jamf_item['jamf_items_id']]) ?? [];
    }
 
    public static function getSupportedGlpiItemtypes(): array
