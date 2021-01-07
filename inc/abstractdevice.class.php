@@ -2,7 +2,7 @@
 /*
  -------------------------------------------------------------------------
  JAMF plugin for GLPI
- Copyright (C) 2019-2020 by Curtis Conard
+ Copyright (C) 2019-2021 by Curtis Conard
  https://github.com/cconard96/jamf
  -------------------------------------------------------------------------
  LICENSE
