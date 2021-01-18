@@ -33,9 +33,8 @@ Html::header('Jamf Plugin', '', 'plugins', 'PluginJamfMenu', 'import');
 
 global $DB, $CFG_GLPI;
 
-$start = isset($_GET['start']) ? $_GET['start'] : 0;
+$start = $_GET['start'] ?? 0;
 
-$mobiledevice = new PluginJamfMobileDevice();
 $import = new PluginJamfImport();
 $importcount = countElementsInTable(PluginJamfImport::getTable());
 $pending = $DB->request([
@@ -44,20 +43,15 @@ $pending = $DB->request([
    'LIMIT'  => $_SESSION['glpilist_limit']
 ]);
 
-$linked_computers = $mobiledevice->find([
-   'itemtype'  => 'Computer'
-]);
-$linked_phones = $mobiledevice->find([
-   'itemtype'  => 'Phone'
+$linked_devices = $DB->request([
+   'SELECT' => ['jamf_type', 'itemtype', 'items_id'],
+   'FROM'   => 'glpi_plugin_jamf_devices',
 ]);
 
-$computer_ids = array_map(static function($a) {
-   return $a['items_id'];
-}, $linked_computers);
-
-$phone_ids = array_map(static function($a) {
-   return $a['items_id'];
-}, $linked_phones);
+$linked = [];
+while ($data = $linked_devices->next()) {
+   $linked[$data['itemtype']][] = $data;
+}
 
 $ajax_url = Plugin::getWebDir('jamf') . '/ajax/merge.php';
 
@@ -77,10 +71,11 @@ while ($data = $pending->next()) {
    $itemtype = $data['type'];
    /** @var CommonDBTM $item */
    $item = new $itemtype();
+   $jamftype = ('PluginJamf'.$data['jamf_type']);
 
    echo "<tr>";
    echo "<td>{$data['jamf_items_id']}</td>";
-   $jamf_link = Html::link($data['name'], PluginJamfMobileDevice::getJamfDeviceURL($data['jamf_items_id']));
+   $jamf_link = Html::link($data['name'], $jamftype::getJamfDeviceURL($data['jamf_items_id']));
    echo "<td>{$jamf_link}</td>";
    echo "<td>{$data['type']}</td>";
    echo "<td>{$data['udid']}</td>";
@@ -95,7 +90,7 @@ while ($data = $pending->next()) {
       ], [new QueryExpression("CASE WHEN uuid='".$data['udid']."' THEN 0 ELSE 1 END")], 1);
 
       $params = [
-         'used'   => array_values($computer_ids)
+         'used'   => array_column($linked['Computer'], 'items_id')
       ];
       if (count($guess)) {
          $params['value'] = reset($guess)['id'];
@@ -114,7 +109,7 @@ while ($data = $pending->next()) {
          ], [], 1);
       }
       $params = [
-         'used'   => array_values($phone_ids)
+         'used'   => array_column($linked['Phone'], 'items_id')
       ];
       if (count($guess)) {
          $match = reset($guess);
