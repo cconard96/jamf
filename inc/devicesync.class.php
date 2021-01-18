@@ -282,17 +282,20 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
          return $this->status;
       }
       $this->commondevice_changes['sync_date'] = $_SESSION['glpi_currenttime'];
+      // Update GLPI Item
       $this->item->update([
             'id' => $this->item->getID()
          ] + $this->item_changes);
       foreach ($this->extitem_changes as $key => $value) {
          PluginJamfExtField::setValue($this->item::getType(), $this->item->getID(), $key, $value);
       }
+      // Update or Add Jamf Item
       $this->db->updateOrInsert('glpi_plugin_jamf_devices', $this->commondevice_changes, [
          'itemtype' => $this->item::getType(),
          'items_id' => $this->item->getID()
       ]);
       $device_id = -1;
+      // Get the ID of the synced Jamf Item
       $iterator = $this->db->request([
          'SELECT' => ['id'],
          'FROM'   => 'glpi_plugin_jamf_devices',
@@ -310,9 +313,22 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
 
       if ($this->jamfplugin_device === null || empty($this->jamfplugin_device->fields)) {
          $jamf_item = new static::$jamfplugin_itemtype();
-         $jamf_match = $jamf_item->find([
-            'itemtype' => $this->item::getType(),
-            'items_id' => $this->item->getID()], [], 1);
+         $jamf_match = $this->db->request([
+            'SELECT'    => ['id'],
+            'FROM'      => static::$jamfplugin_itemtype::getTable(),
+            'WHERE'     => [
+               'itemtype' => $this->item::getType(),
+               'items_id' => $this->item->getID()
+            ],
+            'LEFT JOIN' => [
+               'glpi_plugin_jamf_devices' => [
+                  'ON' => [
+                     'glpi_plugin_jamf_devices' => 'id',
+                     static::$jamfplugin_itemtype::getTable() => 'glpi_plugin_jamf_devices_id'
+                  ]
+               ]
+            ]
+         ]);
          if (count($jamf_match)) {
             $jamf_item->getFromDB(reset($jamf_match)['id']);
             $this->jamfplugin_device = $jamf_item;
