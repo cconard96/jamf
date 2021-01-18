@@ -141,7 +141,7 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
       foreach ($commands as $command => $params) {
          $title = $params['name'];
          $icon = $params['icon'] ?? '';
-         $icon_color = $params['icon_color'] ?? 'black';
+         $icon_color = $params['icon_color'] ?? 'inherit';
          $onclick = "jamfPlugin.onMDMCommandButtonClick('$command', event)";
          echo "<div class='mdm-button' onclick=\"$onclick\"><i class='$icon' style='color: $icon_color'></i>$title</div>";
       }
