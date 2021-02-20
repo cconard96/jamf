@@ -29,7 +29,7 @@ function plugin_init_jamf() {
 
    $PLUGIN_HOOKS['csrf_compliant']['jamf'] = true;
    $PLUGIN_HOOKS['add_css']['jamf'][] = 'css/jamf.css';
-   if ($_SESSION['glpipalette'] === 'darker') {
+   if (!isCommandLine() && isset($_SESSION['glpipalette']) && $_SESSION['glpipalette'] === 'darker') {
       $PLUGIN_HOOKS['add_css']['jamf'][] = 'css/jamf-dark.css';
    }
    $PLUGIN_HOOKS['add_javascript']['jamf'][] = 'js/jamf.min.js';
