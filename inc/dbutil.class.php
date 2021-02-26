@@ -59,4 +59,12 @@
         }
         return $res;
     }
+
+    public static function truncate($table)
+    {
+       global $DB;
+
+       $table_name = $DB::quoteName($table);
+       return $DB->query("TRUNCATE $table_name");
+    }
  }

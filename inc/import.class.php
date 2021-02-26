@@ -32,4 +32,9 @@ class PluginJamfImport extends CommonDBTM {
    {
       return _nx('itemtype', 'Pending import', 'Pending imports', $nb, 'jamf');
    }
+
+   public static function clearPendingImports(): void
+   {
+      PluginJamfDBUtil::truncate(self::getTable());
+   }
 }

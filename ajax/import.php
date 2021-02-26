@@ -68,6 +68,10 @@ if ($_REQUEST['action'] == 'import') {
    } else {
       throw new RuntimeException('Required argument missing!');
    }
+} else if ($_REQUEST['action'] == 'clear') {
+   if (PluginJamfMobileDevice::canCreate() || PluginJamfComputer::canCreate()) {
+      PluginJamfImport::clearPendingImports();
+   }
 } else {
    throw new RuntimeException('Invalid action!');
 }

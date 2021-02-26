@@ -81,10 +81,13 @@ echo "</tbody></table><br>";
 
 echo "<a class='vsubmit' onclick='importDevices(); return false;'>"._x('action', 'Import', 'jamf')."</a>";
 echo "&nbsp;<a class='vsubmit' onclick='discoverNow(); return false;'>"._x('action', 'Discover now', 'jamf')."</a>";
+echo "&nbsp;<a class='vsubmit' onclick='clearPendingImports(); return false;'>"._x('action', 'Clear pending imports', 'jamf')."</a>";
 echo "</div>";
 $ajax_root = $CFG_GLPI['root_doc']."/plugins/jamf/ajax/";
 $import_msg = _x('action', 'Importing', 'jamf') . '...';
 $discover_msg = _x('action', 'Discovering', 'jamf') . '...';
+$clear_msg = _x('action', 'Clearing', 'jamf') . '...';
+
 $js = <<<JAVASCRIPT
       function importDevices() {
          var import_ids = $(':checkbox:checked').filter(':not([name^="_checkall"])').map(function(){
@@ -114,6 +117,22 @@ $js = <<<JAVASCRIPT
             contentType: 'application/json',
             beforeSend: function() {
                showLoading("{$discover_msg}");
+            },
+            complete: function() {
+               location.reload();
+            }
+         });
+      }
+      function clearPendingImports() {
+         $.ajax({
+            type: "POST",
+            url: "{$ajax_root}import.php",
+            data: {
+               action: "clear"
+            },
+            contentType: 'application/json',
+            beforeSend: function() {
+              showLoading("{$clear_msg}");
             },
             complete: function() {
                location.reload();
