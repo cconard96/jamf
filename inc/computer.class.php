@@ -96,7 +96,7 @@ class PluginJamfComputer extends PluginJamfAbstractDevice
       if ($item->canUpdate()) {
          $onclick = "syncDevice(\"{$item::getType()}\", {$item->getID()}); return false;";
          $out .= "&nbsp;&nbsp;<a class='vsubmit' onclick='{$onclick}'>"._x('action', 'Sync now', 'jamf'). '</a>';
-         $ajax_url = $CFG_GLPI['root_doc']. '/plugins/jamf/ajax/sync.php';
+         $ajax_url = Plugin::getWebDir('jamf'). '/ajax/sync.php';
          $js = <<<JAVASCRIPT
                function syncDevice(itemtype, items_id) {
                   $.ajax({

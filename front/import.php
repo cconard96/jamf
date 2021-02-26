@@ -83,7 +83,7 @@ echo "<a class='vsubmit' onclick='importDevices(); return false;'>"._x('action',
 echo "&nbsp;<a class='vsubmit' onclick='discoverNow(); return false;'>"._x('action', 'Discover now', 'jamf')."</a>";
 echo "&nbsp;<a class='vsubmit' onclick='clearPendingImports(); return false;'>"._x('action', 'Clear pending imports', 'jamf')."</a>";
 echo "</div>";
-$ajax_root = $CFG_GLPI['root_doc']."/plugins/jamf/ajax/";
+$ajax_root = Plugin::getWebDir('jamf').'/ajax/';
 $import_msg = _x('action', 'Importing', 'jamf') . '...';
 $discover_msg = _x('action', 'Discovering', 'jamf') . '...';
 $clear_msg = _x('action', 'Clearing', 'jamf') . '...';
