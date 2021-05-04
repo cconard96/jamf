@@ -1,5 +1,5 @@
 ---
-name: Bug report
+name: Bug Report
 about: Create a report to help us improve
 title: ''
 labels: bug
@@ -26,7 +26,7 @@ If applicable, add screenshots to help explain your problem.
 **System Specifications (please complete the following information):**
  - GLPI Server OS: [e.g. Fedora 30, Windows Server 2019, etc]
  - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+ - Plugin version [e.g. 1.1]
 
 **Additional context**
 Add any other context about the problem here.
