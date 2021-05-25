@@ -450,6 +450,8 @@ final class PluginJamfMigration {
          ]);
       }
       unset($old_jsspassword);
+
+      $this->glpiMigration->addRight(PluginJamfComputer::$rightname, ALLSTANDARDRIGHT);
    }
 
    public function apply_2_1_3_migration() {
