@@ -245,9 +245,11 @@ function plugin_jamf_getAddSearchOptions($itemtype)
    return $opt;
 }
 
-function plugin_jamf_dashboardCards()
+function plugin_jamf_dashboardCards($cards = [])
 {
-   $cards = [];
+   if (is_null($cards)) {
+      $cards = [];
+   }
    $cards = array_merge($cards, PluginJamfExtensionAttribute::dashboardCards());
    $cards = array_merge($cards, PluginJamfMobileDevice::dashboardCards());
 
