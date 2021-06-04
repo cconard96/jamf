@@ -1,5 +1,59 @@
 # Jamf Plugin for GLPI Changelog
 
+## [2.1.5]
+
+### Fixes
+
+- Fixed PHP warning regarding Session variables when using GLPI CLI tool
+- Fixed Marketplace compatibility for some AJAX urls
+- Added missing rights for "Jamf Computers" addition in the 2.1.2 migration. If this is a new installation, the new rights will be added automatically. If this is an upgrade, the rights will need added to Profiles manually.
+- Fixed missing dashboard cards
+
+## [2.1.4]
+
+### Changes
+
+- Improved dark mode colors on MDM Commands tab
+
+### Fixes
+
+- Fixed some table names in queries which was causing sync and discovery to fail.
+
+
+## [2.1.3]
+
+### Fixes
+
+- Prevent orphaned software links after purging software in GLPI. Existing orphans will be cleaned as a part of the upgrade.
+- Avoid double encryption on the JSS server password.
+- Fix table name causing automatic sync issues.
+
+## [2.1.2]
+
+### Fixes
+
+- Fix some random property access issues where a field is a common device field (Mostly during import/sync) instead of a specific device type such as Mobile Device or Computer.
+- Fix User matching
+- Fix/Implement Old Software installation cleanup
+
+## [2.1.1]
+
+### Fixes
+
+- Some asset form fixes
+
+
+## [2.1.0]
+
+### Added
+
+- Computer syncing support
+- New plugin update/migration system to make it easier to manage changes between versions
+
+### Changed
+- JSS password will now be encrypted using Sodium (GLPI's new encryption after they moved away from a shared key). This password will be re-encrypted automatically.
+
+
 ## [2.0.0]
 
 ### Added
