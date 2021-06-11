@@ -4,6 +4,7 @@
 
 - Added "Clear pending imports" button on the import page
 - Moved menu under Tools instead of Plugins
+- Add Japanese locale
 
 ## [2.1.5]
 
