@@ -51,6 +51,11 @@ Versioning/Support
    </authors>
    <versions>
       <version>
+         <num>2.2.0</num>
+         <compatibility>~9.5.0</compatibility>
+         <download_url>https://github.com/cconard96/jamf/releases/download/v2.2.0/jamf-2.2.0.zip</download_url>
+      </version>
+      <version>
          <num>2.1.5</num>
          <compatibility>~9.5.0</compatibility>
          <download_url>https://github.com/cconard96/jamf/releases/download/v2.1.5/jamf-2.1.5.zip</download_url>
