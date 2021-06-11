@@ -5,106 +5,106 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: POEditor.com\n"
 "Project-Id-Version: Jamf Plugin For GLPI\n"
-"Language: en-us\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: ja\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #: inc/ruleimport.class.php:57 hook.php:75
 msgctxt "field"
 msgid "Last inventory"
-msgstr "Last inventory"
+msgstr "最終インベントリ"
 
 #: inc/mobiledevice.class.php:75 inc/computer.class.php:72 hook.php:83
 #: hook.php:211
 msgctxt "field"
 msgid "Import date"
-msgstr "Import date"
+msgstr "インポート日"
 
 #: inc/mobiledevice.class.php:85 inc/computer.class.php:82 hook.php:91
 msgctxt "field"
 msgid "Enrollment date"
-msgstr "Enrollment date"
+msgstr "登録日"
 
 #: inc/mobiledevice.class.php:92 inc/ruleimport.class.php:61
 #: inc/computer.class.php:87 hook.php:99
 msgctxt "field"
 msgid "Managed"
-msgstr "Managed"
+msgstr "管理対象"
 
 #: inc/mobiledevice.class.php:90 inc/ruleimport.class.php:66
 #: inc/computer.class.php:84 hook.php:107
 msgctxt "field"
 msgid "Supervised"
-msgstr "Supervised"
+msgstr "監視対象"
 
 #: inc/mobiledevice.class.php:95 hook.php:115
 msgctxt "field"
 msgid "Cloud backup enabled"
-msgstr "Cloud backup enabled"
+msgstr "クラウドバックアップ 有効"
 
 #: hook.php:123
 msgctxt "field"
 msgid "Activation lock enabled"
-msgstr "Activation lock enabled"
+msgstr "アクティベーションロック 有効"
 
 #: hook.php:131
 msgctxt "field"
 msgid "Lost mode enabled"
-msgstr "Lost mode enabled"
+msgstr "紛失モード 有効"
 
 #: hook.php:139
 msgctxt "field"
 msgid "Lost mode enforced"
-msgstr "Lost mode enforced"
+msgstr "紛失モード 強制"
 
 #: hook.php:147
 msgctxt "field"
 msgid "Lost mode enable date"
-msgstr "Lost mode enable date"
+msgstr "紛失モード 有効日"
 
 #: hook.php:155
 msgctxt "field"
 msgid "Lost mode message"
-msgstr "Lost mode message"
+msgstr "紛失モード メッセージ"
 
 #: hook.php:163
 msgctxt "field"
 msgid "Lost mode phone"
-msgstr "Lost mode phone"
+msgstr "紛失モード 電話"
 
 #: hook.php:171
 msgctxt "field"
 msgid "Lost mode latitude"
-msgstr "Lost mode latitude"
+msgstr "紛失モード 緯度"
 
 #: hook.php:179
 msgctxt "field"
 msgid "Lost mode longitude"
-msgstr "Lost mode longitude"
+msgstr "紛失モード 経度"
 
 #: hook.php:187
 msgctxt "field"
 msgid "Lost mode altitude"
-msgstr "Lost mode altitude"
+msgstr "紛失モード 高度"
 
 #: hook.php:195
 msgctxt "field"
 msgid "Lost mode speed"
-msgstr "Lost mode speed"
+msgstr "紛失モード 速度"
 
 #: hook.php:203
 msgctxt "field"
 msgid "Lost mode location date"
-msgstr "Lost mode location date"
+msgstr "紛失モード 場所日"
 
 #: hook.php:219
 msgctxt "field"
 msgid "Sync date"
-msgstr "Sync date"
+msgstr "同期日"
 
 #: setup.php:67
 msgctxt "plugin_info"
 msgid "JAMF Plugin for GLPI"
-msgstr "JAMF Plugin for GLPI"
+msgstr "GLPI用JAMFプラグイン"
 
 #: front/import.php:47 front/merge.php:60
 msgctxt "field"
@@ -115,13 +115,13 @@ msgstr "Jamf ID"
 #: inc/item_extensionattribute.class.php:80 inc/ruleimport.class.php:48
 msgctxt "field"
 msgid "Name"
-msgstr "Name"
+msgstr "名前"
 
 #: front/import.php:50 front/merge.php:62
 #: inc/item_extensionattribute.class.php:81
 msgctxt "field"
 msgid "Type"
-msgstr "Type"
+msgstr "タイプ"
 
 #: front/import.php:51 front/merge.php:63
 msgctxt "field"
@@ -131,252 +131,250 @@ msgstr "UDID"
 #: front/import.php:52 front/merge.php:64
 msgctxt "field"
 msgid "Discovery Date"
-msgstr "Discovery Date"
+msgstr "発見日"
 
 #: front/import.php:74 inc/ruleimport.class.php:75
 msgctxt "action"
 msgid "Import"
-msgstr "Import"
+msgstr "インポート"
 
 #: front/import.php:104
 msgctxt "action"
 msgid "Importing devices..."
-msgstr "Importing devices..."
+msgstr "デバイスのインポート中..."
 
 #: front/menu.php:32
 msgctxt "action"
 msgid "Import devices"
-msgstr "Import devices"
+msgstr "インポートデバイス"
 
 #: front/menu.php:33
 msgctxt "action"
 msgid "Merge existing devices"
-msgstr "Merge existing devices"
+msgstr "既存デバイスの結合"
 
 #: front/menu.php:36
 msgctxt "action"
 msgid "Configure plugin"
-msgstr "Configure plugin"
+msgstr "プラグイン設定"
 
 #: front/menu.php:41 inc/config.class.php:35 inc/menu.class.php:37
 #: inc/menu.class.php:42 inc/profile.class.php:39 inc/profile.class.php:104
 #: inc/profile.class.php:150 inc/cron.class.php:33
 msgctxt "plugin_info"
 msgid "Jamf plugin"
-msgstr "Jamf plugin"
+msgstr "Jamfプラグイン"
 
 #: front/menu.php:50
 msgctxt "error"
 msgid "You do not have access to any Jamf plugin items"
-msgstr "You do not have access to any Jamf plugin items"
+msgstr "Jamfプラグインアイテムにアクセスできません"
 
 #: front/merge.php:65
 msgctxt "field"
 msgid "GLPI Item"
-msgstr "GLPI Item"
+msgstr "GLPIアイテム"
 
 #: front/merge.php:125
 msgctxt "action"
 msgid "Merge"
-msgstr "Merge"
+msgstr "結合"
 
 #: front/merge.php:131
 msgctxt "action"
 msgid "Merging devices..."
-msgstr "Merging devices..."
+msgstr "デバイスの結合中..."
 
 #: inc/apiclassic.class.php:66
 msgctxt "error"
 msgid "Unknown JSS API Error"
-msgstr "Unknown JSS API Error"
+msgstr "不明なJSS APIエラー"
 
 #: inc/config.class.php:36
 msgid "JAMF plugin"
-msgstr "JAMF plugin"
+msgstr "JAMFプラグイン"
 
 #: inc/config.class.php:61
 msgctxt "form_section"
 msgid "Server Settings"
-msgstr "Server Settings"
+msgstr "サーバ設定"
 
 #: inc/config.class.php:62
 msgctxt "config"
 msgid "JSS Server"
-msgstr "JSS Server"
+msgstr "JSSサーバー"
 
 #: inc/config.class.php:69
 msgctxt "config"
 msgid "JSS User"
-msgstr "JSS User"
+msgstr "JSSユーザー"
 
 #: inc/config.class.php:73
 msgctxt "config"
 msgid "JSS Password"
-msgstr "JSS Password"
+msgstr "JSSパスワード"
 
 #: inc/config.class.php:81
 msgctxt "config"
 msgid "Sync Settings"
-msgstr "Sync Settings"
+msgstr "同期設定"
 
 #: inc/config.class.php:84
 msgctxt "config"
 msgid "Sync Interval (minutes)"
-msgstr "Sync Interval (minutes)"
+msgstr "同期間隔（分）"
 
 #: inc/config.class.php:91
 msgctxt "config"
 msgid "Sync General"
-msgstr "Sync General"
+msgstr "同期 一般"
 
 #: inc/config.class.php:96
 msgctxt "config"
 msgid "Sync OS"
-msgstr "Sync OS"
+msgstr "同期 OS"
 
 #: inc/config.class.php:101
 msgctxt "config"
 msgid "Sync Software"
-msgstr "Sync Software"
+msgstr "同期 ソフトウェア"
 
 #: inc/config.class.php:106
 msgctxt "config"
 msgid "Sync Financial"
-msgstr "Sync Financial"
+msgstr "同期 ファイナンシャル"
 
 #: inc/config.class.php:111
 msgctxt "config"
 msgid "Sync User"
-msgstr "Sync User"
+msgstr "同期 ユーザー"
 
 #: inc/config.class.php:116
 msgctxt "config"
 msgid "Auto Import"
-msgstr "Auto Import"
+msgstr "自動 インポート"
 
 #: inc/config.class.php:121
 msgctxt "config"
 msgid "Default Type Settings"
-msgstr "Default Type Settings"
+msgstr "デフォルトタイプの設定"
 
 #: inc/config.class.php:128
 msgctxt "config"
 msgid "Manufacturer"
-msgstr "Manufacturer"
+msgstr "メーカー"
 
 #: inc/config.class.php:134
 msgctxt "config"
 msgid "iPhone Type"
-msgstr "iPhone Type"
+msgstr "iPhoneタイプ"
 
 #: inc/config.class.php:139
 msgctxt "config"
 msgid "iPad Type"
-msgstr "iPad Type"
+msgstr "iPadタイプ"
 
 #: inc/config.class.php:144
 msgctxt "config"
 msgid "AppleTV Type"
-msgstr "AppleTV Type"
+msgstr "AppleTVタイプ"
 
 #: inc/config.class.php:168 inc/user_jssaccount.class.php:221
 #: inc/profile.class.php:110 inc/profile.class.php:157
 msgctxt "button"
 msgid "Save"
-msgstr "Save"
+msgstr "保存"
 
 #: inc/dbutil.class.php:45
 msgctxt "error"
 msgid "%1$s - Error during the database query: %2$s - Error is %3$s"
-msgstr "%1$s - Error during the database query: %2$s - Error is %3$s"
+msgstr "%1$s - データベースクエリ中エラー: %2$s - Error is %3$s"
 
 #: inc/import.class.php:33
 msgctxt "itemtype"
 msgid "Pending import"
 msgid_plural "Pending imports"
-msgstr[0] "Pending import"
-msgstr[1] "Pending imports"
+msgstr[0] "インポート保留中"
 
 #: inc/mobiledevice.class.php:36
 msgctxt "itemtype"
 msgid "Jamf mobile device"
 msgid_plural "Jamf mobile devices"
-msgstr[0] "Jamf mobile device"
-msgstr[1] "Jamf mobile devices"
+msgstr[0] "Jamfモバイルデバイス"
 
 #: inc/mobiledevice.class.php:64
 msgid "Yes"
-msgstr "Yes"
+msgstr "はい"
 
 #: inc/mobiledevice.class.php:64
 msgid "No"
-msgstr "No"
+msgstr "いいえ"
 
 #: inc/mobiledevice.class.php:74 inc/computer.class.php:71
 msgctxt "form_section"
 msgid "Jamf General Information"
-msgstr "Jamf General Information"
+msgstr "Jamf 一般情報"
 
 #: inc/mobiledevice.class.php:77 inc/computer.class.php:74
 msgctxt "field"
 msgid "Last sync"
-msgstr "Last sync"
+msgstr "最終同期"
 
 #: inc/mobiledevice.class.php:80 inc/computer.class.php:77
 msgctxt "field"
 msgid "Jamf last inventory"
-msgstr "Jamf last inventory"
+msgstr "最終Jamfインベントリ"
 
 #: inc/mobiledevice.class.php:82 inc/computer.class.php:79
 msgctxt "field"
 msgid "Jamf import date"
-msgstr "Jamf import date"
+msgstr "Jamfインポート日付"
 
 #: inc/mobiledevice.class.php:87
 msgctxt "field"
 msgid "Shared device"
-msgstr "Shared device"
+msgstr "共有デバイス"
 
 #: inc/mobiledevice.class.php:97 inc/computer.class.php:89
 msgctxt "field"
 msgid "Activation locked"
-msgstr "Activation locked"
+msgstr "アクティベーションロック"
 
 #: inc/mobiledevice.class.php:107 inc/computer.class.php:99
 msgctxt "action"
 msgid "Sync now"
-msgstr "Sync now"
+msgstr "今すぐ同期"
 
 #: inc/mobiledevice.class.php:126
 msgctxt "form_section"
 msgid "Jamf Lost Mode Information"
-msgstr "Jamf Lost Mode Information"
+msgstr "Jamf 紛失モード情報"
 
 #: inc/mobiledevice.class.php:129
 msgctxt "field"
 msgid "Lost mode is not enabled"
-msgstr "Lost mode is not enabled"
+msgstr "紛失モードが無効です"
 
 #: inc/mobiledevice.class.php:120
 msgid "Enabled"
-msgstr "Enabled"
+msgstr "有効"
 
 #: inc/mobiledevice.class.php:122
 msgid "Enforced"
-msgstr "Enforced"
+msgstr "強制"
 
 #: inc/mobiledevice.class.php:136
 msgctxt "field"
 msgid "Enable date"
-msgstr "Enable date"
+msgstr "有効日"
 
 #: inc/mobiledevice.class.php:128
 msgid "Message"
-msgstr "Message"
+msgstr "メッセージ"
 
 #: inc/mobiledevice.class.php:130
 msgid "Phone"
-msgstr "Phone"
+msgstr "電話"
 
 #: inc/mobiledevice.class.php:135
 msgid "GPS"
@@ -384,285 +382,281 @@ msgstr "GPS"
 
 #: inc/mobiledevice.class.php:140
 msgid "Altitude"
-msgstr "Altitude"
+msgstr "高度"
 
 #: inc/mobiledevice.class.php:142
 msgid "Speed"
-msgstr "Speed"
+msgstr "速度"
 
 #: inc/mobiledevice.class.php:144
 msgid "Lost location date"
-msgstr "Lost location date"
+msgstr "紛失 場所日付"
 
 #: inc/profile.class.php:76
 msgid "Import rule"
 msgid_plural "Import rules"
-msgstr[0] "Import rule"
-msgstr[1] "Import rules"
+msgstr[0] "インポート ルール"
 
 #: inc/profile.class.php:79
 msgid "Sync rule"
 msgid_plural "Sync rules"
-msgstr[0] "Sync rule"
-msgstr[1] "Sync rules"
+msgstr[0] "同期 ルール"
 
 #: inc/profile.class.php:122
 msgid "Read"
-msgstr "Read"
+msgstr "読込"
 
 #: inc/ruleimport.class.php:36 inc/ruleimportcollection.class.php:35
 msgid "Device import rules"
-msgstr "Device import rules"
+msgstr "デバイスインポート ルール"
 
 #: inc/ruleimport.class.php:52
 msgid "Item type"
-msgstr "Item type"
+msgstr "項目種別"
 
 #: 
 msgid "Discovering..."
-msgstr "Discovering..."
+msgstr "発見中..."
 
 #: 
 msgid "%s remove a link to a JSS account from a user"
-msgstr "%s remove a link to a JSS account from a user"
+msgstr "%sのユーザーからJSSアカウントへのリンクを削除"
 
 #: 
 msgid "%s links a JSS account to a user"
-msgstr "%s links a JSS account to a user"
+msgstr "%sがユーザーにJSSアカウントをリンクします"
 
 #: 
 msgid "Pending Commands"
-msgstr "Pending Commands"
+msgstr "保留中のコマンド"
 
 #: 
 msgid "Command"
-msgstr "Command"
+msgstr "コマンド"
 
 #: 
 msgid "Failed Commands"
-msgstr "Failed Commands"
+msgstr "失敗したコマンド"
 
 #: 
 msgid "Status"
-msgstr "Status"
+msgstr "状態"
 
 #: 
 msgid "Date issued"
-msgstr "Date issued"
+msgstr "発行日"
 
 #: 
 msgid "Date of last push"
-msgstr "Date of last push"
+msgstr "最終プッシュ日"
 
 #: 
 msgid "Username"
-msgstr "Username"
+msgstr "ユーザ名"
 
 #: 
 msgid "Import Settings"
-msgstr "Import Settings"
+msgstr "インポート 設定"
 
 #: 
 msgid "Update Inventory"
-msgstr "Update Inventory"
+msgstr "インベントリ更新"
 
 #: 
 msgid "Send Blank Push"
-msgstr "Send Blank Push"
+msgstr "ブランクプッシュ送信"
 
 #: 
 msgid "Device name"
-msgstr "Device name"
+msgstr "デバイス名"
 
 #: 
 msgid "Update device location"
-msgstr "Update device location"
+msgstr "デバイス場所更新"
 
 #: 
 msgid "Lock device"
-msgstr "Lock device"
+msgstr "デバイスロック"
 
 #: 
 msgid "Footnote"
-msgstr "Footnote"
+msgstr "脚注"
 
 #: 
 msgid "Disable lost mode"
-msgstr "Disable lost mode"
+msgstr "紛失モード無効"
 
 #: 
 msgid "Enable lost mode"
-msgstr "Enable lost mode"
+msgstr "紛失モード有効"
 
 #: 
 msgid "Erase device"
-msgstr "Erase device"
+msgstr "デバイス消去"
 
 #: 
 msgid "Preserve data plan"
-msgstr "Preserve data plan"
+msgstr "データプラン保存"
 
 #: 
 msgid "Disallow proximity setup"
-msgstr "Disallow proximity setup"
+msgstr "プロキシミティ設定禁止"
 
 #: 
 msgid "Clear activation lock"
-msgstr "Clear activation lock"
+msgstr "起動ロック クリア"
 
 #: 
 msgid "Password lock grace period"
-msgstr "Password lock grace period"
+msgstr "パスワードロック猶予期間"
 
 #: 
 msgid "Grace period (seconds)"
-msgstr "Grace period (seconds)"
+msgstr "猶予期間（秒）"
 
 #: 
 msgid "Play lost mode sound"
-msgstr "Play lost mode sound"
+msgstr "紛失モード音の再生"
 
 #: 
 msgid "Restart device"
-msgstr "Restart device"
+msgstr "デバイス再起動"
 
 #: 
 msgid "Shutdown device"
-msgstr "Shutdown device"
+msgstr "デバイスシャットダウン"
 
 #: 
 msgid "Value"
-msgstr "Value"
+msgstr "値"
 
 #: 
 msgid "%1$s - Error during the drop of the table %2$s - Error is %3$s"
-msgstr "%1$s - Error during the drop of the table %2$s - Error is %3$s"
+msgstr "%1$s - テーブルドロップ中エラー %2$s - Error is %3$s"
 
 #: 
 msgid "JSS Account"
-msgstr "JSS Account"
+msgstr "JSSアカウント"
 
 #: 
 msgid "Update account link"
-msgstr "Update account link"
+msgstr "アカウントリンク更新"
 
 #: 
 msgid "View in Jamf"
-msgstr "View in Jamf"
+msgstr "Jamfで表示"
 
 #: 
 msgid "Extension attribute"
 msgid_plural "Extension attributes"
-msgstr[0] "Extension attribute"
-msgstr[1] "Extension attributes"
+msgstr[0] "拡張属性"
 
 #: 
 msgid "Are you sure you want to send the command: %s?"
-msgstr "Are you sure you want to send the command: %s?"
+msgstr "コマンド送信しますか？: %s"
 
 #: 
 msgid "Schedule OS update"
-msgstr "Schedule OS update"
+msgstr "OSアップデート スケジュール"
 
 #: 
 msgid "Install action"
-msgstr "Install action"
+msgstr "インストール実行"
 
 #: 
 msgid "Product version"
-msgstr "Product version"
+msgstr "製品バージョン"
 
 #: front/import.php:48
 msgctxt "field"
 msgid "Jamf Type"
-msgstr "Jamf Type"
+msgstr "Jamfタイプ"
 
 #: front/import.php:75
 msgctxt "action"
 msgid "Discover now"
-msgstr "Discover now"
+msgstr "今、発見"
 
 #: front/import.php:78
 msgctxt "action"
 msgid "Importing"
-msgstr "Importing"
+msgstr "インポート中..."
 
 #: front/import.php:79
 msgctxt "action"
 msgid "Discovering"
-msgstr "Discovering"
+msgstr "発見中..."
 
 #: front/user_jssaccount.form.php:32
 msgctxt "event"
 msgid "%s remove a link to a JSS account from a user"
-msgstr "%s remove a link to a JSS account from a user"
+msgstr "%sのユーザーからJSSアカウントへのリンクを削除"
 
 #: front/user_jssaccount.form.php:43
 msgctxt "event"
 msgid "%s links a JSS account to a user"
-msgstr "%s links a JSS account to a user"
+msgstr "%sがユーザーにJSSアカウントをリンクします"
 
 #: front/merge.php:164
 msgctxt "action"
 msgid "Merging"
-msgstr "Merging"
+msgstr "マージ"
 
 #: front/menu.php:32
 msgctxt "menu"
 msgid "Import devices"
-msgstr "Import devices"
+msgstr "インポートデバイス"
 
 #: front/menu.php:33
 msgctxt "menu"
 msgid "Merge existing devices"
-msgstr "Merge existing devices"
+msgstr "既存のデバイスをマージ"
 
 #: inc/item_mdmcommand.class.php:35
 msgctxt "itemtype"
 msgid "MDM command"
 msgid_plural "MDM commands"
-msgstr[0] "MDM command"
-msgstr[1] "MDM commands"
+msgstr[0] "MDMコマンド"
 
 #: inc/item_mdmcommand.class.php:150
 msgctxt "form_section"
 msgid "Pending Commands"
-msgstr "Pending Commands"
+msgstr "保留中のコマンド"
 
 #: inc/item_mdmcommand.class.php:153 inc/item_mdmcommand.class.php:172
 msgctxt "field"
 msgid "Command"
-msgstr "Command"
+msgstr "コマンド"
 
 #: inc/item_mdmcommand.class.php:154
 msgctxt "field"
 msgid "Status"
-msgstr "Status"
+msgstr "状態"
 
 #: inc/item_mdmcommand.class.php:155 inc/item_mdmcommand.class.php:174
 msgctxt "field"
 msgid "Date issued"
-msgstr "Date issued"
+msgstr "日付発行"
 
 #: inc/item_mdmcommand.class.php:156 inc/item_mdmcommand.class.php:175
 msgctxt "field"
 msgid "Date of last push"
-msgstr "Date of last push"
+msgstr "最後のプッシュの日"
 
 #: inc/item_mdmcommand.class.php:157 inc/item_mdmcommand.class.php:176
 msgctxt "field"
 msgid "Username"
-msgstr "Username"
+msgstr "ユーザー名"
 
 #: inc/item_mdmcommand.class.php:169
 msgctxt "form_section"
 msgid "Failed Commands"
-msgstr "Failed Commands"
+msgstr "失敗したコマンド"
 
 #: inc/item_mdmcommand.class.php:173
 msgctxt "field"
 msgid "Error"
-msgstr "Error"
+msgstr "エラー"
 
 #: inc/mobiledevice.class.php:57
 msgctxt "field"
@@ -673,27 +667,27 @@ msgstr "UUID"
 #: inc/computer.class.php:93
 msgctxt "action"
 msgid "View in Jamf"
-msgstr "View in Jamf"
+msgstr "Jamfで表示"
 
 #: inc/mobiledevice.class.php:131
 msgctxt "field"
 msgid "Enabled"
-msgstr "Enabled"
+msgstr "使用可能"
 
 #: inc/mobiledevice.class.php:133
 msgctxt "field"
 msgid "Enforced"
-msgstr "Enforced"
+msgstr "強制"
 
 #: inc/mobiledevice.class.php:139
 msgctxt "field"
 msgid "Message"
-msgstr "Message"
+msgstr "メッセージ"
 
 #: inc/mobiledevice.class.php:141
 msgctxt "field"
 msgid "Phone"
-msgstr "Phone"
+msgstr "電話"
 
 #: inc/mobiledevice.class.php:146
 msgctxt "field"
@@ -703,253 +697,249 @@ msgstr "GPS"
 #: inc/mobiledevice.class.php:150
 msgctxt "field"
 msgid "Altitude"
-msgstr "Altitude"
+msgstr "高度"
 
 #: inc/mobiledevice.class.php:152
 msgctxt "field"
 msgid "Speed"
-msgstr "Speed"
+msgstr "速度"
 
 #: inc/mobiledevice.class.php:154
 msgctxt "field"
 msgid "Lost location date"
-msgstr "Lost location date"
+msgstr "失われた場所日付"
 
 #: inc/mobiledevice.class.php:242 inc/mobiledevice.class.php:273
 msgctxt "dashboard"
 msgid "Jamf Lost Mobile Device Count"
-msgstr "Jamf Lost Mobile Device Count"
+msgstr "Jamf紛失モバイルデバイス数"
 
 #: inc/mobiledevice.class.php:247 inc/mobiledevice.class.php:292
 msgctxt "dashboard"
 msgid "Jamf Managed Mobile Device Count"
-msgstr "Jamf Managed Mobile Device Count"
+msgstr "Jamfは、モバイルデバイス数を管理します"
 
 #: inc/mobiledevice.class.php:252 inc/mobiledevice.class.php:310
 msgctxt "dashboard"
 msgid "Jamf Supervised Mobile Device Count"
-msgstr "Jamf Supervised Mobile Device Count"
+msgstr "Jamfは、モバイルデバイスのカウントを監修しました"
 
 #: inc/config.class.php:76
 msgctxt "config"
 msgid "Ignore JSS Certificate"
-msgstr "Ignore JSS Certificate"
+msgstr "JSS証明書を無視します"
 
 #: inc/config.class.php:82
 msgctxt "form_section"
 msgid "Sync Settings"
-msgstr "Sync Settings"
+msgstr "同期設定"
 
 #: inc/config.class.php:121
 msgctxt "config"
 msgid "Sync Components"
-msgstr "Sync Components"
+msgstr "同期コンポーネント"
 
 #: inc/config.class.php:127
 msgctxt "form_section"
 msgid "Default Settings"
-msgstr "Default Settings"
+msgstr "デフォルトの設定"
 
 #: inc/config.class.php:151
 msgctxt "config"
 msgid "Default status"
-msgstr "Default status"
+msgstr "デフォルトの状態"
 
 #: inc/mdmcommand.class.php:41
 msgctxt "mdm_command"
 msgid "Update Inventory"
-msgstr "Update Inventory"
+msgstr "更新インベントリ"
 
 #: inc/mdmcommand.class.php:50
 msgctxt "mdm_command"
 msgid "Send Blank Push"
-msgstr "Send Blank Push"
+msgstr "ブランクプッシュを送ります"
 
 #: inc/mdmcommand.class.php:59
 msgctxt "mdm_command"
 msgid "Device name"
-msgstr "Device name"
+msgstr "装置名"
 
 #: inc/mdmcommand.class.php:64 inc/mdmcommand.class.php:125
 msgctxt "mdm_command_option"
 msgid "Device name"
-msgstr "Device name"
+msgstr "装置名"
 
 #: inc/mdmcommand.class.php:75
 msgctxt "mdm_command"
 msgid "Update device location"
-msgstr "Update device location"
+msgstr "更新デバイスの場所"
 
 #: inc/mdmcommand.class.php:86
 msgctxt "mdm_command"
 msgid "Lock device"
-msgstr "Lock device"
+msgstr "ロック装置"
 
 #: inc/mdmcommand.class.php:93 inc/mdmcommand.class.php:144
 msgctxt "mdm_command_option"
 msgid "Message"
-msgstr "Message"
+msgstr "メッセージ"
 
 #: inc/mdmcommand.class.php:100 inc/mdmcommand.class.php:151
 msgctxt "mdm_command_option"
 msgid "Phone"
-msgstr "Phone"
+msgstr "電話"
 
 #: inc/mdmcommand.class.php:119
 msgctxt "mdm_command"
 msgid "Disable lost mode"
-msgstr "Disable lost mode"
+msgstr "無効に紛失モード"
 
 #: inc/mdmcommand.class.php:137
 msgctxt "mdm_command"
 msgid "Enable lost mode"
-msgstr "Enable lost mode"
+msgstr "紛失モードを有効にします"
 
 #: inc/mdmcommand.class.php:156
 msgctxt "mdm_command_option"
 msgid "Footnote"
-msgstr "Footnote"
+msgstr "脚注"
 
 #: inc/mdmcommand.class.php:168
 msgctxt "mdm_command"
 msgid "Erase device"
-msgstr "Erase device"
+msgstr "消去デバイス"
 
 #: inc/mdmcommand.class.php:175
 msgctxt "mdm_command_option"
 msgid "Preserve data plan"
-msgstr "Preserve data plan"
+msgstr "データプランを保存"
 
 #: inc/mdmcommand.class.php:179
 msgctxt "mdm_command_option"
 msgid "Disallow proximity setup"
-msgstr "Disallow proximity setup"
+msgstr "許可しないプロキシミティ設定"
 
 #: inc/mdmcommand.class.php:183
 msgctxt "mdm_command_option"
 msgid "Clear activation lock"
-msgstr "Clear activation lock"
+msgstr "クリア起動ロック"
 
 #: inc/mdmcommand.class.php:194
 msgctxt "mdm_command"
 msgid "Password lock grace period"
-msgstr "Password lock grace period"
+msgstr "パスワードロックの猶予期間"
 
 #: inc/mdmcommand.class.php:200
 msgctxt "mdm_command_option"
 msgid "Grace period (seconds)"
-msgstr "Grace period (seconds)"
+msgstr "猶予期間（秒）"
 
 #: inc/mdmcommand.class.php:212
 msgctxt "mdm_command"
 msgid "Play lost mode sound"
-msgstr "Play lost mode sound"
+msgstr "紛失モードの音を再生します"
 
 #: inc/mdmcommand.class.php:224
 msgctxt "mdm_command"
 msgid "Restart device"
-msgstr "Restart device"
+msgstr "再起動デバイス"
 
 #: inc/mdmcommand.class.php:236
 msgctxt "mdm_command"
 msgid "Shutdown device"
-msgstr "Shutdown device"
+msgstr "シャットダウン・デバイス"
 
 #: inc/mdmcommand.class.php:248
 msgctxt "mdm_command"
 msgid "Schedule OS update"
-msgstr "Schedule OS update"
+msgstr "スケジュールOSアップデート"
 
 #: inc/mdmcommand.class.php:259
 msgctxt "mdm_command_option"
 msgid "Install action"
-msgstr "Install action"
+msgstr "アクションをインストールします。"
 
 #: inc/mdmcommand.class.php:262
 msgctxt "mdm_command_option"
 msgid "Download and prompt for install"
-msgstr "Download and prompt for install"
+msgstr "ダウンロードしてインストールのプロンプト"
 
 #: inc/mdmcommand.class.php:263
 msgctxt "mdm_command_option"
 msgid "Download, install, and restart"
-msgstr "Download, install, and restart"
+msgstr "ダウンロード、インストール、および再起動"
 
 #: inc/mdmcommand.class.php:267
 msgctxt "mdm_command_option"
 msgid "Product version"
-msgstr "Product version"
+msgstr "製品バージョン"
 
 #: inc/item_extensionattribute.class.php:36 inc/extensionattribute.class.php:33
 msgctxt "itemtype"
 msgid "Extension attribute"
 msgid_plural "Extension attributes"
-msgstr[0] "Extension attribute"
-msgstr[1] "Extension attributes"
+msgstr[0] "拡張属性"
 
 #: inc/item_extensionattribute.class.php:82
 msgctxt "field"
 msgid "Value"
-msgstr "Value"
+msgstr "値"
 
 #: inc/dbutil.class.php:44
 msgctxt "error"
 msgid "%1$s - Error during the drop of the table %2$s - Error is %3$s"
-msgstr "%1$s - Error during the drop of the table %2$s - Error is %3$s"
+msgstr "%1$s - テーブルドロップ中エラー %2$s - Error is %3$s"
 
 #: inc/user_jssaccount.class.php:40
 msgctxt "itemtype"
 msgid "JSS Account Link"
 msgid_plural "JSS Account Links"
-msgstr[0] "JSS Account Link"
-msgstr[1] "JSS Account Links"
+msgstr[0] "JSSアカウントリンク"
 
 #: inc/user_jssaccount.class.php:177
 msgctxt "error"
 msgid "Attempt to use JSS user rights without a linked account"
-msgstr "Attempt to use JSS user rights without a linked account"
+msgstr "リンクされたアカウントなしでJSSのユーザー権限を使用しようとします"
 
 #: inc/user_jssaccount.class.php:213
 msgctxt "itemtype"
 msgid "JSS Account"
-msgstr "JSS Account"
+msgstr "JSSアカウント"
 
 #: inc/user_jssaccount.class.php:220
 msgctxt "action"
 msgid "Update account link"
-msgstr "Update account link"
+msgstr "更新アカウントのリンク"
 
 #: inc/ruleimport.class.php:36
 msgctxt "itemtype"
 msgid "Device import rules"
-msgstr "Device import rules"
+msgstr "デバイスのインポートルール"
 
 #: inc/ruleimport.class.php:52
 msgctxt "field"
 msgid "Item type"
-msgstr "Item type"
+msgstr "項目種別"
 
 #: inc/extensionattribute.class.php:66 inc/extensionattribute.class.php:108
 msgctxt "dashboard"
 msgid "Jamf Attribute - %s"
-msgstr "Jamf Attribute - %s"
+msgstr "Jamf属性 - %s"
 
 #: inc/profile.class.php:90
 msgctxt "right"
 msgid "Import rule"
 msgid_plural "Import rules"
-msgstr[0] "Import rule"
-msgstr[1] "Import rules"
+msgstr[0] "インポートルール"
 
 #: inc/computer.class.php:35
 msgctxt "itemtype"
 msgid "Jamf computer"
 msgid_plural "Jamf computers"
-msgstr[0] "Jamf computer"
-msgstr[1] "Jamf computers"
+msgstr[0] "Jamfコンピュータ"
 
 #: js/jamf.js:141 js/jamf.min.js:1
 msgctxt "message"
 msgid "Are you sure you want to send the command: %s?"
-msgstr "Are you sure you want to send the command: %s?"
+msgstr "コマンド送信しますか？: %s"
 
