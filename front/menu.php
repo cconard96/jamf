@@ -28,7 +28,7 @@ if (!$plugin->isActivated('jamf')) {
    Html::displayNotFoundError();
 }
 
-Html::header('Jamf Plugin', '', 'plugins', 'PluginJamfMenu', 'import');
+Html::header('Jamf Plugin', '', 'tools', 'PluginJamfMenu', 'import');
 
 global $CFG_GLPI;
 
