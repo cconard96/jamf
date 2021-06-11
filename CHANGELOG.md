@@ -1,5 +1,10 @@
 # Jamf Plugin for GLPI Changelog
 
+## [2.2.0]
+
+- Added "Clear pending imports" button on the import page
+- Moved menu under Tools instead of Plugins
+
 ## [2.1.5]
 
 ### Fixes
