@@ -29,7 +29,7 @@ if (!$plugin->isActivated('jamf')) {
 }
 
 Session::checkRight("plugin_jamf_mobiledevice", CREATE);
-Html::header('Jamf Plugin', '', 'plugins', 'PluginJamfMenu', 'import');
+Html::header('Jamf Plugin', '', 'tools', 'PluginJamfMenu', 'import');
 
 global $DB, $CFG_GLPI;
 
