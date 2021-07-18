@@ -44,30 +44,100 @@ class PluginJamfInventoryAdapter {
    }
 
    public function getGlpiInventoryData(): array {
+      global $DB;
+
+      $source = $this->source_data;
+      $config = \Config::getConfigurationValues('plugin:jamf');
+
+      $manufacturer = 'Apple Inc.';
+      if (!empty($config['default_manufacturer'])) {
+         $it = $DB->request([
+            'SELECT' => ['name'],
+            'FROM'   => Manufacturer::getTable(),
+            'WHERE'  => ['id' => $config['default_manufacturer']]
+         ]);
+         if (count($it)) {
+            $manufacturer = $it->next()['name'];
+         }
+      }
+
       $result = [
-         'itemtype'  => $this->source_data['_metadata']['itemtype'],
+         'itemtype'  => $source['_metadata']['itemtype'],
          'query'     => 'INVENTORY',
          'deviceid'  => $this->getDeviceID(),
          'content'   => [
             'accesslog' => [
-               'logdate'   => PluginJamfToolbox::utcToLocal($this->source_data['general']['last_inventory_update_utc'])
+               'logdate'   => PluginJamfToolbox::utcToLocal($source['general']['last_inventory_update_utc'])
             ]
          ]
       ];
 
+      $is_mobile = $source['_metadata']['jamf_type'] === 'MobileDevice';
+
+      // Antivirus
+      // There are more layers of security than a traditional antivirus software on MacOS.
+
       // Batteries
+      // Nothing has specific battery hardware info. All we have is a bettery level.
 
       // BIOS
+      $bios = [
+         'mmanufacturer'   => $manufacturer,
+         'mmodel'          => $source['hardware']['model'],
+         'msn'             => $source['general']['serial_number'],
+         'smanufacturer'   => $manufacturer,
+         'ssn'             => $source['general']['serial_number']
+      ];
+      if (!$is_mobile) {
+         $bios['bmanufacturer'] = $manufacturer;
+         $bios['bversion'] = $source['hardware']['boot_rom'];
+         $bios['biosserial'] = $source['general']['serial_number'];
+      }
 
       // Controllers
+      // Not supported
 
       // CPUs
+      $cpus = [];
+      if (!$is_mobile) {
+         $cpus = [
+            'items'  => [
+               [
+                  'arch'         => $source['hardware']['processor_architecture'],
+                  'corecount'    => $source['hardware']['number_cores'],
+                  'name'         => $source['hardware']['processor_type'],
+                  'manufacturer' => str_contains($source['hardware']['processor_type'], 'Intel') ? 'Intel' : $manufacturer,
+                  'speed'        => $source['hardware']['processor_speed_mhz'],
+                  'cache'        => $source['hardware']['cache_size_kb'],
+               ]
+            ]
+         ];
+      }
 
       // Drives
+      //TODO
+
+      // Envs
+      // Not supported
+
+      // Firewalls
+      // Not supported
 
       // Hardware
+      $hardware = [
+         'name'   => $source['general']['name'],
+         'uuid'   => $source['general']['udid'],
+      ];
+      if (!$is_mobile) {
+         // Mobile devices don't report RAM information
+         $hardware['memory'] = $source['hardware']['total_ram_mb'];
+      }
 
       // Inputs
+      //TODO Maybe not supported
+
+      // License Info
+      // Not supported
 
       // Logical Volumes
 
@@ -85,6 +155,10 @@ class PluginJamfInventoryAdapter {
 
       // Printers
 
+      // Processes
+
+      // Remote Management
+
       // Slots
 
       // Softwares
@@ -97,12 +171,17 @@ class PluginJamfInventoryAdapter {
 
       // Users
 
+      // Videos (Graphical adapters including virtual ones)
+
       // Version Client
 
       // Version Provider
 
       // Volume Groups
 
+      $result['bios']      = $bios;
+      $result['cpus']      = $cpus;
+      $result['hardware']  = $hardware;
       return $result;
    }
 }
