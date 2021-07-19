@@ -21,6 +21,8 @@
  --------------------------------------------------------------------------
  */
 
+use Glpi\System\Status\StatusChecker;
+
 function plugin_jamf_install()
 {
    $jamfMigration = new PluginJamfMigration(PLUGIN_JAMF_VERSION);
@@ -264,4 +266,14 @@ function plugin_jamf_showJamfInfoForItem(array $params)
    if ($jamf_class !== null) {
       return $jamf_class::showForItem($params);
    }
+}
+
+function plugin_jamf_status() {
+   $classic_api_status = PluginJamfAPIClassic::testConnection();
+   return [
+      'status' => $classic_api_status ? StatusChecker::STATUS_OK : StatusChecker::STATUS_PROBLEM,
+      'classic_api'  => [
+         'status' => $classic_api_status ? StatusChecker::STATUS_OK : StatusChecker::STATUS_PROBLEM,
+      ]
+   ];
 }

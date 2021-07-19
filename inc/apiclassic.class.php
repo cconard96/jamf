@@ -332,5 +332,14 @@ class PluginJamfAPIClassic
       }
       return $rights;
    }
+
+   public static function testConnection(): bool {
+      try {
+         self::getItems('mobiledevices', ['match' => '?name=glpi_conn_test']);
+         return true;
+      } catch (RuntimeException $e) {
+         return false;
+      }
+   }
 }
 
