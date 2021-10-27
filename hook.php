@@ -32,30 +32,8 @@ function plugin_jamf_install()
 
 function plugin_jamf_uninstall()
 {
-   PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_imports');
-   PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_mobiledevices');
-   PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_mobiledevicesoftwares');
-   PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_softwares');
-   PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_extensionattributes');
-   PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_items_extensionattributes');
-   PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_extfields');
-   PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_users_jssaccounts');
-   PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_computers');
-   PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_computersoftwares');
-   PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_devices');
-   Config::deleteConfigurationValues('plugin:Jamf', [
-      'config_class',
-      'jssserver', 'jssuser', 'jsspassword', 'jssignorecert',
-      'sync_interval', 'sync_general', 'sync_os',
-      'sync_software', 'sync_financial', 'sync_user', 'sync_components',
-      'user_sync_mode', 'autoimport', 'default_status',
-      'default_manufacturer',
-      'iphone_type',
-      'ipad_type',
-      'appletv_type',
-      'plugin_version'
-   ]);
-   CronTask::unregister('Jamf');
+   $jamfMigration = new PluginJamfMigration(PLUGIN_JAMF_VERSION);
+   $jamfMigration->uninstall();
    return true;
 }
 
