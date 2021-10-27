@@ -78,7 +78,7 @@ class PluginJamfInventoryAdapter {
       // There are more layers of security than a traditional antivirus software on MacOS.
 
       // Batteries
-      // Nothing has specific battery hardware info. All we have is a bettery level.
+      // Nothing has specific battery hardware info. All we have is a battery level.
 
       // BIOS
       $bios = [
