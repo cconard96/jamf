@@ -20,6 +20,8 @@
  * --------------------------------------------------------------------------
  */
 
+use Glpi\Agent\Communication\AbstractRequest;
+
 /**
  * Adapter for converting data from the JSS API to the GLPI Inventory Format
  */
@@ -57,18 +59,19 @@ class PluginJamfInventoryAdapter {
             'WHERE'  => ['id' => $config['default_manufacturer']]
          ]);
          if (count($it)) {
-            $manufacturer = $it->next()['name'];
+            $manufacturer = $it->current()['name'];
          }
       }
 
       $result = [
          'itemtype'  => $source['_metadata']['itemtype'],
-         'query'     => 'INVENTORY',
+         'action'    => AbstractRequest::INVENT_ACTION,
          'deviceid'  => $this->getDeviceID(),
          'content'   => [
             'accesslog' => [
                'logdate'   => PluginJamfToolbox::utcToLocal($source['general']['last_inventory_update_utc'])
-            ]
+            ],
+            'versionclient'   => $this->getVersionClient(),
          ]
       ];
 
@@ -83,7 +86,6 @@ class PluginJamfInventoryAdapter {
       // BIOS
       $bios = [
          'mmanufacturer'   => $manufacturer,
-         'mmodel'          => $source['hardware']['model'],
          'msn'             => $source['general']['serial_number'],
          'smanufacturer'   => $manufacturer,
          'ssn'             => $source['general']['serial_number']
@@ -92,6 +94,9 @@ class PluginJamfInventoryAdapter {
          $bios['bmanufacturer'] = $manufacturer;
          $bios['bversion'] = $source['hardware']['boot_rom'];
          $bios['biosserial'] = $source['general']['serial_number'];
+         $bios['mmodel'] = $source['hardware']['model'];
+      } else {
+         $bios['mmodel'] = $source['general']['model'];
       }
 
       // Controllers
@@ -170,18 +175,29 @@ class PluginJamfInventoryAdapter {
       // USB Devices
 
       // Users
+      $users = [];
+      if (!$is_mobile && isset($source['group_accounts']['local_accounts'])) {
+         $hardware['users'] = [];
+         foreach ($source['group_accounts']['local_accounts'] as $account) {
+            if (isset($account['user'])) {
+               $users[] = [
+                  'login'  => $account['user']['name'],
+                  'name'   => $account['user']['real_name'],
+                  'id'     => $account['user']['uid'],
+                  'home'   => $account['user']['home'],
+               ];
+            }
+         }
+      }
 
       // Videos (Graphical adapters including virtual ones)
 
-      // Version Client
-
-      // Version Provider
-
       // Volume Groups
 
-      $result['bios']      = $bios;
-      $result['cpus']      = $cpus;
-      $result['hardware']  = $hardware;
+      $result['content']['bios']          = $bios;
+      $result['content']['cpus']          = $cpus;
+      $result['content']['hardware']      = $hardware;
+      $result['content']['local_users']   = $users;
       return $result;
    }
 }

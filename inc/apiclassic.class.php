@@ -187,9 +187,9 @@ class PluginJamfAPIClassic
       if ($user_auth && !PluginJamfUser_JSSAccount::canReadJSSItem($itemtype)) {
          return null;
       }
-      $param_str = self::getParamString($params);
+      $param_str = static::getParamString($params);
       $endpoint = "$itemtype$param_str";
-      $response = self::get($endpoint);
+      $response = static::get($endpoint);
       // Strip first key (usually like mobile_devices or mobile_device)
       // No other first level keys exist
       return ($response !== null && count($response)) ? reset($response) : null;
@@ -217,7 +217,7 @@ class PluginJamfAPIClassic
       }
 
       $endpoint = "$itemtype$param_str";
-      return self::add($endpoint, $payload);
+      return static::add($endpoint, $payload);
    }
 
    /**
@@ -234,9 +234,9 @@ class PluginJamfAPIClassic
       if ($user_auth && !PluginJamfUser_JSSAccount::canUpdateJSSItem($itemtype)) {
          return null;
       }
-      $param_str = self::getParamString($params);
+      $param_str = static::getParamString($params);
       $endpoint = "$itemtype$param_str";
-      return self::update($endpoint, $fields);
+      return static::update($endpoint, $fields);
    }
 
    /**
@@ -252,14 +252,14 @@ class PluginJamfAPIClassic
       if ($user_auth && !PluginJamfUser_JSSAccount::canDeleteJSSItem($itemtype)) {
          return null;
       }
-      $param_str = self::getParamString($params);
+      $param_str = static::getParamString($params);
       $endpoint = "$itemtype$param_str";
-      return self::delete($endpoint);
+      return static::delete($endpoint);
    }
 
    private static function getJSSGroupActionRights($groupid)
    {
-      $response = self::get("accounts/groupid/$groupid");
+      $response = static::get("accounts/groupid/$groupid");
       return $response['group']['privileges']['jss_actions'];
    }
 
@@ -268,7 +268,7 @@ class PluginJamfAPIClassic
       if ($user_auth && !PluginJamfUser_JSSAccount::canReadJSSItem('accounts')) {
          return null;
       }
-      $response = self::get("accounts/userid/$userid", true, 'application/xml');
+      $response = static::get("accounts/userid/$userid", true, 'application/xml');
       $account = simplexml_load_string($response);
 
       $access_level = reset($account->access_level);
@@ -291,7 +291,7 @@ class PluginJamfAPIClassic
                }
             }
             // Why are jss_actions not included in the group when all other rights are?
-            $action_privileges = self::getJSSGroupActionRights(reset($group->id));
+            $action_privileges = static::getJSSGroupActionRights(reset($group->id));
             $rights['jss_actions'] = $action_privileges;
 
             if (isset($group->privileges->jss_settings)) {
@@ -335,7 +335,7 @@ class PluginJamfAPIClassic
 
    public static function testConnection(): bool {
       try {
-         self::getItems('mobiledevices', ['match' => '?name=glpi_conn_test']);
+         static::getItems('mobiledevices', ['match' => '?name=glpi_conn_test']);
          return true;
       } catch (RuntimeException $e) {
          return false;

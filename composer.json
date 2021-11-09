@@ -3,7 +3,8 @@
     "php": "^7.2"
   },
   "require-dev": {
-    "glpi-project/tools": "^0.1"
+    "glpi-project/tools": "^0.1",
+    "justinrainbow/json-schema": "^5.2"
   },
   "config": {
     "optimize-autoloader": true,
@@ -11,5 +12,8 @@
       "php": "7.2.0"
     },
     "sort-packages": true
+  },
+  "scripts": {
+    "test": "../../vendor/bin/atoum --force-terminal --ncc --mcn 1 --bf tests/bootstrap.php -d tests"
   }
 }
