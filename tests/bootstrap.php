@@ -4,6 +4,9 @@ global $CFG_GLPI;
 define('GLPI_ROOT', dirname(dirname(dirname(__DIR__))));
 define("GLPI_CONFIG_DIR", GLPI_ROOT . "/tests");
 
+define('TU_USER', '_test_user');
+define('TU_PASS', 'PhpUnit_4');
+
 include GLPI_ROOT . "/inc/includes.php";
 include_once GLPI_ROOT . '/tests/GLPITestCase.php';
 include_once GLPI_ROOT . '/tests/DbTestCase.php';
