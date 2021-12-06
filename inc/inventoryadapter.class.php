@@ -20,23 +20,62 @@
  * --------------------------------------------------------------------------
  */
 
+use CJDevStudios\ArrayMapper\Mapper;
+use CJDevStudios\ArrayMapper\MappingRule;
+use CJDevStudios\ArrayMapper\MappingSchema;
 use Glpi\Agent\Communication\AbstractRequest;
 
 /**
  * Adapter for converting data from the JSS API to the GLPI Inventory Format
  */
-class PluginJamfInventoryAdapter {
-   private $source_data;
+class PluginJamfInventoryAdapter implements PluginJamfInventoryMutatorInterface {
+
+   private array $source_data;
+
+   private bool $is_mobile;
+
+   private string $manufacturer;
+
+   private array $config;
 
    public function __construct($source_data) {
+      global $DB;
+
       $this->source_data = $source_data;
+      $this->is_mobile = $this->source_data['_metadata']['jamf_type'] === 'MobileDevice';
+
+      $this->config = \Config::getConfigurationValues('plugin:jamf');
+
+      $this->manufacturer = 'Apple Inc.';
+      if (!empty($this->config['default_manufacturer'])) {
+         $it = $DB->request([
+            'SELECT' => ['name'],
+            'FROM'   => Manufacturer::getTable(),
+            'WHERE'  => ['id' => $this->config['default_manufacturer']]
+         ]);
+         if (count($it)) {
+            $this->manufacturer = $it->current()['name'];
+         }
+      }
    }
 
-   private function getDeviceID(): string {
+   public function getManufacturer(): string {
+      return $this->manufacturer;
+   }
+
+   public function getDeviceID(): string {
       return $this->source_data['_metadata']['jamf_type'].'_'.$this->source_data['general']['udid'];
    }
 
-   private function getVersionClient(): string {
+   public function getGlpiItemtype(): string {
+      return $this->source_data['_metadata']['itemtype'];
+   }
+
+   public function getIsPartial(): bool {
+      return false;
+   }
+
+   public function getVersionClient(): string {
       $plugin_version = PLUGIN_JAMF_VERSION;
       $version = "Jamf-Plugin_v{$plugin_version}";
       if (isset($this->source_data['_metadata']['jss_version_name'])) {
@@ -45,140 +84,106 @@ class PluginJamfInventoryAdapter {
       return $version;
    }
 
-   public function getGlpiInventoryData(): array {
-      global $DB;
+   public function getVersionProvider(): array {
+      return [];
+   }
 
-      $source = $this->source_data;
-      $config = \Config::getConfigurationValues('plugin:jamf');
+   public function getAntivirusData(): ?array {
+      return null;
+   }
 
-      $manufacturer = 'Apple Inc.';
-      if (!empty($config['default_manufacturer'])) {
-         $it = $DB->request([
-            'SELECT' => ['name'],
-            'FROM'   => Manufacturer::getTable(),
-            'WHERE'  => ['id' => $config['default_manufacturer']]
-         ]);
-         if (count($it)) {
-            $manufacturer = $it->current()['name'];
-         }
-      }
+   public function getBatteriesData(): ?array {
+      return null;
+   }
 
-      $result = [
-         'itemtype'  => $source['_metadata']['itemtype'],
-         'action'    => AbstractRequest::INVENT_ACTION,
-         'deviceid'  => $this->getDeviceID(),
-         'content'   => [
-            'accesslog' => [
-               'logdate'   => PluginJamfToolbox::utcToLocal($source['general']['last_inventory_update_utc'])
-            ],
-            'versionclient'   => $this->getVersionClient(),
-         ]
-      ];
+   public function getBiosData(): ?array {
 
-      $is_mobile = $source['_metadata']['jamf_type'] === 'MobileDevice';
-
-      // Antivirus
-      // There are more layers of security than a traditional antivirus software on MacOS.
-
-      // Batteries
-      // Nothing has specific battery hardware info. All we have is a battery level.
-
-      // BIOS
       $bios = [
-         'mmanufacturer'   => $manufacturer,
-         'msn'             => $source['general']['serial_number'],
-         'smanufacturer'   => $manufacturer,
-         'ssn'             => $source['general']['serial_number']
+         'mmanufacturer' => $this->manufacturer,
+         'smanufacturer' => $this->manufacturer,
       ];
-      if (!$is_mobile) {
-         $bios['bmanufacturer'] = $manufacturer;
-         $bios['bversion'] = $source['hardware']['boot_rom'];
-         $bios['biosserial'] = $source['general']['serial_number'];
-         $bios['mmodel'] = $source['hardware']['model'];
+      if (!$this->is_mobile) {
+         $bios['bmanufacturer'] = $this->manufacturer;
+      }
+
+      $schema = new MappingSchema();
+      $schema->addMappingRule(new MappingRule('general.serial_number', 'msn'));
+      $schema->addMappingRule(new MappingRule('general.serial_number', 'ssn'));
+      if (!$this->is_mobile) {
+         $schema->addMappingRule(new MappingRule('hardware.boot_rom', 'bversion'));
+         $schema->addMappingRule(new MappingRule('general.serial_number', 'biosserial'));
+         $schema->addMappingRule(new MappingRule('hardware.model', 'mmodel'));
       } else {
-         $bios['mmodel'] = $source['general']['model'];
+         $schema->addMappingRule(new MappingRule('general.model', 'mmodel'));
       }
 
-      // Controllers
-      // Not supported
+      $mapper = new Mapper($schema);
+      $bios = array_merge($bios, $mapper->map($this->source_data));
 
-      // CPUs
-      $cpus = [];
-      if (!$is_mobile) {
-         $cpus = [
-            'items'  => [
-               [
-                  'arch'         => $source['hardware']['processor_architecture'],
-                  'corecount'    => $source['hardware']['number_cores'],
-                  'name'         => $source['hardware']['processor_type'],
-                  'manufacturer' => str_contains($source['hardware']['processor_type'], 'Intel') ? 'Intel' : $manufacturer,
-                  'speed'        => $source['hardware']['processor_speed_mhz'],
-                  'cache'        => $source['hardware']['cache_size_kb'],
-               ]
-            ]
-         ];
+      return $bios;
+   }
+
+   public function getControllersData(): ?array {
+      return null;
+   }
+
+   public function getCpusData(): ?array {
+      if ($this->is_mobile) {
+         return null;
       }
+      $schema = new MappingSchema();
+      $schema->addMappingRule(new MappingRule('hardware.processor_architecture', 'items.0.arch'));
+      $schema->addMappingRule(new MappingRule('hardware.number_cores', 'items.0.corecount'));
+      $schema->addMappingRule(new MappingRule('hardware.processor_type', 'items.0.name'));
+      $schema->addMappingRule(new MappingRule('hardware.processor_speed_mhz', 'items.0.speed'));
+      $schema->addMappingRule(new MappingRule('hardware.cache_size_kb', 'items.0.cache'));
+      $schema->addMappingRule(
+         (new MappingRule('hardware.processor_type', 'items.0.manufacturer'))
+            ->setTransform(function ($value) {
+               return str_contains($value, 'Intel') ? 'Intel' : $this->manufacturer;
+      }));
 
-      // Drives
-      //TODO
+      $mapper = new Mapper($schema);
+      return $mapper->map($this->source_data);
+   }
 
-      // Envs
-      // Not supported
+   public function getDrivesData(): ?array {
+      return null;
+   }
 
-      // Firewalls
-      // Not supported
+   public function getEnvsData(): ?array {
+      return null;
+   }
 
-      // Hardware
+   public function getFirewallsData(): ?array {
+      return null;
+   }
+
+   public function getHardwareData(): ?array {
       $hardware = [
-         'name'   => $source['general']['name'],
-         'uuid'   => $source['general']['udid'],
+         'name'   => $this->source_data['general']['name'],
+         'uuid'   => $this->source_data['general']['udid'],
       ];
-      if (!$is_mobile) {
+      if (!$this->is_mobile) {
          // Mobile devices don't report RAM information
-         $hardware['memory'] = $source['hardware']['total_ram_mb'];
+         $hardware['memory'] = $this->source_data['hardware']['total_ram_mb'];
       }
 
-      // Inputs
-      //TODO Maybe not supported
+      return $hardware;
+   }
 
-      // License Info
-      // Not supported
+   public function getInputsData(): ?array {
+      return null;
+   }
 
-      // Logical Volumes
+   public function getLocalGroupsData(): ?array {
+      return null;
+   }
 
-      // Memory
-
-      // Monitors/Displays
-
-      // Networks
-
-      // Operating System
-
-      // Physical Volumes
-
-      // Ports
-
-      // Printers
-
-      // Processes
-
-      // Remote Management
-
-      // Slots
-
-      // Softwares
-
-      // Sounds
-
-      // Storage
-
-      // USB Devices
-
-      // Users
+   public function getLocalUsersData(): ?array {
       $users = [];
-      if (!$is_mobile && isset($source['group_accounts']['local_accounts'])) {
-         $hardware['users'] = [];
-         foreach ($source['group_accounts']['local_accounts'] as $account) {
+      if (!$this->is_mobile && isset($this->source_data['group_accounts']['local_accounts'])) {
+         foreach ($this->source_data['group_accounts']['local_accounts'] as $account) {
             if (isset($account['user'])) {
                $users[] = [
                   'login'  => $account['user']['name'],
@@ -188,16 +193,238 @@ class PluginJamfInventoryAdapter {
                ];
             }
          }
+         return $users;
+      }
+      return null;
+   }
+
+   public function getPhysicalVolumesData(): ?array {
+      return null;
+   }
+
+   public function getMemoriesData(): ?array {
+      return null;
+   }
+
+   public function getMonitorsData(): ?array {
+      return null;
+   }
+
+   public function getNetworksData(): ?array {
+      return null;
+   }
+
+   public function getOperatingSystemData(): ?array {
+      if ($this->is_mobile) {
+         $os = [
+            'name'      => $this->source_data['general']['os_type'],
+            'version'   => $this->source_data['general']['os_version'],
+         ];
+      } else {
+         $os = [
+            'name'      => $this->source_data['hardware']['os_name'],
+            'version'   => $this->source_data['hardware']['os_version'],
+         ];
+         if ($this->source_data['hardware']['active_directory_status']) {
+            $os['dns_domain'] = $this->source_data['hardware']['active_directory_status'];
+            $os['fqdn'] = $os['dns_domain'];
+         }
+      }
+      $os['full_name'] = $os['name'] . ' ' . $os['version'];
+
+      return $os;
+   }
+
+   public function getPortsData(): ?array {
+      return null;
+   }
+
+   public function getPrintersData(): ?array {
+      $printers = [];
+      if (!$this->is_mobile && $this->source_data['hardware']['mapped_printers']) {
+         foreach ($this->source_data['hardware']['mapped_printers'] as $printer) {
+            $printers[] = [
+               'name'         => $printer['name'],
+               'network'      => strtolower($printer['location']) !== strtolower($this->source_data['general']['name']),
+               'description'  => $printer['type']
+            ];
+         }
+         return $printers;
+      }
+      return null;
+   }
+
+   public function getProcessesData(): ?array {
+      return null;
+   }
+
+   public function getRemoteManagementData(): ?array {
+      return null;
+   }
+
+   public function getSlotsData(): ?array {
+      return null;
+   }
+
+   public function getSoftwaresData(): ?array {
+      return null;
+   }
+
+   public function getSoundsData(): ?array {
+      return null;
+   }
+
+   public function getStoragesData(): ?array {
+      return null;
+   }
+
+   public function getUsbDevicesData(): ?array {
+      return null;
+   }
+
+   public function getUsersData(): ?array {
+      return null;
+   }
+
+   public function getVideosData(): ?array {
+      return null;
+   }
+
+   public function getVirtualMachinesData(): ?array {
+      return null;
+   }
+
+   public function getVolumeGroupsData(): ?array {
+      return null;
+   }
+
+   public function getLicenseInfosData(): ?array {
+      return null;
+   }
+
+   public function getModemsData(): ?array {
+      return null;
+   }
+
+   public function getFirmwaresData(): ?array {
+      return null;
+   }
+
+   public function getSimcardsData(): ?array {
+      return null;
+   }
+
+   public function getSensorsData(): ?array {
+      return null;
+   }
+
+   public function getPowerSuppliesData(): ?array {
+      return null;
+   }
+
+   public function getCamerasData(): ?array {
+      return null;
+   }
+
+   public function getNetworkPortsData(): ?array {
+      return null;
+   }
+
+   public function getNetworkComponentsData(): ?array {
+      return null;
+   }
+
+   public function getPageCountersData(): ?array {
+      return null;
+   }
+
+   public function getCartridgesData(): ?array {
+      return null;
+   }
+
+   public function getConsumablesData(): ?array {
+      return null;
+   }
+
+   public function getNetworkDevicesData(): ?array {
+      return null;
+   }
+
+   public function getDatabaseServicesData(): ?array {
+      return null;
+   }
+
+   public function getInventoryDate(): string {
+      return PluginJamfToolbox::utcToLocal($this->source_data['general']['last_inventory_update_utc']);
+   }
+
+   public function getGlpiInventoryData(): array {
+
+      $result = [
+         'itemtype'  => $this->getGlpiItemtype(),
+         'action'    => AbstractRequest::INVENT_ACTION,
+         'deviceid'  => $this->getDeviceID(),
+         'partial'   => $this->getIsPartial(),
+         'content'   => [
+            'accesslog' => [
+               'logdate'   => $this->getInventoryDate()
+            ],
+            'antivirus'          => $this->getAntivirusData(),
+            'batteries'          => $this->getBatteriesData(),
+            'bios'               => $this->getBiosData(),
+            'cameras'            => $this->getCamerasData(),
+            'cartridges'         => $this->getCartridgesData(),
+            'controllers'        => $this->getControllersData(),
+            'consumables'        => $this->getConsumablesData(),
+            'cpus'               => $this->getCpusData(),
+            'databases_services' => $this->getDatabaseServicesData(),
+            'drives'             => $this->getDrivesData(),
+            'envs'               => $this->getEnvsData(),
+            'firewalls'          => $this->getFirewallsData(),
+            'firmwares'          => $this->getFirmwaresData(),
+            'hardware'           => $this->getHardwareData(),
+            'inputs'             => $this->getInputsData(),
+            'licenseinfos'       => $this->getLicenseInfosData(),
+            'local_groups'       => $this->getLocalGroupsData(),
+            'local_users'        => $this->getLocalUsersData(),
+            'modems'             => $this->getModemsData(),
+            'monitors'           => $this->getMonitorsData(),
+            'network_components' => $this->getNetworkComponentsData(),
+            'network_device'     => $this->getNetworkDevicesData(),
+            'network_ports'      => $this->getNetworkPortsData(),
+            'networks'           => $this->getNetworksData(),
+            'operatingsystem'    => $this->getOperatingSystemData(),
+            'pagecounters'       => $this->getPageCountersData(),
+            'physical_volumes'   => $this->getPhysicalVolumesData(),
+            'ports'              => $this->getPortsData(),
+            'powersupplies'      => $this->getPowerSuppliesData(),
+            'printers'           => $this->getPrintersData(),
+            'processes'          => $this->getProcessesData(),
+            'remote_mgmt'        => $this->getRemoteManagementData(),
+            'sensors'            => $this->getSensorsData(),
+            'simcards'           => $this->getSimcardsData(),
+            'slots'              => $this->getSlotsData(),
+            'softwares'          => $this->getSoftwaresData(),
+            'sounds'             => $this->getSoundsData(),
+            'storages'           => $this->getStoragesData(),
+            'usbdevices'         => $this->getUsbDevicesData(),
+            'users'              => $this->getUsersData(),
+            'videos'             => $this->getVideosData(),
+            'virtualmachines'    => $this->getVirtualMachinesData(),
+            'versionclient'      => $this->getVersionClient(),
+            'versionprovider'    => $this->getVersionProvider(),
+            'volume_groups'      => $this->getVolumeGroupsData(),
+         ]
+      ];
+
+      $original_content_count = count($result['content']);
+      $result['content'] = array_filter($result['content'], static function($v) {
+         return $v !== null;
+      });
+      if (count($result['content']) !== $original_content_count) {
+         $result['partial'] = true;
       }
 
-      // Videos (Graphical adapters including virtual ones)
-
-      // Volume Groups
-
-      $result['content']['bios']          = $bios;
-      $result['content']['cpus']          = $cpus;
-      $result['content']['hardware']      = $hardware;
-      $result['content']['local_users']   = $users;
       return $result;
    }
 }

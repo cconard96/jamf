@@ -8,6 +8,7 @@ define('TU_USER', '_test_user');
 define('TU_PASS', 'PhpUnit_4');
 
 include GLPI_ROOT . "/inc/includes.php";
+include  __DIR__ . '/../vendor/autoload.php';
 include_once GLPI_ROOT . '/tests/GLPITestCase.php';
 include_once GLPI_ROOT . '/tests/DbTestCase.php';
 

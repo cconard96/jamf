@@ -23,18 +23,78 @@
 
 namespace tests\units;
 
+use JsonSchema\Constraints\Constraint;
 use JsonSchema\Validator;
 
 class PluginJamfInventoryAdapter extends \DbTestCase {
 
-   public function testGetGlpiInventoryData() {
+   private function getMobileDeviceAdapter() {
       $sample_dir = GLPI_ROOT . '/plugins/jamf/tools/samples/classic_api/';
       $sample1 = json_decode(file_get_contents($sample_dir . '/mobiledevices/id/28.json'), true)['mobile_device'];
       $sample1['_metadata'] = [
          'itemtype'  => 'Computer',
          'jamf_type' => 'MobileDevice'
       ];
-      $adapter = new \PluginJamfInventoryAdapter($sample1);
+      return new \PluginJamfInventoryAdapter($sample1);
+   }
+
+   private function getComputerAdapter() {
+      $sample_dir = GLPI_ROOT . '/plugins/jamf/tools/samples/classic_api/';
+      $sample1 = json_decode(file_get_contents($sample_dir . '/computers/id/33.json'), true)['computer'];
+      $sample1['_metadata'] = [
+         'itemtype'  => 'Computer',
+         'jamf_type' => 'Computer'
+      ];
+      return new \PluginJamfInventoryAdapter($sample1);
+   }
+
+   public function testGetMobileDeviceBiosData() {
+      $adapter = $this->getMobileDeviceAdapter();
+      $bios = $adapter->getBiosData();
+
+      $this->array($bios)->hasKeys(['mmanufacturer', 'smanufacturer', 'msn', 'ssn', 'mmodel']);
+      // Check array doesn't have computer-only keys
+      $this->array($bios)->notHasKeys(['bmanufacturer', 'bversion', 'biosserial']);
+
+      $this->string($bios['mmanufacturer'])->isIdenticalTo($adapter->getManufacturer());
+      $this->string($bios['smanufacturer'])->isIdenticalTo($adapter->getManufacturer());
+      $this->string($bios['msn'])->isIdenticalTo('CA44C89860A3');
+      $this->string($bios['ssn'])->isIdenticalTo('CA44C89860A3');
+      $this->string($bios['mmodel'])->isIdenticalTo('iPad mini (CDMA)');
+   }
+
+   public function testGetComputerBiosData() {
+      $adapter = $this->getComputerAdapter();
+      $bios = $adapter->getBiosData();
+
+      $this->array($bios)->hasKeys(['mmanufacturer', 'smanufacturer', 'msn', 'ssn', 'mmodel', 'bmanufacturer', 'bversion', 'biosserial']);
+
+      $this->string($bios['mmanufacturer'])->isIdenticalTo($adapter->getManufacturer());
+      $this->string($bios['smanufacturer'])->isIdenticalTo($adapter->getManufacturer());
+      $this->string($bios['bmanufacturer'])->isIdenticalTo($adapter->getManufacturer());
+      $this->string($bios['msn'])->isIdenticalTo('CA40DA6C60A3');
+      $this->string($bios['ssn'])->isIdenticalTo('CA40DA6C60A3');
+      $this->string($bios['biosserial'])->isIdenticalTo('CA40DA6C60A3');
+      $this->string($bios['mmodel'])->isIdenticalTo('13-inch MacBook Pro (2011)');
+      $this->string($bios['bversion'])->isIdenticalTo('MBP81.0047.B27');
+   }
+
+   public function testGetMobileDeviceCpusData() {
+      $adapter = $this->getMobileDeviceAdapter();
+      $cpus = $adapter->getCpusData();
+      $this->variable($cpus)->isNull();
+   }
+   public function testGetComputerCpusData() {
+      $adapter = $this->getComputerAdapter();
+      $cpus = $adapter->getCpusData();
+
+      $this->array($cpus)->hasKey('items');
+      $this->array($cpus['items'])->hasSize(1);
+      $this->boolean(isset($cpus['items'][0]))->isTrue();
+   }
+
+   public function testGetGlpiInventoryData() {
+      $adapter = $this->getMobileDeviceAdapter();
       $glpi_inv_data = $adapter->getGlpiInventoryData();
 
       $this->array($glpi_inv_data)->hasKeys([
@@ -42,14 +102,14 @@ class PluginJamfInventoryAdapter extends \DbTestCase {
       ]);
 
       $this->array($glpi_inv_data['content'])->hasKeys([
-         'accesslog', 'bios', 'cpus', 'hardware'
+         'accesslog', 'bios', 'hardware'
       ]);
 
       $validator = new Validator();
       $glpi_inv_data = json_decode(json_encode($glpi_inv_data));
       $validator->validate($glpi_inv_data, [
          '$ref' => 'file://' . \Plugin::getPhpDir('jamf').'/tools/inventory.schema.json'
-      ]);
+      ], Constraint::CHECK_MODE_COERCE_TYPES | Constraint::CHECK_MODE_TYPE_CAST);
 
       //Debug
       if (!$validator->isValid()) {

@@ -1,7 +1,14 @@
 {
   "require": {
-    "php": "^7.2"
+    "php": "^7.4",
+    "cjdevstudios/array-mapper": "dev-main"
   },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/CJDevStudios/array-mapper.git"
+    }
+  ],
   "require-dev": {
     "glpi-project/tools": "^0.1",
     "justinrainbow/json-schema": "^5.2"
@@ -9,7 +16,7 @@
   "config": {
     "optimize-autoloader": true,
     "platform": {
-      "php": "7.2.0"
+      "php": "7.4.0"
     },
     "sort-packages": true
   },
