@@ -20,6 +20,8 @@
  * --------------------------------------------------------------------------
  */
 
+use CJDevStudios\ArrayMapper\ArrayPathAccessor;
+use CJDevStudios\ArrayMapper\DynamicMappingRule;
 use CJDevStudios\ArrayMapper\Mapper;
 use CJDevStudios\ArrayMapper\MappingRule;
 use CJDevStudios\ArrayMapper\MappingSchema;
@@ -28,7 +30,7 @@ use Glpi\Agent\Communication\AbstractRequest;
 /**
  * Adapter for converting data from the JSS API to the GLPI Inventory Format
  */
-class PluginJamfInventoryAdapter implements PluginJamfInventoryMutatorInterface {
+class PluginJamfInventoryAdapter {
 
    private array $source_data;
 
@@ -133,6 +135,7 @@ class PluginJamfInventoryAdapter implements PluginJamfInventoryMutatorInterface 
       }
       $schema = new MappingSchema();
       $schema->addMappingRule(new MappingRule('hardware.processor_architecture', 'items.0.arch'));
+      $schema->addMappingRule(new MappingRule('hardware.number_processors', 'items.0.core'));
       $schema->addMappingRule(new MappingRule('hardware.number_cores', 'items.0.corecount'));
       $schema->addMappingRule(new MappingRule('hardware.processor_type', 'items.0.name'));
       $schema->addMappingRule(new MappingRule('hardware.processor_speed_mhz', 'items.0.speed'));
@@ -142,13 +145,90 @@ class PluginJamfInventoryAdapter implements PluginJamfInventoryMutatorInterface 
             ->setTransform(function ($value) {
                return str_contains($value, 'Intel') ? 'Intel' : $this->manufacturer;
       }));
+      $schema->addMappingRule(new DynamicMappingRule(static function($source) {
+         $total_cores = ArrayPathAccessor::get($source, 'hardware.number_processors');
+         $total_threads = ArrayPathAccessor::get($source, 'hardware.number_cores');
+         return $total_threads / $total_cores;
+      }, 'items.0.thread'));
 
       $mapper = new Mapper($schema);
       return $mapper->map($this->source_data);
    }
 
    public function getDrivesData(): ?array {
-      return null;
+      $schema = new MappingSchema();
+
+      if (!$this->is_mobile) {
+         $storage_devices = ArrayPathAccessor::get($this->source_data, 'hardware.storage');
+         $it_num = 0;
+         for ($i = 0, $iMax = count($storage_devices); $i < $iMax; $i++) {
+            for ($j = 0, $jMax = count($storage_devices[$i]['partitions']); $j < $jMax; $j++) {
+               $path_root = 'hardware.storage.'.$i.'.partitions.'.$j;
+               $schema->addMappingRule(new MappingRule($path_root . '.name', 'items.' . $it_num . '.label'));
+               $schema->addMappingRule(new MappingRule($path_root . '.partition_capacity_mb', 'items.' . $it_num . '.total'));
+               $schema->addMappingRule(new MappingRule($path_root . '.available_mb', 'items.' . $it_num . '.free'));
+
+               $schema->addMappingRule(new DynamicMappingRule(static function ($source) {
+                  return 'FileVault 2';
+               }, 'items.' . $i . '.encrypt_name'));
+
+               $schema->addMappingRule(new DynamicMappingRule(static function ($source) use ($path_root) {
+                  $fv2_enabled = ArrayPathAccessor::get($source, $path_root . '.filevault2_status') === 'Encrypted' ? 'Yes' : 'No';
+                  $fv2_percent = ArrayPathAccessor::get($source, $path_root . '.filevault2_percent');
+
+                  if ($fv2_enabled && $fv2_percent < 100) {
+                     return 'Partially';
+                  }
+                  return $fv2_enabled;
+               }, 'items.' . $it_num . '.encrypt_status'));
+
+               // Set values based on known facts about devices
+               $schema->addMappingRule(new DynamicMappingRule(static function($source) {
+                  $os_version = ArrayPathAccessor::get($source, 'hardware.os_version');
+
+                  if (version_compare($os_version, '10.12.4', '>=')) {
+                     return 'APFS';
+                  }
+                  if (version_compare($os_version, '8.1', '>=')) {
+                     return 'HFS+';
+                  }
+                  return 'HFS';
+               }, 'items.' . $it_num . '.filesystem'));
+
+               $it_num++;
+            }
+         }
+      } else {
+         $schema->addMappingRule(new MappingRule('general.available_mb', 'items.0.free'));
+         $schema->addMappingRule(new MappingRule('general.capacity_mb', 'items.0.total'));
+         $schema->addMappingRule(new DynamicMappingRule(static function($source) {
+            return 'Internal Storage';
+         }, 'items.0.label'));
+
+         // Set values based on known facts about devices
+         $schema->addMappingRule(new DynamicMappingRule(static function($source) {
+            $os = ArrayPathAccessor::get($source, 'general.os_type');
+            $os_version = ArrayPathAccessor::get($source, 'general.os_version');
+            if ($os === 'iOS') {
+               if (version_compare($os_version, '10.3', '>=')) {
+                  return 'APFS';
+               }
+               return 'HFS+';
+            }
+
+            if ($os === 'tvOS') {
+               if (version_compare($os_version, '10.2', '>=')) {
+                  return 'APFS';
+               }
+               return 'HFS+';
+            }
+
+            return 'APFS';
+         }, 'items.0.filesystem'));
+      }
+
+      $mapper = new Mapper($schema);
+      return $mapper->map($this->source_data);
    }
 
    public function getEnvsData(): ?array {
