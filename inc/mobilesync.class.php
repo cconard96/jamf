@@ -655,7 +655,7 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync
             'FROM' => 'glpi_plugin_jamf_devices',
             'WHERE' => ['jamf_type' => static::$jamf_itemtype]
         ]);
-        while ($data = $iterator->next()) {
+        foreach ($iterator as $data) {
             $imported[] = $data['udid'];
         }
         $pending_iterator = $DB->request([
@@ -665,7 +665,7 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync
             ]
         ]);
         $pending_import = [];
-        while ($data = $pending_iterator->next()) {
+        foreach ($pending_iterator as $data) {
             $pending_import[$data['udid']] = $data;
         }
 
@@ -848,7 +848,7 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync
         if (!count($iterator)) {
             return [];
         }
-        $jamf_item = $iterator->next();
+        $jamf_item = $iterator->current();
 
         return static::$api_classic::getItems('mobiledevices', ['id' => $jamf_item['jamf_items_id']]) ?? [];
     }

@@ -190,7 +190,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
         if (!$iterator->count()) {
             return -1;
         }
-        while ($data = $iterator->next()) {
+        foreach ($iterator as $data) {
             try {
                 $result = static::sync($data['itemtype'], $data['items_id']);
                 if ($result) {
@@ -307,7 +307,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
             ]
         ]);
         if (count($iterator)) {
-            $device_id = $iterator->next()['id'];
+            $device_id = $iterator->current()['id'];
         }
         $this->db->updateOrInsert(static::$jamfplugin_itemtype::getTable(), $this->jamfplugin_item_changes, [
             'glpi_plugin_jamf_devices_id' => $device_id

@@ -534,7 +534,7 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync
             'FROM' => 'glpi_plugin_jamf_devices',
             'WHERE' => ['jamf_type' => static::$jamf_itemtype]
         ]);
-        while ($data = $iterator->next()) {
+        foreach ($iterator as $data) {
             $imported[] = $data['jamf_items_id'];
         }
         $pending_iterator = $DB->request([
@@ -544,7 +544,7 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync
             ]
         ]);
         $pending_import = [];
-        while ($data = $pending_iterator->next()) {
+        foreach ($pending_iterator as $data) {
             $pending_import[$data['jamf_items_id']] = $data;
         }
 
@@ -701,7 +701,7 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync
         if (!count($iterator)) {
             return [];
         }
-        $jamf_item = $iterator->next();
+        $jamf_item = $iterator->current();
 
         return static::$api_classic::getItems('computers', ['id' => $jamf_item['jamf_items_id']]) ?? [];
     }

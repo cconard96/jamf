@@ -57,7 +57,7 @@ class PluginJamfExtensionAttribute extends CommonDBTM
         ]);
         $cards = [];
 
-        while ($data = $iterator->next()) {
+        foreach ($iterator as $data) {
             $slug = strtolower(str_replace(' ', '_', $data['name']));
             $cards["plugin_jamf_extensionattribute_{$slug}"] = [
                 'widgettype' => ['halfdonut'],
@@ -95,7 +95,7 @@ class PluginJamfExtensionAttribute extends CommonDBTM
         ]);
 
         $card_data = [];
-        while ($data = $iterator->next()) {
+        foreach ($iterator as $data) {
             $card_data[] = [
                 'label' => $data['value'],
                 'number' => $data['cpt'],

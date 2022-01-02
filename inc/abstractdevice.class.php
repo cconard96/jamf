@@ -123,7 +123,7 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
             ]
         ]);
         if (count($iterator)) {
-            $jamf_type = $iterator->next()['jamf_type'];
+            $jamf_type = $iterator->current()['jamf_type'];
             if ($jamf_type === 'Computer') {
                 return PluginJamfComputer::class;
             }
@@ -167,7 +167,7 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
                 ]
             ]);
             if (count($iterator)) {
-                $jamf_data = $iterator->next();
+                $jamf_data = $iterator->current();
                 if ($jamf_data['jamf_type'] === 'Computer') {
                     $found_type = PluginJamfComputer::class;
                     $found_id = $jamf_data['id'];
@@ -203,7 +203,7 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
             'WHERE' => ['id' => $this->fields['glpi_plugin_jamf_devices_id']]
         ]);
         if (count($iterator)) {
-            return $iterator->next();
+            return $iterator->current();
         }
         return [];
     }
@@ -237,7 +237,7 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
         ]);
 
         $attributes = [];
-        while ($data = $iterator->next()) {
+        foreach ($iterator as $data) {
             $attributes[] = $data;
         }
         return $attributes;
