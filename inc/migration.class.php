@@ -501,7 +501,7 @@ final class PluginJamfMigration
                 'WHERE' => ['glpi_softwares.id' => null]
             ]);
             $m_ids = [];
-            while ($data = $broken_msoftware_links->next()) {
+            foreach ($broken_msoftware_links as $data) {
                 $m_ids[] = $data['id'];
             }
             if (count($m_ids)) {
@@ -526,7 +526,7 @@ final class PluginJamfMigration
                 'WHERE' => ['glpi_softwares.id' => null]
             ]);
             $c_ids = [];
-            while ($data = $broken_csoftware_links->next()) {
+            foreach ($broken_csoftware_links as $data) {
                 $c_ids[] = $data['id'];
             }
             if (count($c_ids)) {

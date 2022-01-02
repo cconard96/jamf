@@ -85,7 +85,7 @@ class PluginJamfSoftware extends CommonDBTM
         ]);
 
         $result = [];
-        while ($data = $iterator->next()) {
+        foreach ($iterator as $data) {
             $result[] = $data;
         }
         return $result;

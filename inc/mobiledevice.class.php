@@ -209,7 +209,7 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
 
         return [
             'label' => _x('dashboard', 'Jamf Lost Mobile Device Count', 'jamf'),
-            'number' => $iterator->next()['cpt']
+            'number' => $iterator->current()['cpt']
         ];
     }
 
@@ -228,7 +228,7 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
 
         return [
             'label' => _x('dashboard', 'Jamf Managed Mobile Device Count', 'jamf'),
-            'number' => $iterator->next()['cpt']
+            'number' => $iterator->current()['cpt']
         ];
     }
 
@@ -246,7 +246,7 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
         ]);
         return [
             'label' => _x('dashboard', 'Jamf Supervised Mobile Device Count', 'jamf'),
-            'number' => $iterator->next()['cpt']
+            'number' => $iterator->current()['cpt']
         ];
     }
 
