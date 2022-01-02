@@ -260,10 +260,6 @@ class PluginJamfInventoryAdapter {
        return $mapper->map($this->source_data);
    }
 
-   public function getLocalGroupsData(): ?array {
-      return null;
-   }
-
    public function getLocalUsersData(): ?array {
       $users = [];
       if (!$this->is_mobile && isset($this->source_data['group_accounts']['local_accounts'])) {
@@ -279,18 +275,6 @@ class PluginJamfInventoryAdapter {
          }
          return $users;
       }
-      return null;
-   }
-
-   public function getPhysicalVolumesData(): ?array {
-      return null;
-   }
-
-   public function getMemoriesData(): ?array {
-      return null;
-   }
-
-   public function getMonitorsData(): ?array {
       return null;
    }
 
@@ -319,10 +303,6 @@ class PluginJamfInventoryAdapter {
       return $os;
    }
 
-   public function getPortsData(): ?array {
-      return null;
-   }
-
    public function getPrintersData(): ?array {
       $printers = [];
       if (!$this->is_mobile && $this->source_data['hardware']['mapped_printers']) {
@@ -335,10 +315,6 @@ class PluginJamfInventoryAdapter {
          }
          return $printers;
       }
-      return null;
-   }
-
-   public function getRemoteManagementData(): ?array {
       return null;
    }
 
@@ -408,29 +384,19 @@ class PluginJamfInventoryAdapter {
             'bios'               => $this->getBiosData(),
             'cpus'               => $this->getCpusData(),
             'drives'             => $this->getDrivesData(),
-            'firmwares'          => $this->getFirmwaresData(),
             'hardware'           => $this->getHardwareData(),
-            'licenseinfos'       => $this->getLicenseInfosData(),
-            'local_groups'       => $this->getLocalGroupsData(),
             'local_users'        => $this->getLocalUsersData(),
-            'modems'             => $this->getModemsData(),
-            'monitors'           => $this->getMonitorsData(),
             'network_components' => $this->getNetworkComponentsData(),
             'network_device'     => $this->getNetworkDevicesData(),
             'network_ports'      => $this->getNetworkPortsData(),
             'networks'           => $this->getNetworksData(),
             'operatingsystem'    => $this->getOperatingSystemData(),
-            'physical_volumes'   => $this->getPhysicalVolumesData(),
-            'ports'              => $this->getPortsData(),
             'powersupplies'      => $this->getPowerSuppliesData(),
             'printers'           => $this->getPrintersData(),
-            'remote_mgmt'        => $this->getRemoteManagementData(),
             'simcards'           => $this->getSimcardsData(),
             'softwares'          => $this->getSoftwaresData(),
             'storages'           => $this->getStoragesData(),
-            'users'              => $this->getUsersData(),
             'versionclient'      => $this->getVersionClient(),
-            'volume_groups'      => $this->getVolumeGroupsData(),
          ]
       ];
 
