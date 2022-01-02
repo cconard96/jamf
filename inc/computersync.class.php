@@ -640,7 +640,8 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync
                 'items_id' => $items_id,
                 'udid' => $jamf_item['general']['udid'],
                 'jamf_type' => static::$jamf_itemtype,
-                'jamf_items_id' => $jamf_item['general']['id']
+                'jamf_items_id' => $jamf_item['general']['id'],
+                'model_identifier'  => $jamf_item['hardware']['model_identifier'],
             ]);
             if ($r === false) {
                 if ($use_transaction) {
