@@ -326,27 +326,17 @@ class PluginJamfInventoryAdapter {
       return null;
    }
 
-   public function getUsersData(): ?array {
-      return null;
-   }
-
-   public function getVolumeGroupsData(): ?array {
-      return null;
-   }
-
-   public function getLicenseInfosData(): ?array {
-      return null;
-   }
-
-   public function getModemsData(): ?array {
-      return null;
-   }
-
-   public function getFirmwaresData(): ?array {
-      return null;
-   }
-
    public function getSimcardsData(): ?array {
+       if ($this->is_mobile && isset($this->source_data['network']['imei']) && !empty($this->source_data['network']['imei'])) {
+           $schema = new MappingSchema();
+           // Need phone_number, iccid, operator_name
+           $schema->addMappingRule(new MappingRule('network.phone_number', 'phone_number'));
+           $schema->addMappingRule(new MappingRule('network.iccid', 'iccid'));
+           $schema->addMappingRule(new MappingRule('network.home_carrier_network', 'operator_name'));
+           // TODO Handle IMEI which is part of the inventory spec modem property
+           $mapper = new Mapper($schema);
+           return $mapper->map($this->source_data);
+       }
       return null;
    }
 
