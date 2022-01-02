@@ -240,16 +240,44 @@ class PluginJamfInventoryAdapter {
    }
 
    public function getHardwareData(): ?array {
-      $hardware = [
-         'name'   => $this->source_data['general']['name'],
-         'uuid'   => $this->source_data['general']['udid'],
-      ];
+       $schema = new MappingSchema();
+
+       $schema->addMappingRule(new MappingRule('general.name', 'name'));
+       $schema->addMappingRule(new MappingRule('general.udid', 'uuid'));
       if (!$this->is_mobile) {
-         // Mobile devices don't report RAM information
-         $hardware['memory'] = $this->source_data['hardware']['total_ram_mb'];
+          // Mobile devices don't report RAM information
+          $schema->addMappingRule(new MappingRule('hardware.total_ram_mb', 'memory'));
+
+          $model_identifier = $this->source_data['hardware']['model_identifier'];
+          $schema->addMappingRule(new DynamicMappingRule(static function($source) use($model_identifier) {
+              // Auto-detect chassis type from model_identifier
+              if (strpos($model_identifier, 'iMac') !== false) {
+                  return 'All in One';
+              } else if (strpos($model_identifier, 'MacBook') !== false) {
+                  return 'Laptop';
+              } else if (strpos($model_identifier, 'Macmini') !== false) {
+                  return 'Low Profile Desktop';
+              } else {
+                  return 'Desktop';
+              }
+          }, 'chassis'));
+      } else {
+          $os_type = $this->source_data['general']['os_type'];
+          $schema->addMappingRule(new DynamicMappingRule(static function($source) use($os_type) {
+              // Auto-detect chassis type based on other information
+              // (Using values from Win32_SystemEnclosure::ChassisTypes)
+              if ($os_type === 'iOS' || $os_type === 'iPadOS') {
+                  return 'Tablet';
+              } else if ($source['hardware']['chassis_type'] === 'tvOS') {
+                  return 'Sealed-Case PC';
+              } else {
+                  return 'Unknown';
+              }
+          }, 'chassis'));
       }
 
-      return $hardware;
+       $mapper = new Mapper($schema);
+       return $mapper->map($this->source_data);
    }
 
    public function getInputsData(): ?array {
@@ -418,14 +446,6 @@ class PluginJamfInventoryAdapter {
       return null;
    }
 
-   public function getCartridgesData(): ?array {
-      return null;
-   }
-
-   public function getConsumablesData(): ?array {
-      return null;
-   }
-
    public function getNetworkDevicesData(): ?array {
       return null;
    }
@@ -449,13 +469,13 @@ class PluginJamfInventoryAdapter {
             'accesslog' => [
                'logdate'   => $this->getInventoryDate()
             ],
-            'antivirus'          => $this->getAntivirusData(),
+            //'antivirus'          => $this->getAntivirusData(),
             'batteries'          => $this->getBatteriesData(),
             'bios'               => $this->getBiosData(),
             'cameras'            => $this->getCamerasData(),
-            'cartridges'         => $this->getCartridgesData(),
-            'controllers'        => $this->getControllersData(),
-            'consumables'        => $this->getConsumablesData(),
+            //'cartridges'         => $this->getCartridgesData(),
+            //'controllers'        => $this->getControllersData(),
+            //'consumables'        => $this->getConsumablesData(),
             'cpus'               => $this->getCpusData(),
             'databases_services' => $this->getDatabaseServicesData(),
             'drives'             => $this->getDrivesData(),
@@ -490,9 +510,9 @@ class PluginJamfInventoryAdapter {
             'usbdevices'         => $this->getUsbDevicesData(),
             'users'              => $this->getUsersData(),
             'videos'             => $this->getVideosData(),
-            'virtualmachines'    => $this->getVirtualMachinesData(),
+            //'virtualmachines'    => $this->getVirtualMachinesData(),
             'versionclient'      => $this->getVersionClient(),
-            'versionprovider'    => $this->getVersionProvider(),
+            //'versionprovider'    => $this->getVersionProvider(),
             'volume_groups'      => $this->getVolumeGroupsData(),
          ]
       ];
