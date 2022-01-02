@@ -21,9 +21,11 @@
  --------------------------------------------------------------------------
  */
 
-class PluginJamfToolbox {
+class PluginJamfToolbox
+{
 
-    public static function getHumanReadableTimeDiff($start, $end = null) {
+    public static function getHumanReadableTimeDiff($start, $end = null)
+    {
         if ($start === null || $start == 'NULL') {
             return null;
         }
@@ -60,7 +62,8 @@ class PluginJamfToolbox {
      * @return string The local date and time.
      * @throws Exception
      */
-    public static function utcToLocal($utc, int $format = null): string {
+    public static function utcToLocal($utc, int $format = null): string
+    {
         if (!is_a($utc, DateTime::class)) {
             $utc = new DateTime($utc);
         }

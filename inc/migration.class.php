@@ -26,7 +26,8 @@
  *
  * @since 2.1.0
  */
-final class PluginJamfMigration {
+final class PluginJamfMigration
+{
 
     private const BASE_VERSION = '1.0.0';
     /**
@@ -44,14 +45,16 @@ final class PluginJamfMigration {
      * @param string $version
      * @global DBmysql $DB
      */
-    public function __construct($version) {
+    public function __construct($version)
+    {
         global $DB;
 
         $this->glpiMigration = new Migration($version);
         $this->db = $DB;
     }
 
-    public function applyMigrations() {
+    public function applyMigrations()
+    {
         $rc = new ReflectionClass($this);
         $otherMigrationFunctions = array_map(static function ($rm) use ($rc) {
             return $rm->getShortName();
@@ -89,7 +92,8 @@ final class PluginJamfMigration {
         }
     }
 
-    public function uninstall() {
+    public function uninstall()
+    {
         PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_imports');
         PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_mobiledevices');
         PluginJamfDBUtil::dropTableOrDie('glpi_plugin_jamf_mobiledevicesoftwares');
@@ -116,7 +120,8 @@ final class PluginJamfMigration {
         CronTask::unregister('Jamf');
     }
 
-    private function setPluginVersionInDB($version) {
+    private function setPluginVersionInDB($version)
+    {
         $this->db->updateOrInsert(Config::getTable(), [
             'value' => $version,
             'context' => 'plugin:Jamf',
@@ -132,7 +137,8 @@ final class PluginJamfMigration {
      *
      * @since 2.1.0
      */
-    public function apply_1_0_0_migration(): void {
+    public function apply_1_0_0_migration(): void
+    {
 
         // Check imports table (Used to store newly discovered devices that haven't been imported yet)
         if (!$this->db->tableExists('glpi_plugin_jamf_imports')) {
@@ -234,7 +240,8 @@ final class PluginJamfMigration {
         ]);
     }
 
-    private function apply_1_1_0_migration() {
+    private function apply_1_1_0_migration()
+    {
         // Check extension attribute tables
         if (!$this->db->tableExists('glpi_plugin_jamf_extensionattributes')) {
             $query = "CREATE TABLE `glpi_plugin_jamf_extensionattributes` (
@@ -311,14 +318,16 @@ final class PluginJamfMigration {
         }
     }
 
-    private function apply_1_1_1_migration() {
+    private function apply_1_1_1_migration()
+    {
         $this->glpiMigration->addRight(PluginJamfMobileDevice::$rightname, ALLSTANDARDRIGHT);
         $this->glpiMigration->addRight(PluginJamfRuleImport::$rightname, ALLSTANDARDRIGHT);
         $this->glpiMigration->addRight(PluginJamfUser_JSSAccount::$rightname, ALLSTANDARDRIGHT);
         $this->glpiMigration->addRight(PluginJamfItem_MDMCommand::$rightname, ALLSTANDARDRIGHT);
     }
 
-    private function apply_1_1_2_migration() {
+    private function apply_1_1_2_migration()
+    {
         $this->db->updateOrDie('glpi_crontasks', [
             'allowmode' => 3
         ], [
@@ -326,7 +335,8 @@ final class PluginJamfMigration {
         ]);
     }
 
-    private function apply_2_0_0_migration() {
+    private function apply_2_0_0_migration()
+    {
         $config = Config::getConfigurationValues('plugin:Jamf');
         $coreConfig = Config::getConfigurationValues('core');
 
@@ -356,7 +366,8 @@ final class PluginJamfMigration {
         }
     }
 
-    public function apply_2_1_0_migration() {
+    public function apply_2_1_0_migration()
+    {
         if (!$this->db->fieldExists('glpi_plugin_jamf_extensionattributes', 'jamf_type', false)) {
             $this->glpiMigration->addField('glpi_plugin_jamf_extensionattributes', 'jamf_type', 'string', [
                 'value' => 'MobileDevice',
@@ -473,7 +484,8 @@ final class PluginJamfMigration {
         $this->glpiMigration->addRight(PluginJamfComputer::$rightname, ALLSTANDARDRIGHT);
     }
 
-    public function apply_2_1_3_migration() {
+    public function apply_2_1_3_migration()
+    {
         if ($this->db->tableExists('glpi_plugin_jamf_mobiledevicesoftwares')) {
             $broken_msoftware_links = $this->db->request([
                 'SELECT' => ['glpi_plugin_jamf_mobiledevicesoftwares.id'],

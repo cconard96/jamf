@@ -25,14 +25,16 @@
  * JamfConnection class
  * @since 1.0.0
  */
-class PluginJamfConnection {
+class PluginJamfConnection
+{
     private $config;
 
     /**
      * Load connection details from the DB and store them in the $config array.
      * @since 1.0.0
      */
-    public function __construct() {
+    public function __construct()
+    {
         $jamf_config = Config::getConfigurationValues('plugin:Jamf', [
             'jssserver', 'jssuser', 'jsspassword', 'jssignorecert']);
         $this->config = $jamf_config;
@@ -46,7 +48,8 @@ class PluginJamfConnection {
      * @param string $jsspassword The password for $jssuser.
      * @since 1.0.0
      */
-    public function setConnectionConfig($jssserver, $jssuser, $jsspassword) {
+    public function setConnectionConfig($jssserver, $jssuser, $jsspassword)
+    {
         global $DB;
 
         $enc = Toolbox::sodiumEncrypt($jsspassword);
@@ -62,7 +65,8 @@ class PluginJamfConnection {
      * @return string The JSS version.
      * @since 1.0.0
      */
-    public function getServerVersion() {
+    public function getServerVersion()
+    {
         static $version = null;
         if (is_null($version)) {
             $version = PluginJamfAPIPro::getLobby()['version'];
@@ -76,7 +80,8 @@ class PluginJamfConnection {
      * @param bool $pro_api True if using the pro API.
      * @return string The full API endpoint URL.
      */
-    public function getAPIUrl($endpoint, $pro_api = false) {
+    public function getAPIUrl($endpoint, $pro_api = false)
+    {
         if ($pro_api) {
             return "{$this->config['jssserver']}/uapi/{$endpoint}";
         }
@@ -88,7 +93,8 @@ class PluginJamfConnection {
      * Set the username and password for the specified curl connection.
      * @param resource $curl The curl handle.
      */
-    public function setCurlAuth(&$curl) {
+    public function setCurlAuth(&$curl)
+    {
         if (isset($this->config['jssuser']) && !empty($this->config['jssuser'])) {
             curl_setopt($curl, CURLOPT_USERPWD, $this->config['jssuser'] . ':' . $this->config['jsspassword']);
         }
@@ -99,7 +105,8 @@ class PluginJamfConnection {
      * @param $curl
      * @since 2.0.0
      */
-    public function setCurlSecurity(&$curl) {
+    public function setCurlSecurity(&$curl)
+    {
         curl_setopt($curl, CURLOPT_SSLVERSION, 6);
         if ($this->config['jssignorecert']) {
             curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);

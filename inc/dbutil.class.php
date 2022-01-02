@@ -25,15 +25,18 @@
  * DB utilities for Jamf plugin.
  * Contains several methods not yet available in the core for interacting with the DB and tables.
  */
-class PluginJamfDBUtil {
+class PluginJamfDBUtil
+{
 
-    public static function dropTable(string $table) {
+    public static function dropTable(string $table)
+    {
         global $DB;
 
         return $DB->query('DROP TABLE' . $DB::quoteName($table));
     }
 
-    public static function dropTableOrDie(string $table, string $message = '') {
+    public static function dropTableOrDie(string $table, string $message = '')
+    {
         global $DB;
 
         if (!$DB->tableExists($table)) {
@@ -58,7 +61,8 @@ class PluginJamfDBUtil {
         return $res;
     }
 
-    public static function truncate($table) {
+    public static function truncate($table)
+    {
         global $DB;
 
         $table_name = $DB::quoteName($table);

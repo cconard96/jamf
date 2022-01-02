@@ -28,18 +28,21 @@
  *
  * @since 1.1.0
  */
-class PluginJamfUser_JSSAccount extends CommonDBChild {
+class PluginJamfUser_JSSAccount extends CommonDBChild
+{
     static public $itemtype = 'User';
     static public $items_id = 'users_id';
     static public $rightname = 'plugin_jamf_jssaccount';
 
     public const LINK = 256;
 
-    public static function getTypeName($nb = 0) {
+    public static function getTypeName($nb = 0)
+    {
         return _nx('itemtype', 'JSS Account Link', 'JSS Account Links', $nb, 'jamf');
     }
 
-    public function prepareInputForUpdate($input) {
+    public function prepareInputForUpdate($input)
+    {
         global $DB;
         if ($input['jssaccounts_id'] == 0) {
             $DB->delete(self::getTable(), ['id' => $this->fields['id']]);
@@ -47,18 +50,21 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
         }
     }
 
-    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0) {
+    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
+    {
         if (!self::canView()) {
             return false;
         }
         return self::getTypeName(1);
     }
 
-    public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0) {
+    public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
+    {
         return self::showForUser($item);
     }
 
-    public function getJSSPrivileges() {
+    public function getJSSPrivileges()
+    {
         // Cache JSS account privileges information to avoid extra, costly API calls.
         static $privileges = [];
 
@@ -68,7 +74,8 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
         return $privileges[$this->fields['jssaccounts_id']];
     }
 
-    private static function getItemRightMap() {
+    private static function getItemRightMap()
+    {
         static $map = null;
         if ($map === null) {
             $map = [
@@ -90,7 +97,8 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
         return $map;
     }
 
-    public static function canCreateJSSItem($itemtype, $meta) {
+    public static function canCreateJSSItem($itemtype, $meta)
+    {
         if ($itemtype == 'mobiledevicecommands') {
             $commands = PluginJamfMDMCommand::getAvailableCommands();
             return self::haveJSSRight('jss_actions', $commands[$meta]['jss_right']);
@@ -108,7 +116,8 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
         return true;
     }
 
-    public static function canReadJSSItem($itemtype) {
+    public static function canReadJSSItem($itemtype)
+    {
         $map = self::getItemRightMap();
         if (!isset($map[$itemtype])) {
             return false;
@@ -122,7 +131,8 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
         return true;
     }
 
-    public static function canUpdateJSSItem($itemtype) {
+    public static function canUpdateJSSItem($itemtype)
+    {
         $map = self::getItemRightMap();
         if (!isset($map[$itemtype])) {
             return false;
@@ -136,7 +146,8 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
         return true;
     }
 
-    public static function canDeleteJSSItem($itemtype) {
+    public static function canDeleteJSSItem($itemtype)
+    {
         $map = self::getItemRightMap();
         if (!isset($map[$itemtype])) {
             return false;
@@ -150,7 +161,8 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
         return true;
     }
 
-    public static function hasLink() {
+    public static function hasLink()
+    {
         $user_jssaccount = new self();
         $matches = $user_jssaccount->find([
             'users_id' => Session::getLoginUserID()
@@ -158,7 +170,8 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
         return count($matches) > 0;
     }
 
-    public static function haveJSSRight($type, $jss_right) {
+    public static function haveJSSRight($type, $jss_right)
+    {
         $user_jssaccount = new self();
         static $matches = null;
 
@@ -181,7 +194,8 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
         return in_array($jss_right, $type_rights);
     }
 
-    public static function showForUser($item) {
+    public static function showForUser($item)
+    {
         $canedit = self::canUpdate();
 
         $user_jssaccount = new self();
@@ -234,12 +248,14 @@ class PluginJamfUser_JSSAccount extends CommonDBChild {
      * @param string $jssaccount_id The ID of the JSS Account.
      * @return string Jamf URL for the JSS account.
      */
-    public static function getJSSAccountURL($jssaccount_id) {
+    public static function getJSSAccountURL($jssaccount_id)
+    {
         $config = PluginJamfConfig::getConfig();
         return "{$config['jssserver']}/accounts.html?id={$jssaccount_id}";
     }
 
-    public function getRights($interface = 'central') {
+    public function getRights($interface = 'central')
+    {
         if ($interface == 'central') {
             return [
                 READ => __('Read'),

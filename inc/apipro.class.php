@@ -25,7 +25,8 @@
  * JSS Pro API interface class
  * @since 1.0.0
  */
-class PluginJamfAPIPro {
+class PluginJamfAPIPro
+{
     /** PluginJamfConnection object representing the connection to a JSS server */
     private static $connection;
 
@@ -36,7 +37,8 @@ class PluginJamfAPIPro {
      * @return mixed JSON string or associative array depending on the value of $raw.
      * @since 1.0.0
      */
-    private static function get(string $endpoint, $raw = false) {
+    private static function get(string $endpoint, $raw = false)
+    {
         if (!self::$connection) {
             self::$connection = new PluginJamfConnection();
         }
@@ -62,7 +64,8 @@ class PluginJamfAPIPro {
      * Get data from the lobby endpoint. This should only contain the JSS version.
      * @return array Associative array of the data from the lobby endpoint.
      */
-    public static function getLobby() {
+    public static function getLobby()
+    {
         return self::get('/');
     }
 
@@ -72,7 +75,8 @@ class PluginJamfAPIPro {
      * @return array Array of mobile devices and some basic fields for each.
      * @since 1.0.0
      */
-    public static function getAllMobileDevices() {
+    public static function getAllMobileDevices()
+    {
         if (!self::$connection) {
             self::$connection = new PluginJamfConnection();
         }
@@ -90,7 +94,8 @@ class PluginJamfAPIPro {
      * @param bool $detailed If true, all fields are returned. Otherwise, only a basic subset of fields are returned.
      * @return array Associative array of fields for the specified device.
      */
-    public static function getMobileDevice(int $id, bool $detailed = false) {
+    public static function getMobileDevice(int $id, bool $detailed = false)
+    {
         if (!self::$connection) {
             self::$connection = new PluginJamfConnection();
         }

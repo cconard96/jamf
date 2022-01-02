@@ -24,7 +24,8 @@ define('PLUGIN_JAMF_VERSION', '2.2.0');
 define('PLUGIN_JAMF_MIN_GLPI', '9.5.0');
 define('PLUGIN_JAMF_MAX_GLPI', '9.6.0');
 
-function plugin_init_jamf() {
+function plugin_init_jamf()
+{
     global $PLUGIN_HOOKS;
 
     $PLUGIN_HOOKS['csrf_compliant']['jamf'] = true;
@@ -64,7 +65,8 @@ function plugin_init_jamf() {
     $PLUGIN_HOOKS['secured_configs']['Jamf'] = ['jsspassword'];
 }
 
-function plugin_version_jamf() {
+function plugin_version_jamf()
+{
 
     return [
         'name' => _x('plugin_info', 'JAMF Plugin for GLPI', 'jamf'),
@@ -81,7 +83,8 @@ function plugin_version_jamf() {
     ];
 }
 
-function plugin_jamf_check_prerequisites() {
+function plugin_jamf_check_prerequisites()
+{
     if (!method_exists('Plugin', 'checkGlpiVersion')) {
         $version = preg_replace('/^((\d+\.?)+).*$/', '$1', GLPI_VERSION);
         $matchMinGlpiReq = version_compare($version, PLUGIN_JAMF_MIN_GLPI, '>=');
@@ -100,6 +103,7 @@ function plugin_jamf_check_prerequisites() {
     return true;
 }
 
-function plugin_jamf_check_config() {
+function plugin_jamf_check_config()
+{
     return true;
 }

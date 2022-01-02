@@ -21,6 +21,7 @@
  --------------------------------------------------------------------------
  */
 
-class PluginJamfMobileDeviceSoftware extends PluginJamfSoftware {
+class PluginJamfMobileDeviceSoftware extends PluginJamfSoftware
+{
 
 }

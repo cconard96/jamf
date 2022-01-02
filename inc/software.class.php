@@ -25,9 +25,11 @@
  * PluginJamfSoftware class.
  * @since 1.0.0
  */
-class PluginJamfSoftware extends CommonDBTM {
+class PluginJamfSoftware extends CommonDBTM
+{
 
-    public static function getTypeName($nb = 0) {
+    public static function getTypeName($nb = 0)
+    {
         return Software::getTypeName($nb);
     }
 
@@ -36,7 +38,8 @@ class PluginJamfSoftware extends CommonDBTM {
      * @param Software $item
      * @global DBmysql $DB
      */
-    public static function plugin_jamf_purgeSoftware(Software $item) {
+    public static function plugin_jamf_purgeSoftware(Software $item)
+    {
         global $DB;
 
         $software_classes = [PluginJamfComputerSoftware::class, PluginJamfMobileDeviceSoftware::class];
@@ -48,7 +51,8 @@ class PluginJamfSoftware extends CommonDBTM {
         }
     }
 
-    public static function getForGlpiItem(CommonDBTM $item): array {
+    public static function getForGlpiItem(CommonDBTM $item): array
+    {
         global $DB;
 
         $iterator = $DB->request([

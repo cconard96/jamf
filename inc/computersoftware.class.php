@@ -21,6 +21,7 @@
  --------------------------------------------------------------------------
  */
 
-class PluginJamfComputerSoftware extends PluginJamfSoftware {
+class PluginJamfComputerSoftware extends PluginJamfSoftware
+{
 
 }

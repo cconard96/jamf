@@ -29,15 +29,18 @@ if (!defined('GLPI_ROOT')) {
  * PluginJamfProfile class. Adds plugin related rights tab to Profiles.
  * @since 1.0.0
  */
-class PluginJamfProfile extends Profile {
+class PluginJamfProfile extends Profile
+{
 
     public static $rightname = "config";
 
-    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0) {
+    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
+    {
         return self::createTabEntry(_x('plugin_info', 'Jamf plugin', 'jamf'));
     }
 
-    public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0) {
+    public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
+    {
         $jamfprofile = new self();
         if ($item->fields['interface'] == 'central') {
             $jamfprofile->showForm($item->getID());
@@ -56,7 +59,8 @@ class PluginJamfProfile extends Profile {
      *
      * @return bool|void
      */
-    public function showForm($profiles_id = 0, $openform = true, $closeform = true) {
+    public function showForm($profiles_id = 0, $openform = true, $closeform = true)
+    {
         global $CFG_GLPI;
 
         if (!self::canView()) {
@@ -120,7 +124,8 @@ class PluginJamfProfile extends Profile {
      *
      * @return bool|void
      */
-    function showFormHelpdesk($profiles_id = 0, $openform = true, $closeform = true) {
+    function showFormHelpdesk($profiles_id = 0, $openform = true, $closeform = true)
+    {
         global $CFG_GLPI;
 
         if (!self::canView()) {

@@ -25,13 +25,16 @@
  * Contains all cron functions for Jamf plugin
  * @since 1.0.0
  */
-final class PluginJamfCron extends CommonGLPI {
+final class PluginJamfCron extends CommonGLPI
+{
 
-    public static function getTypeName($nb = 0) {
+    public static function getTypeName($nb = 0)
+    {
         return _x('plugin_info', 'Jamf plugin', 'jamf');
     }
 
-    public static function cronSyncJamf(CronTask $task) {
+    public static function cronSyncJamf(CronTask $task)
+    {
         $volume = 0;
         $engines = PluginJamfSync::getDeviceSyncEngines();
 
@@ -44,7 +47,8 @@ final class PluginJamfCron extends CommonGLPI {
         return 1;
     }
 
-    public static function cronImportJamf(CronTask $task) {
+    public static function cronImportJamf(CronTask $task)
+    {
         $volume = 0;
         $engines = PluginJamfSync::getDeviceSyncEngines();
 
