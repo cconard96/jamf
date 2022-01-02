@@ -26,68 +26,63 @@
  * Determines if the import happens or if it is dropped.
  * @since 1.0.0
  */
- class PluginJamfRuleImport extends Rule {
+class PluginJamfRuleImport extends Rule {
 
-   static public $rightname = 'plugin_jamf_ruleimport';
-   public $can_sort = true;
+    static public $rightname = 'plugin_jamf_ruleimport';
+    public $can_sort = true;
 
-   public function getTitle()
-   {
-      return _x('itemtype', 'Device import rules', 'jamf');
-   }
+    public function getTitle() {
+        return _x('itemtype', 'Device import rules', 'jamf');
+    }
 
-   public function maxActionsCount()
-   {
-      return 1;
-   }
+    public function maxActionsCount() {
+        return 1;
+    }
 
-   public function getCriterias()
-   {
-      $criterias = [];
-      $criterias['name']['field'] = 'name';
-      $criterias['name']['name']  = _x('field', 'Name', 'jamf');
-      $criterias['name']['table'] = '';
+    public function getCriterias() {
+        $criterias = [];
+        $criterias['name']['field'] = 'name';
+        $criterias['name']['name'] = _x('field', 'Name', 'jamf');
+        $criterias['name']['table'] = '';
 
-      $criterias['itemtype']['field'] = 'itemtype';
-      $criterias['itemtype']['name']  = _x('field', 'Item type', 'jamf');
-      $criterias['itemtype']['table'] = '';
-      $criterias['itemtype']['allow_condition'] = [Rule::PATTERN_IS, Rule::PATTERN_IS_NOT];
+        $criterias['itemtype']['field'] = 'itemtype';
+        $criterias['itemtype']['name'] = _x('field', 'Item type', 'jamf');
+        $criterias['itemtype']['table'] = '';
+        $criterias['itemtype']['allow_condition'] = [Rule::PATTERN_IS, Rule::PATTERN_IS_NOT];
 
-      $criterias['last_inventory']['field'] = 'last_inventory';
-      $criterias['last_inventory']['name']  = _x('field', 'Last inventory', 'jamf');
-      $criterias['last_inventory']['table'] = '';
+        $criterias['last_inventory']['field'] = 'last_inventory';
+        $criterias['last_inventory']['name'] = _x('field', 'Last inventory', 'jamf');
+        $criterias['last_inventory']['table'] = '';
 
-      $criterias['managed']['field'] = 'managed';
-      $criterias['managed']['name']  = _x('field', 'Managed', 'jamf');
-      $criterias['managed']['type']  = 'yesno';
-      $criterias['managed']['table'] = '';
+        $criterias['managed']['field'] = 'managed';
+        $criterias['managed']['name'] = _x('field', 'Managed', 'jamf');
+        $criterias['managed']['type'] = 'yesno';
+        $criterias['managed']['table'] = '';
 
-      $criterias['supervised']['field'] = 'supervised';
-      $criterias['supervised']['name']  = _x('field', 'Supervised', 'jamf');
-      $criterias['supervised']['type']  = 'yesno';
-      $criterias['supervised']['table'] = '';
-      return $criterias;
-   }
+        $criterias['supervised']['field'] = 'supervised';
+        $criterias['supervised']['name'] = _x('field', 'Supervised', 'jamf');
+        $criterias['supervised']['type'] = 'yesno';
+        $criterias['supervised']['table'] = '';
+        return $criterias;
+    }
 
-   public function getActions()
-   {
-      $actions = [];
-      $actions['_import']['name']  = _x('action', 'Import', 'jamf');
-      $actions['_import']['type']  = 'yesno';
-      return $actions;
-   }
+    public function getActions() {
+        $actions = [];
+        $actions['_import']['name'] = _x('action', 'Import', 'jamf');
+        $actions['_import']['type'] = 'yesno';
+        return $actions;
+    }
 
-   public function displayAdditionalRuleCondition($condition, $crit, $name, $value, $test = false)
-   {
-      if (isset($crit['field'])) {
-         switch ($crit['field']) {
-            case 'itemtype':
-               Dropdown::showFromArray($name, [
-                  Computer::getType()  => Computer::getTypeName(1),
-                  Phone::getType()     => Phone::getTypeName(1),
-               ]);
-               return true;
-         }
-      }
-   }
- }
+    public function displayAdditionalRuleCondition($condition, $crit, $name, $value, $test = false) {
+        if (isset($crit['field'])) {
+            switch ($crit['field']) {
+                case 'itemtype':
+                    Dropdown::showFromArray($name, [
+                        Computer::getType() => Computer::getTypeName(1),
+                        Phone::getType() => Phone::getTypeName(1),
+                    ]);
+                    return true;
+            }
+        }
+    }
+}

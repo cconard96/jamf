@@ -21,11 +21,11 @@
  --------------------------------------------------------------------------
  */
 
-include ('../../../inc/includes.php');
+include('../../../inc/includes.php');
 
 $plugin = new Plugin();
 if (!$plugin->isActivated('jamf')) {
-   Html::displayNotFoundError();
+    Html::displayNotFoundError();
 }
 
 Html::header_nocache();
@@ -40,18 +40,18 @@ parse_str($input, $_REQUEST);
 
 // An action must be specified
 if (!isset($_REQUEST['itemtype'], $_REQUEST['items_id'])) {
-   throw new RuntimeException('Required argument missing!');
+    throw new RuntimeException('Required argument missing!');
 }
 
 try {
-   $jamf_class = PluginJamfAbstractDevice::getJamfItemClassForGLPIItem($_REQUEST['itemtype'], $_REQUEST['items_id']);
-   if ($jamf_class !== null) {
-      $sync_class = PluginJamfSync::getDeviceSyncEngines()[$jamf_class] ?? null;
-      if ($sync_class !== null) {
-         $sync_class::sync($_REQUEST['itemtype'], $_REQUEST['items_id']);
-      }
-   }
+    $jamf_class = PluginJamfAbstractDevice::getJamfItemClassForGLPIItem($_REQUEST['itemtype'], $_REQUEST['items_id']);
+    if ($jamf_class !== null) {
+        $sync_class = PluginJamfSync::getDeviceSyncEngines()[$jamf_class] ?? null;
+        if ($sync_class !== null) {
+            $sync_class::sync($_REQUEST['itemtype'], $_REQUEST['items_id']);
+        }
+    }
 } catch (Exception $e) {
-   Toolbox::logError($e->getMessage());
-   return;
+    Toolbox::logError($e->getMessage());
+    return;
 }

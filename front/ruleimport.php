@@ -21,13 +21,13 @@
  --------------------------------------------------------------------------
  */
 
-include ('../../../inc/includes.php');
+include('../../../inc/includes.php');
 
 $plugin = new Plugin();
 if (!$plugin->isActivated('jamf')) {
-   Html::displayNotFoundError();
+    Html::displayNotFoundError();
 }
 
 $rulecollection = new PluginJamfRuleImportCollection($_SESSION['glpiactive_entity']);
 
-include (GLPI_ROOT . "/front/rule.common.php");
+include(GLPI_ROOT . "/front/rule.common.php");

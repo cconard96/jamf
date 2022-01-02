@@ -25,25 +25,23 @@
  * DB utilities for Jamf plugin.
  * Contains several methods not yet available in the core for interacting with the DB and tables.
  */
- class PluginJamfDBUtil {
+class PluginJamfDBUtil {
 
-    public static function dropTable(string $table)
-    {
-       global $DB;
+    public static function dropTable(string $table) {
+        global $DB;
 
-       return $DB->query('DROP TABLE'.$DB::quoteName($table));
+        return $DB->query('DROP TABLE' . $DB::quoteName($table));
     }
 
-    public static function dropTableOrDie(string $table, string $message = '')
-    {
+    public static function dropTableOrDie(string $table, string $message = '') {
         global $DB;
 
         if (!$DB->tableExists($table)) {
-           return true;
+            return true;
         }
-        $res = $DB->query('DROP TABLE'.$DB::quoteName($table));
+        $res = $DB->query('DROP TABLE' . $DB::quoteName($table));
         if (!$res) {
-           //TRANS: %1$s is the description, %2$s is the query, %3$s is the error message
+            //TRANS: %1$s is the description, %2$s is the query, %3$s is the error message
             $message = sprintf(
                 _x('error', '%1$s - Error during the drop of the table %2$s - Error is %3$s', 'jamf'),
                 $message,
@@ -51,20 +49,19 @@
                 $DB->error()
             );
             if (isCommandLine()) {
-                throw new \RuntimeException($message);
+                throw new RuntimeException($message);
             }
 
-           echo $message . "\n";
-           die(1);
+            echo $message . "\n";
+            die(1);
         }
         return $res;
     }
 
-    public static function truncate($table)
-    {
-       global $DB;
+    public static function truncate($table) {
+        global $DB;
 
-       $table_name = $DB::quoteName($table);
-       return $DB->query("TRUNCATE $table_name");
+        $table_name = $DB::quoteName($table);
+        return $DB->query("TRUNCATE $table_name");
     }
- }
+}

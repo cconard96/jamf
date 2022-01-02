@@ -25,7 +25,7 @@ include('../../../inc/includes.php');
 
 $plugin = new Plugin();
 if (!$plugin->isActivated('jamf')) {
-   Html::displayNotFoundError();
+    Html::displayNotFoundError();
 }
 
 Session::checkRight("plugin_jamf_mobiledevice", CREATE);
@@ -38,19 +38,19 @@ $start = $_GET['start'] ?? 0;
 $import = new PluginJamfImport();
 $importcount = countElementsInTable(PluginJamfImport::getTable());
 $pending = $DB->request([
-   'FROM'   => PluginJamfImport::getTable(),
-   'START'  => $start,
-   'LIMIT'  => $_SESSION['glpilist_limit']
+    'FROM' => PluginJamfImport::getTable(),
+    'START' => $start,
+    'LIMIT' => $_SESSION['glpilist_limit']
 ]);
 
 $linked_devices = $DB->request([
-   'SELECT' => ['jamf_type', 'itemtype', 'items_id'],
-   'FROM'   => 'glpi_plugin_jamf_devices',
+    'SELECT' => ['jamf_type', 'itemtype', 'items_id'],
+    'FROM' => 'glpi_plugin_jamf_devices',
 ]);
 
 $linked = [];
 while ($data = $linked_devices->next()) {
-   $linked[$data['itemtype']][] = $data;
+    $linked[$data['itemtype']][] = $data;
 }
 
 $ajax_url = Plugin::getWebDir('jamf') . '/ajax/merge.php';
@@ -59,73 +59,73 @@ Html::printPager($start, $importcount, $ajax_url, '');
 echo "<form>";
 echo "<div class='center'><table id='merge_table' class='tab_cadre' style='width: 50%'>";
 echo "<thead>";
-echo "<th>"._x('field', 'Jamf ID', 'jamf')."</th>";
-echo "<th>"._x('field', 'Name', 'jamf')."</th>";
-echo "<th>"._x('field', 'Type', 'jamf')."</th>";
-echo "<th>"._x('field', 'UDID', 'jamf')."</th>";
-echo "<th>"._x('field', 'Discovery Date', 'jamf')."</th>";
-echo "<th>"._x('field', 'GLPI Item', 'jamf')."</th>";
+echo "<th>" . _x('field', 'Jamf ID', 'jamf') . "</th>";
+echo "<th>" . _x('field', 'Name', 'jamf') . "</th>";
+echo "<th>" . _x('field', 'Type', 'jamf') . "</th>";
+echo "<th>" . _x('field', 'UDID', 'jamf') . "</th>";
+echo "<th>" . _x('field', 'Discovery Date', 'jamf') . "</th>";
+echo "<th>" . _x('field', 'GLPI Item', 'jamf') . "</th>";
 echo "</thead><tbody>";
 while ($data = $pending->next()) {
-   $rowid = $data['jamf_items_id'];
-   $itemtype = $data['type'];
-   /** @var CommonDBTM $item */
-   $item = new $itemtype();
-   $jamftype = ('PluginJamf'.$data['jamf_type']);
+    $rowid = $data['jamf_items_id'];
+    $itemtype = $data['type'];
+    /** @var CommonDBTM $item */
+    $item = new $itemtype();
+    $jamftype = ('PluginJamf' . $data['jamf_type']);
 
-   echo "<tr>";
-   echo "<td>{$data['jamf_items_id']}</td>";
-   $jamf_link = Html::link($data['name'], $jamftype::getJamfDeviceURL($data['jamf_items_id']));
-   echo "<td>{$jamf_link}</td>";
-   echo "<td>{$data['type']}</td>";
-   echo "<td>{$data['udid']}</td>";
-   $date_discover = Html::convDateTime($data['date_discover']);
-   echo "<td>{$date_discover}</td><td>";
-   if ($itemtype === 'Computer') {
-      $guess = $item->find([
-         'OR' => [
-            'uuid' => $data['udid'],
-            'name' => $data['name']
-         ]
-      ], [new QueryExpression("CASE WHEN uuid='".$data['udid']."' THEN 0 ELSE 1 END")], 1);
+    echo "<tr>";
+    echo "<td>{$data['jamf_items_id']}</td>";
+    $jamf_link = Html::link($data['name'], $jamftype::getJamfDeviceURL($data['jamf_items_id']));
+    echo "<td>{$jamf_link}</td>";
+    echo "<td>{$data['type']}</td>";
+    echo "<td>{$data['udid']}</td>";
+    $date_discover = Html::convDateTime($data['date_discover']);
+    echo "<td>{$date_discover}</td><td>";
+    if ($itemtype === 'Computer') {
+        $guess = $item->find([
+            'OR' => [
+                'uuid' => $data['udid'],
+                'name' => $data['name']
+            ]
+        ], [new QueryExpression("CASE WHEN uuid='" . $data['udid'] . "' THEN 0 ELSE 1 END")], 1);
 
-      $params = [
-         'used'   => array_column($linked['Computer'], 'items_id')
-      ];
-      if (count($guess)) {
-         $params['value'] = reset($guess)['id'];
-      }
-      $itemtype::dropdown($params);
-   } else {
-      $extfield = new PluginJamfExtField();
-      $guess = $extfield->find([
-         'itemtype'  => $itemtype,
-         'name'      => 'uuid',
-         'value'     => $data['udid']
-      ], [], 1);
-      if (!count($guess)) {
-         $guess = $item->find([
-            'name' => $data['name']
-         ], [], 1);
-      }
-      $params = [
-         'used'   => array_column($linked['Phone'], 'items_id')
-      ];
-      if (count($guess)) {
-         $match = reset($guess);
-         if (isset($match['items_id'])) {
-            $params['value'] = $match['items_id'];
-         } else {
-            $params['value'] = $match['id'];
-         }
-      }
-      $itemtype::dropdown($params);
-   }
-   echo "</td></tr>";
+        $params = [
+            'used' => array_column($linked['Computer'], 'items_id')
+        ];
+        if (count($guess)) {
+            $params['value'] = reset($guess)['id'];
+        }
+        $itemtype::dropdown($params);
+    } else {
+        $extfield = new PluginJamfExtField();
+        $guess = $extfield->find([
+            'itemtype' => $itemtype,
+            'name' => 'uuid',
+            'value' => $data['udid']
+        ], [], 1);
+        if (!count($guess)) {
+            $guess = $item->find([
+                'name' => $data['name']
+            ], [], 1);
+        }
+        $params = [
+            'used' => array_column($linked['Phone'], 'items_id')
+        ];
+        if (count($guess)) {
+            $match = reset($guess);
+            if (isset($match['items_id'])) {
+                $params['value'] = $match['items_id'];
+            } else {
+                $params['value'] = $match['id'];
+            }
+        }
+        $itemtype::dropdown($params);
+    }
+    echo "</td></tr>";
 }
 echo "</tbody></table><br>";
 
-echo "<a class='vsubmit' onclick='mergeDevices(); return false;'>"._x('action', 'Merge', 'jamf')."</a>";
+echo "<a class='vsubmit' onclick='mergeDevices(); return false;'>" . _x('action', 'Merge', 'jamf') . "</a>";
 echo "</div>";
 $js = <<<JAVASCRIPT
       function mergeDevices() {
@@ -163,6 +163,6 @@ echo Html::scriptBlock($js);
 $position = "position: fixed; top: 0; left: 0; right: 0; bottom: 0;";
 $style = "display: none; {$position} width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 2; cursor: progress;";
 echo "<div id='loading-overlay' style='{$style}'><table class='tab_cadre' style='margin-top: 10%;'>";
-echo "<thead><tr><th class='center'><h3>"._x('action', 'Merging', 'jamf') . '...'."</h3></th></tr></thead>";
+echo "<thead><tr><th class='center'><h3>" . _x('action', 'Merging', 'jamf') . '...' . "</h3></th></tr></thead>";
 echo "</table></div>";
 Html::footer();

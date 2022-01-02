@@ -21,8 +21,8 @@
 
 /* global GLPI_PLUGINS_PATH */
 /* global CFG_GLPI */
-(function(){
-   window.JamfPlugin = function() {
+(function () {
+   window.JamfPlugin = function () {
       var self = this;
 
       /**
@@ -55,11 +55,11 @@
             self.jamf_id = args.jamf_id;
             self.itemtype = args.itemtype;
             self.items_id = args.items_id;
-            self.ajax_root = args.ajax_root || CFG_GLPI.root_doc+"/"+GLPI_PLUGINS_PATH.jamf+"/ajax/";
+            self.ajax_root = args.ajax_root || CFG_GLPI.root_doc + "/" + GLPI_PLUGINS_PATH.jamf + "/ajax/";
          }
       };
 
-      this.onMDMCommandButtonClick = function(command, event) {
+      this.onMDMCommandButtonClick = function (command, event) {
          event.preventDefault();
          if (self.commands[command] !== undefined) {
             if (self.commands[command]['params'] !== undefined) {
@@ -76,7 +76,7 @@
        *
        * @param {Object} command
        */
-      var showMDMCommandForm = function(command) {
+      var showMDMCommandForm = function (command) {
          $.ajax({
             method: 'GET',
             url: (self.ajax_root + "getMDMCommandForm.php"),
@@ -92,20 +92,20 @@
                self.dialog_send_command.dialog({
                   autoOpen: false,
                   modal: true,
-                  close: function() {
+                  close: function () {
                      self.dialog_send_command.remove();
                   }
                });
                self.dialog_send_command.dialog({
-                  buttons : {
-                     "Send" : function() {
+                  buttons: {
+                     "Send": function () {
                         if (self.commands[command]['confirm'] !== undefined && self.commands[command]['confirm'] === true) {
                            showMDMCommandConfirmation(command, self.dialog_send_command.serialize());
                         } else {
                            self.sendMDMCommand(command, self.dialog_send_command.serialize());
                         }
                      },
-                     "Cancel" : function() {
+                     "Cancel": function () {
                         $(this).dialog("close");
                      }
                   }
@@ -115,14 +115,14 @@
          });
       };
 
-      var showMDMCommandConfirmation = function(command, params) {
+      var showMDMCommandConfirmation = function (command, params) {
          if (self.dialog_confirm_command === undefined || self.dialog_confirm_command === null) {
             self.dialog_confirm_command = $("<div id='jamf-mdmcommand-confirm'></div>").appendTo('#page');
-            $(document).ready(function() {
+            $(document).ready(function () {
                $('#jamf-mdmcommand-confirm').dialog({
                   autoOpen: false,
                   modal: true,
-                  close: function() {
+                  close: function () {
                      self.dialog_confirm_command.remove();
                   }
                });
@@ -130,11 +130,11 @@
          }
 
          self.dialog_confirm_command.dialog({
-            buttons : {
-               "Confirm" : function() {
+            buttons: {
+               "Confirm": function () {
                   self.sendMDMCommand(command, params);
                },
-               "Cancel" : function() {
+               "Cancel": function () {
                   $(this).dialog("close");
                }
             }
@@ -148,7 +148,7 @@
       /**
        *
        */
-      this.sendMDMCommand = function(command, params) {
+      this.sendMDMCommand = function (command, params) {
          if (params === undefined) {
             params = '';
          }
@@ -162,7 +162,7 @@
                itemtype: self.itemtype,
                items_id: self.items_id
             }
-         }).always(function() {
+         }).always(function () {
             location.reload();
          });
       };
