@@ -2,7 +2,7 @@
 global $CFG_GLPI;
 
 define('GLPI_ROOT', dirname(dirname(dirname(__DIR__))));
-define("GLPI_CONFIG_DIR", GLPI_ROOT . "/tests");
+define("GLPI_CONFIG_DIR", GLPI_ROOT . "/tests/config");
 
 define('TU_USER', '_test_user');
 define('TU_PASS', 'PhpUnit_4');
