@@ -90,14 +90,6 @@ class PluginJamfInventoryAdapter {
       return [];
    }
 
-   public function getAntivirusData(): ?array {
-      return null;
-   }
-
-   public function getBatteriesData(): ?array {
-      return null;
-   }
-
    public function getBiosData(): ?array {
 
       $bios = [
@@ -123,10 +115,6 @@ class PluginJamfInventoryAdapter {
       $bios = array_merge($bios, $mapper->map($this->source_data));
 
       return $bios;
-   }
-
-   public function getControllersData(): ?array {
-      return null;
    }
 
    public function getCpusData(): ?array {
@@ -231,14 +219,6 @@ class PluginJamfInventoryAdapter {
       return $mapper->map($this->source_data);
    }
 
-   public function getEnvsData(): ?array {
-      return null;
-   }
-
-   public function getFirewallsData(): ?array {
-      return null;
-   }
-
    public function getHardwareData(): ?array {
        $schema = new MappingSchema();
 
@@ -278,10 +258,6 @@ class PluginJamfInventoryAdapter {
 
        $mapper = new Mapper($schema);
        return $mapper->map($this->source_data);
-   }
-
-   public function getInputsData(): ?array {
-      return null;
    }
 
    public function getLocalGroupsData(): ?array {
@@ -362,15 +338,7 @@ class PluginJamfInventoryAdapter {
       return null;
    }
 
-   public function getProcessesData(): ?array {
-      return null;
-   }
-
    public function getRemoteManagementData(): ?array {
-      return null;
-   }
-
-   public function getSlotsData(): ?array {
       return null;
    }
 
@@ -378,27 +346,11 @@ class PluginJamfInventoryAdapter {
       return null;
    }
 
-   public function getSoundsData(): ?array {
-      return null;
-   }
-
    public function getStoragesData(): ?array {
       return null;
    }
 
-   public function getUsbDevicesData(): ?array {
-      return null;
-   }
-
    public function getUsersData(): ?array {
-      return null;
-   }
-
-   public function getVideosData(): ?array {
-      return null;
-   }
-
-   public function getVirtualMachinesData(): ?array {
       return null;
    }
 
@@ -422,15 +374,7 @@ class PluginJamfInventoryAdapter {
       return null;
    }
 
-   public function getSensorsData(): ?array {
-      return null;
-   }
-
    public function getPowerSuppliesData(): ?array {
-      return null;
-   }
-
-   public function getCamerasData(): ?array {
       return null;
    }
 
@@ -442,15 +386,7 @@ class PluginJamfInventoryAdapter {
       return null;
    }
 
-   public function getPageCountersData(): ?array {
-      return null;
-   }
-
    public function getNetworkDevicesData(): ?array {
-      return null;
-   }
-
-   public function getDatabaseServicesData(): ?array {
       return null;
    }
 
@@ -469,21 +405,11 @@ class PluginJamfInventoryAdapter {
             'accesslog' => [
                'logdate'   => $this->getInventoryDate()
             ],
-            //'antivirus'          => $this->getAntivirusData(),
-            'batteries'          => $this->getBatteriesData(),
             'bios'               => $this->getBiosData(),
-            'cameras'            => $this->getCamerasData(),
-            //'cartridges'         => $this->getCartridgesData(),
-            //'controllers'        => $this->getControllersData(),
-            //'consumables'        => $this->getConsumablesData(),
             'cpus'               => $this->getCpusData(),
-            'databases_services' => $this->getDatabaseServicesData(),
             'drives'             => $this->getDrivesData(),
-            'envs'               => $this->getEnvsData(),
-            'firewalls'          => $this->getFirewallsData(),
             'firmwares'          => $this->getFirmwaresData(),
             'hardware'           => $this->getHardwareData(),
-            'inputs'             => $this->getInputsData(),
             'licenseinfos'       => $this->getLicenseInfosData(),
             'local_groups'       => $this->getLocalGroupsData(),
             'local_users'        => $this->getLocalUsersData(),
@@ -494,25 +420,16 @@ class PluginJamfInventoryAdapter {
             'network_ports'      => $this->getNetworkPortsData(),
             'networks'           => $this->getNetworksData(),
             'operatingsystem'    => $this->getOperatingSystemData(),
-            'pagecounters'       => $this->getPageCountersData(),
             'physical_volumes'   => $this->getPhysicalVolumesData(),
             'ports'              => $this->getPortsData(),
             'powersupplies'      => $this->getPowerSuppliesData(),
             'printers'           => $this->getPrintersData(),
-            'processes'          => $this->getProcessesData(),
             'remote_mgmt'        => $this->getRemoteManagementData(),
-            'sensors'            => $this->getSensorsData(),
             'simcards'           => $this->getSimcardsData(),
-            'slots'              => $this->getSlotsData(),
             'softwares'          => $this->getSoftwaresData(),
-            'sounds'             => $this->getSoundsData(),
             'storages'           => $this->getStoragesData(),
-            'usbdevices'         => $this->getUsbDevicesData(),
             'users'              => $this->getUsersData(),
-            'videos'             => $this->getVideosData(),
-            //'virtualmachines'    => $this->getVirtualMachinesData(),
             'versionclient'      => $this->getVersionClient(),
-            //'versionprovider'    => $this->getVersionProvider(),
             'volume_groups'      => $this->getVolumeGroupsData(),
          ]
       ];
