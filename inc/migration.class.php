@@ -536,4 +536,58 @@ final class PluginJamfMigration
             }
         }
     }
+
+    public function apply_3_0_0_migration(): void
+    {
+        if ($this->db->tableExists('glpi_plugin_jamf_devices')) {
+            if (!$this->db->fieldExists('glpi_plugin_jamf_devices', 'model_identifier')) {
+                // Add model_identifier column (Needed specifically for some MDM commands like ScheduleOSUpdate to know applicable updates)
+                $this->glpiMigration->addField('glpi_plugin_jamf_devices', 'model_identifier', 'string');
+                $this->glpiMigration->migrationOneTable('glpi_plugin_jamf_devices');
+                // Fill model_identifier column for all existing devices (Need to query JSS)
+                $this->glpiMigration->log('Updating model_identifier for all existing devices. This may take a while...', false);
+                $devices = $this->db->request([
+                    'SELECT' => ['id', 'jamf_type', 'jamf_items_id'],
+                    'FROM' => 'glpi_plugin_jamf_devices'
+                ]);
+
+                $jss_mobiledevices = PluginJamfAPIClassic::getItems('mobiledevices');
+                foreach ($devices as $device) {
+                    if ($device['jamf_type'] === 'MobileDevice') {
+                        // We can get the model identifier directly from the list of mobile devices
+                        foreach ($jss_mobiledevices as $jss_mobile) {
+                            if ($jss_mobile['id'] === $device['jamf_items_id']) {
+                                $this->db->update(
+                                    'glpi_plugin_jamf_devices',
+                                    [
+                                        'model_identifier' => $jss_mobile['model_identifier']
+                                    ],
+                                    [
+                                        'id' => $device['id']
+                                    ]
+                                );
+                                break;
+                            }
+                        }
+                    } else if ($device['jamf_type'] === 'Computer') {
+                        // We need to query the JSS for the computer's model identifier
+                        $computer = PluginJamfAPIClassic::getItems('computers', ['id' => $device['jamf_items_id']]);
+                        if ($computer !== null) {
+                            $this->db->update(
+                                'glpi_plugin_jamf_devices',
+                                [
+                                    'model_identifier' => $computer['hardware']['model_identifier']
+                                ],
+                                [
+                                    'id' => $device['id']
+                                ]
+                            );
+                        }
+                    } else {
+                        $this->glpiMigration->log('Found device with invalid Jamf type (ID: '.$device['id'].'). Ignoring.', true);
+                    }
+                }
+            }
+        }
+    }
 }
