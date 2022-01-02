@@ -23,19 +23,22 @@
 
 use Glpi\System\Status\StatusChecker;
 
-function plugin_jamf_install() {
+function plugin_jamf_install()
+{
     $jamfMigration = new PluginJamfMigration(PLUGIN_JAMF_VERSION);
     $jamfMigration->applyMigrations();
     return true;
 }
 
-function plugin_jamf_uninstall() {
+function plugin_jamf_uninstall()
+{
     $jamfMigration = new PluginJamfMigration(PLUGIN_JAMF_VERSION);
     $jamfMigration->uninstall();
     return true;
 }
 
-function plugin_jamf_getDatabaseRelations() {
+function plugin_jamf_getDatabaseRelations()
+{
 //   $plugin = new Plugin();
 //   if ($plugin->isActivated('jamf')) {
 //      return [
@@ -57,7 +60,8 @@ function plugin_jamf_getDatabaseRelations() {
     return [];
 }
 
-function plugin_jamf_getAddSearchOptions($itemtype) {
+function plugin_jamf_getAddSearchOptions($itemtype)
+{
     $opt = [];
     $plugin = new Plugin();
     if ($plugin->isActivated('jamf')) {
@@ -221,7 +225,8 @@ function plugin_jamf_getAddSearchOptions($itemtype) {
     return $opt;
 }
 
-function plugin_jamf_dashboardCards($cards = []) {
+function plugin_jamf_dashboardCards($cards = [])
+{
     if (is_null($cards)) {
         $cards = [];
     }
@@ -231,7 +236,8 @@ function plugin_jamf_dashboardCards($cards = []) {
     return $cards;
 }
 
-function plugin_jamf_showJamfInfoForItem(array $params) {
+function plugin_jamf_showJamfInfoForItem(array $params)
+{
     $item = $params['item'];
     /** @var PluginJamfAbstractDevice $jamf_class */
     $jamf_class = PluginJamfAbstractDevice::getJamfItemClassForGLPIItem($item::getType(), $item->getID());
@@ -240,7 +246,8 @@ function plugin_jamf_showJamfInfoForItem(array $params) {
     }
 }
 
-function plugin_jamf_status() {
+function plugin_jamf_status()
+{
     $classic_api_status = PluginJamfAPIClassic::testConnection();
     return [
         'status' => $classic_api_status ? StatusChecker::STATUS_OK : StatusChecker::STATUS_PROBLEM,

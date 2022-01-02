@@ -21,7 +21,8 @@
  --------------------------------------------------------------------------
  */
 
-abstract class PluginJamfDeviceSync extends PluginJamfSync {
+abstract class PluginJamfDeviceSync extends PluginJamfSync
+{
 
     protected $commondevice_changes = [];
 
@@ -31,7 +32,8 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
      * @return PluginJamfDeviceSync
      * @since 2.0.0
      */
-    protected function syncGeneral(): PluginJamfDeviceSync {
+    protected function syncGeneral(): PluginJamfDeviceSync
+    {
         $this->status['syncGeneral'] = self::STATUS_NOT_APPLICABLE;
         return $this;
     }
@@ -41,7 +43,8 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
      * @return PluginJamfDeviceSync
      * @since 2.0.0
      */
-    protected function syncOS(): PluginJamfDeviceSync {
+    protected function syncOS(): PluginJamfDeviceSync
+    {
         $this->status['syncOS'] = self::STATUS_NOT_APPLICABLE;
         return $this;
     }
@@ -51,7 +54,8 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
      * @return PluginJamfDeviceSync
      * @since 2.0.0
      */
-    protected function syncSoftware(): PluginJamfDeviceSync {
+    protected function syncSoftware(): PluginJamfDeviceSync
+    {
         $this->status['syncSoftware'] = self::STATUS_NOT_APPLICABLE;
         return $this;
     }
@@ -61,7 +65,8 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
      * @return PluginJamfDeviceSync
      * @since 2.0.0
      */
-    protected function syncUser(): PluginJamfDeviceSync {
+    protected function syncUser(): PluginJamfDeviceSync
+    {
         $this->status['syncUser'] = self::STATUS_NOT_APPLICABLE;
         return $this;
     }
@@ -71,7 +76,8 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
      * @return PluginJamfDeviceSync
      * @since 2.0.0
      */
-    protected function syncPurchasing(): PluginJamfDeviceSync {
+    protected function syncPurchasing(): PluginJamfDeviceSync
+    {
         $this->status['syncPurchasing'] = self::STATUS_NOT_APPLICABLE;
         return $this;
     }
@@ -81,7 +87,8 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
      * @return PluginJamfDeviceSync
      * @since 1.1.0
      */
-    protected function syncExtensionAttributes(): PluginJamfDeviceSync {
+    protected function syncExtensionAttributes(): PluginJamfDeviceSync
+    {
         $this->status['syncExtensionAttributes'] = self::STATUS_NOT_APPLICABLE;
         return $this;
     }
@@ -91,7 +98,8 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
      * @return PluginJamfDeviceSync
      * @since 2.0.0
      */
-    protected function syncSecurity(): PluginJamfDeviceSync {
+    protected function syncSecurity(): PluginJamfDeviceSync
+    {
         $this->status['syncSecurity'] = self::STATUS_NOT_APPLICABLE;
         return $this;
     }
@@ -101,7 +109,8 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
      * @return PluginJamfDeviceSync
      * @since 2.0.0
      */
-    protected function syncNetwork(): PluginJamfDeviceSync {
+    protected function syncNetwork(): PluginJamfDeviceSync
+    {
         $this->status['syncNetwork'] = self::STATUS_NOT_APPLICABLE;
         return $this;
     }
@@ -111,7 +120,8 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
      * @return PluginJamfDeviceSync
      * @since 1.1.0
      */
-    protected function syncGeneralJamfPluginItem(): PluginJamfDeviceSync {
+    protected function syncGeneralJamfPluginItem(): PluginJamfDeviceSync
+    {
         $this->status['syncGeneralJamfPluginItem'] = self::STATUS_NOT_APPLICABLE;
         return $this;
     }
@@ -121,12 +131,14 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
      * @return PluginJamfDeviceSync
      * @since 2.0.0
      */
-    protected function syncComponents(): PluginJamfDeviceSync {
+    protected function syncComponents(): PluginJamfDeviceSync
+    {
         $this->status['syncComponents'] = self::STATUS_NOT_APPLICABLE;
         return $this;
     }
 
-    public static function syncExtensionAttributeDefinitions(): void {
+    public static function syncExtensionAttributeDefinitions(): void
+    {
         global $DB;
 
         switch (static::$jamf_itemtype) {
@@ -159,7 +171,8 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
         }
     }
 
-    public static function syncAll(): int {
+    public static function syncAll(): int
+    {
         global $DB;
 
         $volume = 0;
@@ -198,7 +211,8 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
      * @return bool True if the update was successful.
      * @throws Exception Any exception that occurs during the update process.
      */
-    public static function sync(string $itemtype, int $items_id, bool $use_transaction = true): bool {
+    public static function sync(string $itemtype, int $items_id, bool $use_transaction = true): bool
+    {
         global $DB;
 
         /** @var CommonDBTM $item */
@@ -264,7 +278,8 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
      * @return array STATUS_OK if the sync was successful, STATUS_ERROR otherwise.
      * @since 1.1.0
      */
-    protected function finalizeSync() {
+    protected function finalizeSync()
+    {
         if ($this->dummySync) {
             return $this->status;
         }
@@ -346,7 +361,8 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync {
      * @return PluginJamfDeviceSync
      * @since 1.0.0
      */
-    protected function syncOther(): PluginJamfDeviceSync {
+    protected function syncOther(): PluginJamfDeviceSync
+    {
         return $this;
     }
 }

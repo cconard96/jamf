@@ -26,15 +26,18 @@
  *
  * @since 1.1.0
  */
-class PluginJamfItem_MDMCommand extends CommonDBTM {
+class PluginJamfItem_MDMCommand extends CommonDBTM
+{
 
     static public $rightname = 'plugin_jamf_mdmcommand';
 
-    public static function getTypeName($nb = 0) {
+    public static function getTypeName($nb = 0)
+    {
         return _nx('itemtype', 'MDM command', 'MDM commands', $nb, 'jamf');
     }
 
-    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0) {
+    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
+    {
         $jamf_class = PluginJamfAbstractDevice::getJamfItemClassForGLPIItem($item::getType(), $item->getID());
         if ($jamf_class !== PluginJamfMobileDevice::class || !PluginJamfMobileDevice::canView()) {
             return false;
@@ -42,7 +45,8 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
         return self::getTypeName(2);
     }
 
-    public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0) {
+    public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
+    {
         return self::showForItem($item);
     }
 
@@ -51,7 +55,8 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
      * @return array
      * @since 1.0.0
      */
-    public static function getApplicableCommands(PluginJamfMobileDevice $mobiledevice) {
+    public static function getApplicableCommands(PluginJamfMobileDevice $mobiledevice)
+    {
         if (PluginJamfUser_JSSAccount::hasLink()) {
             $allcommands = PluginJamfMDMCommand::getAvailableCommands();
             $device_data = $mobiledevice->getJamfDeviceData();
@@ -119,7 +124,8 @@ class PluginJamfItem_MDMCommand extends CommonDBTM {
         return [];
     }
 
-    public static function showForItem(CommonDBTM $item) {
+    public static function showForItem(CommonDBTM $item)
+    {
         if (!PluginJamfMobileDevice::canView() || !static::canView()) {
             return false;
         }
@@ -206,7 +212,8 @@ JAVASCRIPT;
     /**
      * {@inheritDoc}
      */
-    public function getRights($interface = 'central') {
+    public function getRights($interface = 'central')
+    {
 
         return [READ => __('Read')];
     }

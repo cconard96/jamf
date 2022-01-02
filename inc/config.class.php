@@ -24,18 +24,21 @@
 /**
  * PluginJamfConfig class
  */
-class PluginJamfConfig extends CommonDBTM {
+class PluginJamfConfig extends CommonDBTM
+{
 
     static protected $notable = true;
 
-    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0) {
+    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
+    {
         if (!$withtemplate && $item->getType() === 'Config') {
             return _x('plugin_info', 'Jamf plugin', 'jamf');
         }
         return '';
     }
 
-    public function showForm() {
+    public function showForm()
+    {
         global $CFG_GLPI;
         if (!Session::haveRight('config', UPDATE)) {
             return false;
@@ -158,14 +161,16 @@ class PluginJamfConfig extends CommonDBTM {
         Html::closeForm();
     }
 
-    public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0) {
+    public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
+    {
         if ($item->getType() === 'Config') {
             $config = new self();
             $config->showForm();
         }
     }
 
-    public static function undiscloseConfigValue($fields) {
+    public static function undiscloseConfigValue($fields)
+    {
         $to_hide = ['jsspassword'];
         foreach ($to_hide as $f) {
             if (in_array($f, $fields, true)) {
@@ -175,7 +180,8 @@ class PluginJamfConfig extends CommonDBTM {
         return $fields;
     }
 
-    public static function getConfig(bool $force_all = false): array {
+    public static function getConfig(bool $force_all = false): array
+    {
         static $config = null;
         if ($config === null) {
             $config = Config::getConfigurationValues('plugin:Jamf');

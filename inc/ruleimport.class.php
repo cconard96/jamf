@@ -26,20 +26,24 @@
  * Determines if the import happens or if it is dropped.
  * @since 1.0.0
  */
-class PluginJamfRuleImport extends Rule {
+class PluginJamfRuleImport extends Rule
+{
 
     static public $rightname = 'plugin_jamf_ruleimport';
     public $can_sort = true;
 
-    public function getTitle() {
+    public function getTitle()
+    {
         return _x('itemtype', 'Device import rules', 'jamf');
     }
 
-    public function maxActionsCount() {
+    public function maxActionsCount()
+    {
         return 1;
     }
 
-    public function getCriterias() {
+    public function getCriterias()
+    {
         $criterias = [];
         $criterias['name']['field'] = 'name';
         $criterias['name']['name'] = _x('field', 'Name', 'jamf');
@@ -66,14 +70,16 @@ class PluginJamfRuleImport extends Rule {
         return $criterias;
     }
 
-    public function getActions() {
+    public function getActions()
+    {
         $actions = [];
         $actions['_import']['name'] = _x('action', 'Import', 'jamf');
         $actions['_import']['type'] = 'yesno';
         return $actions;
     }
 
-    public function displayAdditionalRuleCondition($condition, $crit, $name, $value, $test = false) {
+    public function displayAdditionalRuleCondition($condition, $crit, $name, $value, $test = false)
+    {
         if (isset($crit['field'])) {
             switch ($crit['field']) {
                 case 'itemtype':

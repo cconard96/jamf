@@ -27,7 +27,8 @@ use mageekguy\atoum\writers\std\err;
  * JSS Classic API interface class
  * @since 1.0.0
  */
-class PluginJamfAPIClassic {
+class PluginJamfAPIClassic
+{
     /** PluginJamfConnection object representing the connection to a JSS server */
     private static $connection;
 
@@ -40,7 +41,8 @@ class PluginJamfAPIClassic {
      * @throws PluginJamfRateLimitException
      * @since 1.0.0
      */
-    private static function get(string $endpoint, $raw = false, $response_type = 'application/json') {
+    private static function get(string $endpoint, $raw = false, $response_type = 'application/json')
+    {
         if (!self::$connection) {
             self::$connection = new PluginJamfConnection();
         }
@@ -84,7 +86,8 @@ class PluginJamfAPIClassic {
      * @return int|bool True if successful, or the HTTP return code if it is not 201.
      * @since 1.1.0
      */
-    private static function add(string $endpoint, string $payload) {
+    private static function add(string $endpoint, string $payload)
+    {
         if (!self::$connection) {
             self::$connection = new PluginJamfConnection();
         }
@@ -111,7 +114,8 @@ class PluginJamfAPIClassic {
      * @return int|bool True if successful, or the HTTP return code if it is not 201.
      * @since 1.1.0
      */
-    private static function update(string $endpoint, array $data) {
+    private static function update(string $endpoint, array $data)
+    {
         if (!self::$connection) {
             self::$connection = new PluginJamfConnection();
         }
@@ -138,7 +142,8 @@ class PluginJamfAPIClassic {
      * @return int|bool True if successful, or the HTTP return code if it is not 200.
      * @since 1.1.0
      */
-    private static function delete(string $endpoint) {
+    private static function delete(string $endpoint)
+    {
         if (!self::$connection) {
             self::$connection = new PluginJamfConnection();
         }
@@ -160,7 +165,8 @@ class PluginJamfAPIClassic {
      * @return string The constructed parameter string.
      * @since 1.0.0
      */
-    private static function getParamString(array $params = []) {
+    private static function getParamString(array $params = [])
+    {
         $param_str = '';
         foreach ($params as $key => $value) {
             $param_str = "{$param_str}/{$key}/{$value}";
@@ -176,7 +182,8 @@ class PluginJamfAPIClassic {
      * @return array Associative array of the decoded JSON response.
      * @since 1.0.0
      */
-    public static function getItems(string $itemtype, array $params = [], $user_auth = false) {
+    public static function getItems(string $itemtype, array $params = [], $user_auth = false)
+    {
         if ($user_auth && !PluginJamfUser_JSSAccount::canReadJSSItem($itemtype)) {
             return null;
         }
@@ -196,7 +203,8 @@ class PluginJamfAPIClassic {
      * @return bool|int
      * @since 1.1.0
      */
-    public static function addItem(string $itemtype, string $payload, $user_auth = false) {
+    public static function addItem(string $itemtype, string $payload, $user_auth = false)
+    {
         if ($itemtype == 'mobiledevicecommands') {
             $param_str = '/command';
             $meta = (string)simplexml_load_string($payload)->general->command;
@@ -221,7 +229,8 @@ class PluginJamfAPIClassic {
      * @return bool|int
      * @since 1.1.0
      */
-    public static function updateItem(string $itemtype, array $params = [], array $fields = [], $user_auth = false) {
+    public static function updateItem(string $itemtype, array $params = [], array $fields = [], $user_auth = false)
+    {
         if ($user_auth && !PluginJamfUser_JSSAccount::canUpdateJSSItem($itemtype)) {
             return null;
         }
@@ -238,7 +247,8 @@ class PluginJamfAPIClassic {
      * @return bool|int
      * @since 1.1.0
      */
-    public static function deleteItem(string $itemtype, array $params = [], $user_auth = false) {
+    public static function deleteItem(string $itemtype, array $params = [], $user_auth = false)
+    {
         if ($user_auth && !PluginJamfUser_JSSAccount::canDeleteJSSItem($itemtype)) {
             return null;
         }
@@ -247,12 +257,14 @@ class PluginJamfAPIClassic {
         return self::delete($endpoint);
     }
 
-    private static function getJSSGroupActionRights($groupid) {
+    private static function getJSSGroupActionRights($groupid)
+    {
         $response = self::get("accounts/groupid/$groupid");
         return $response['group']['privileges']['jss_actions'];
     }
 
-    public static function getJSSAccountRights($userid, $user_auth = false) {
+    public static function getJSSAccountRights($userid, $user_auth = false)
+    {
         if ($user_auth && !PluginJamfUser_JSSAccount::canReadJSSItem('accounts')) {
             return null;
         }
@@ -321,7 +333,8 @@ class PluginJamfAPIClassic {
         return $rights;
     }
 
-    public static function testConnection(): bool {
+    public static function testConnection(): bool
+    {
         try {
             self::getItems('mobiledevices', ['match' => '?name=glpi_conn_test']);
             return true;

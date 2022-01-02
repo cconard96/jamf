@@ -24,7 +24,8 @@
  * Abstraction for all Jamf device types (Mobile device and Computer for now)
  * @since 2.0.0
  */
-abstract class PluginJamfAbstractDevice extends CommonDBChild {
+abstract class PluginJamfAbstractDevice extends CommonDBChild
+{
     static public $itemtype = 'itemtype';
     static public $items_id = 'items_id';
     static public $jamftype_name = null;
@@ -51,7 +52,8 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild {
      * @param CommonDBTM $item
      * @global DBmysql $DB
      */
-    private static function purgeItemCommon(CommonDBTM $item) {
+    private static function purgeItemCommon(CommonDBTM $item)
+    {
         global $DB;
 
         $jamf_class = static::getJamfItemClassForGLPIItem($item::getType(), $item->getID());
@@ -78,7 +80,8 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild {
      * @param Computer $item
      * @global DBmysql $DB
      */
-    public static function plugin_jamf_purgeComputer(Computer $item) {
+    public static function plugin_jamf_purgeComputer(Computer $item)
+    {
         static::purgeItemCommon($item);
     }
 
@@ -87,7 +90,8 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild {
      * @param Phone $item
      * @global DBmysql $DB
      */
-    public static function plugin_jamf_purgePhone(Phone $item) {
+    public static function plugin_jamf_purgePhone(Phone $item)
+    {
         global $DB;
 
         static::purgeItemCommon($item);
@@ -97,13 +101,15 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild {
         ]);
     }
 
-    static function preUpdatePhone($item) {
+    static function preUpdatePhone($item)
+    {
         if (isset($item->input['_plugin_jamf_uuid'])) {
             PluginJamfExtField::setValue($item::getType(), $item->getID(), 'uuid', $item->input['_plugin_jamf_uuid']);
         }
     }
 
-    public static function getJamfItemClassForGLPIItem(string $itemtype, $items_id): ?string {
+    public static function getJamfItemClassForGLPIItem(string $itemtype, $items_id): ?string
+    {
         global $DB;
 
         $iterator = $DB->request([
@@ -130,7 +136,8 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild {
         return null;
     }
 
-    public static function getJamfItemForGLPIItem(CommonDBTM $item, $limit_to_type = false): ?PluginJamfAbstractDevice {
+    public static function getJamfItemForGLPIItem(CommonDBTM $item, $limit_to_type = false): ?PluginJamfAbstractDevice
+    {
         global $DB;
 
         $found_type = static::class;
@@ -179,14 +186,16 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild {
         return null;
     }
 
-    public function getGLPIItem() {
+    public function getGLPIItem()
+    {
         $itemtype = $this->fields['itemtype'];
         $item = new $itemtype();
         $item->getFromDB($this->fields['items_id']);
         return $item;
     }
 
-    public function getJamfDeviceData() {
+    public function getJamfDeviceData()
+    {
         global $DB;
 
         $iterator = $DB->request([
@@ -201,7 +210,8 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild {
 
     abstract public function getMDMCommands();
 
-    public function getExtensionAttributes() {
+    public function getExtensionAttributes()
+    {
         global $DB;
 
         $ext_table = PluginJamfExtensionAttribute::getTable();

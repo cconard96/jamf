@@ -26,13 +26,16 @@
  * This class is only used when devices are not automatically imported.
  * @since 1.0.0
  */
-class PluginJamfImport extends CommonDBTM {
+class PluginJamfImport extends CommonDBTM
+{
 
-    public static function getTypeName($nb = 0) {
+    public static function getTypeName($nb = 0)
+    {
         return _nx('itemtype', 'Pending import', 'Pending imports', $nb, 'jamf');
     }
 
-    public static function clearPendingImports(): void {
+    public static function clearPendingImports(): void
+    {
         PluginJamfDBUtil::truncate(self::getTable());
     }
 }

@@ -25,7 +25,8 @@
  * PluginJamfSync class.
  * This is the base class for all classes which sync data from Jamf to GLPI..
  */
-abstract class PluginJamfSync {
+abstract class PluginJamfSync
+{
 
     /**
      * The sync task completed successfully.
@@ -119,7 +120,8 @@ abstract class PluginJamfSync {
      * @param CommonDBTM|null $item
      * @param array $data
      */
-    public function __construct(CommonDBTM $item = null, array $data = []) {
+    public function __construct(CommonDBTM $item = null, array $data = [])
+    {
         /** @global DBmysql */
         global $DB;
 
@@ -149,7 +151,8 @@ abstract class PluginJamfSync {
      * @return array STATUS_OK if the sync was successful, STATUS_ERROR otherwise.
      * @since 1.1.0
      */
-    protected function finalizeSync() {
+    protected function finalizeSync()
+    {
         if ($this->dummySync) {
             return $this->status;
         }
@@ -188,7 +191,8 @@ abstract class PluginJamfSync {
         return $this->status;
     }
 
-    protected function createOrGetItem($itemtype, $criteria, $params) {
+    protected function createOrGetItem($itemtype, $criteria, $params)
+    {
         $item = new $itemtype();
         $item_matches = $item->find($criteria);
         if (!count($item_matches)) {
@@ -200,7 +204,8 @@ abstract class PluginJamfSync {
         return $item;
     }
 
-    protected function applyDesiredState($itemtype, $match_criteria, $state, $options = []): CommonDBTM {
+    protected function applyDesiredState($itemtype, $match_criteria, $state, $options = []): CommonDBTM
+    {
         $opts = [];
         $opts = array_replace($opts, $options);
 
@@ -240,7 +245,8 @@ abstract class PluginJamfSync {
 
     abstract public static function getSupportedGlpiItemtypes(): array;
 
-    public static function isSupportedGlpiItemtype(string $itemtype): bool {
+    public static function isSupportedGlpiItemtype(string $itemtype): bool
+    {
         return in_array($itemtype, static::getSupportedGlpiItemtypes(), true);
     }
 
@@ -248,7 +254,8 @@ abstract class PluginJamfSync {
      * @return PluginJamfSync[]
      * @since 1.0.0
      */
-    final public static function getDeviceSyncEngines(): array {
+    final public static function getDeviceSyncEngines(): array
+    {
         return [
             PluginJamfMobileDevice::class => PluginJamfMobileSync::class,
             PluginJamfComputer::class => PluginJamfComputerSync::class

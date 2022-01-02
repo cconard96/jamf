@@ -26,13 +26,16 @@
  *
  * @since 1.1.0
  */
-class PluginJamfExtensionAttribute extends CommonDBTM {
+class PluginJamfExtensionAttribute extends CommonDBTM
+{
 
-    public static function getTypeName($nb = 1) {
+    public static function getTypeName($nb = 1)
+    {
         return _nx('itemtype', 'Extension attribute', 'Extension attributes', $nb, 'jamf');
     }
 
-    public function addOrUpdate($input) {
+    public function addOrUpdate($input)
+    {
         global $DB;
 
         if (!isset($input['jamf_id'])) {
@@ -43,7 +46,8 @@ class PluginJamfExtensionAttribute extends CommonDBTM {
         return $DB->updateOrInsert(self::getTable(), $input, ['jamf_id' => $jamf_id]);
     }
 
-    public static function dashboardCards() {
+    public static function dashboardCards()
+    {
         global $DB;
 
         $table = self::getTable();
@@ -66,7 +70,8 @@ class PluginJamfExtensionAttribute extends CommonDBTM {
         return $cards;
     }
 
-    public static function cardProvider($name, array $params = []) {
+    public static function cardProvider($name, array $params = [])
+    {
         global $DB;
 
         $rel_table = PluginJamfItem_ExtensionAttribute::getTable();

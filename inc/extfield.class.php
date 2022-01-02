@@ -25,9 +25,11 @@
  * PluginJamfExtField class. This represents an extra field for a GLPI item.
  * As an example, the Phone itemtype does not have a UUID field so one is added using this class/table.
  */
-class PluginJamfExtField extends CommonDBTM {
+class PluginJamfExtField extends CommonDBTM
+{
 
-    public static function getValue($itemtype, $items_id, $name) {
+    public static function getValue($itemtype, $items_id, $name)
+    {
         $ext_field = new self();
         $match = $ext_field->find([
             'itemtype' => $itemtype,
@@ -41,7 +43,8 @@ class PluginJamfExtField extends CommonDBTM {
         return '';
     }
 
-    public static function setValue($itemtype, $items_id, $name, $value) {
+    public static function setValue($itemtype, $items_id, $name, $value)
+    {
         global $DB;
 
         $DB->updateOrInsert(self::getTable(), [

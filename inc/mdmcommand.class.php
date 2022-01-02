@@ -26,12 +26,14 @@
  *
  * @since 1.1.0
  */
-class PluginJamfMDMCommand {
+class PluginJamfMDMCommand
+{
 
     /**
      * @return array
      */
-    public static function getAvailableCommands(): array {
+    public static function getAvailableCommands(): array
+    {
         static $allcommands = null;
 
         if ($allcommands == null) {
@@ -278,7 +280,8 @@ class PluginJamfMDMCommand {
      * @param string $command The name of the command such as "UpdateInventory".
      * @return string|null HTML form or null if it is not applicable.
      */
-    public static function getFormForCommand($command) {
+    public static function getFormForCommand($command)
+    {
         if (isset(self::getAvailableCommands()[$command])) {
             $command_data = self::getAvailableCommands()[$command];
             if (!isset($command_data['params'])) {
@@ -318,7 +321,8 @@ class PluginJamfMDMCommand {
         return null;
     }
 
-    public static function canSend($command) {
+    public static function canSend($command)
+    {
         $allcommands = self::getAvailableCommands();
 
         return PluginJamfUser_JSSAccount::haveJSSRight('jss_actions', $allcommands[$command]['jss_right']);

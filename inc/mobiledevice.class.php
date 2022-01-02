@@ -25,13 +25,15 @@
  * JamfMobileDevice class. This represents a mobile device from Jamf.
  * This is mainly used to store extra fields that are not already in Computer or Phone classes.
  */
-class PluginJamfMobileDevice extends PluginJamfAbstractDevice {
+class PluginJamfMobileDevice extends PluginJamfAbstractDevice
+{
 
     static public $itemtype = 'itemtype';
     static public $items_id = 'items_id';
     public static $rightname = 'plugin_jamf_mobiledevice';
 
-    public static function getTypeName($nb = 1) {
+    public static function getTypeName($nb = 1)
+    {
         return _nx('itemtype', 'Jamf mobile device', 'Jamf mobile devices', $nb, 'jamf');
     }
 
@@ -40,7 +42,8 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice {
      * @param array $params
      * @return void|bool
      */
-    public static function showForComputerOrPhoneMain($params) {
+    public static function showForComputerOrPhoneMain($params)
+    {
 
     }
 
@@ -49,7 +52,8 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice {
      * @param int $jamf_id The Jamf ID of the device.
      * @return string Jamf URL for the mobile device.
      */
-    public static function getJamfDeviceURL(int $jamf_id): string {
+    public static function getJamfDeviceURL(int $jamf_id): string
+    {
         $config = PluginJamfConfig::getConfig();
         return "{$config['jssserver']}/mobileDevices.html?id={$jamf_id}";
     }
@@ -59,7 +63,8 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice {
      * @param CommonDBTM $item
      * @global CommonDBTM $DB
      */
-    private static function purgeItemCommon(CommonDBTM $item) {
+    private static function purgeItemCommon(CommonDBTM $item)
+    {
         global $DB;
 
         $DB->delete(self::getTable(), [
@@ -72,7 +77,8 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice {
      * Cleanup relations when a Computer is purged.
      * @param Computer $item
      */
-    public static function plugin_jamf_purgeComputer(Computer $item) {
+    public static function plugin_jamf_purgeComputer(Computer $item)
+    {
         self::purgeItemCommon($item);
     }
 
@@ -81,7 +87,8 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice {
      * @param Phone $item
      * @global DBmysql $DB
      */
-    public static function plugin_jamf_purgePhone(Phone $item) {
+    public static function plugin_jamf_purgePhone(Phone $item)
+    {
         global $DB;
 
         self::purgeItemCommon($item);
@@ -111,13 +118,15 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice {
 //       return null;
 //   }
 
-    public static function preUpdatePhone($item) {
+    public static function preUpdatePhone($item)
+    {
         if (isset($item->input['_plugin_jamf_uuid'])) {
             PluginJamfExtField::setValue($item::getType(), $item->getID(), 'uuid', $item->input['_plugin_jamf_uuid']);
         }
     }
 
-    public function getGLPIItem() {
+    public function getGLPIItem()
+    {
         $device_data = $this->getJamfDeviceData();
         $itemtype = $device_data['itemtype'];
         $item = new $itemtype();
@@ -125,7 +134,8 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice {
         return $item;
     }
 
-    public function getMDMCommands() {
+    public function getMDMCommands()
+    {
         $device_data = $this->getJamfDeviceData();
         $commandhistory = PluginJamfAPIClassic::getItems('mobiledevicehistory', [
             'id' => $device_data['jamf_items_id'],
@@ -138,7 +148,8 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice {
             ];
     }
 
-    public function getSpecificType() {
+    public function getSpecificType()
+    {
         $item = $this->getGLPIItem();
         $modelclass = $this->getJamfDeviceData()['itemtype'] . 'Model';
         if ($item->fields[getForeignKeyFieldForItemType($modelclass)] > 0) {
@@ -160,7 +171,8 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice {
         return null;
     }
 
-    public static function dashboardCards() {
+    public static function dashboardCards()
+    {
         $cards = [];
 
         $cards['plugin_jamf_mobile_lost'] = [
@@ -182,7 +194,8 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice {
         return $cards;
     }
 
-    public static function cardLostModeProvider($params = []) {
+    public static function cardLostModeProvider($params = [])
+    {
         global $DB;
 
         $table = self::getTable();
@@ -200,7 +213,8 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice {
         ];
     }
 
-    public static function cardManagedProvider($params = []) {
+    public static function cardManagedProvider($params = [])
+    {
         global $DB;
 
         $table = self::getTable();
@@ -218,7 +232,8 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice {
         ];
     }
 
-    public static function cardSupervisedProvider($params = []) {
+    public static function cardSupervisedProvider($params = [])
+    {
         global $DB;
 
         $table = self::getTable();
@@ -235,7 +250,8 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice {
         ];
     }
 
-    public static function showForItem(array $params) {
+    public static function showForItem(array $params)
+    {
         global $CFG_GLPI, $DB;
 
         /** @var CommonDBTM $item */

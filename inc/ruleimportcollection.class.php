@@ -24,13 +24,15 @@
 /**
  * PluginJamfRuleImportCollection class.
  */
-class PluginJamfRuleImportCollection extends RuleCollection {
+class PluginJamfRuleImportCollection extends RuleCollection
+{
 
     public $stop_on_first_match = true;
     static public $rightname = 'plugin_jamf_ruleimport';
     public $menu_option = 'jamf_import';
 
-    public function getTitle() {
+    public function getTitle()
+    {
         return PluginJamfRuleImport::getTypeName();
     }
 }

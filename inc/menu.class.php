@@ -25,7 +25,8 @@
  * PluginJamfMenu class. This class adds a menu which contains links to pages related to this plugin.
  * See /front/menu.php file for the menu content.
  */
-class PluginJamfMenu extends CommonGLPI {
+class PluginJamfMenu extends CommonGLPI
+{
 
     /**
      * Get name of this type by language of the user connected
@@ -33,15 +34,18 @@ class PluginJamfMenu extends CommonGLPI {
      * @param integer $nb number of elements
      * @return string name of this type
      */
-    public static function getTypeName($nb = 0) {
+    public static function getTypeName($nb = 0)
+    {
         return _x('plugin_info', 'Jamf plugin', 'jamf');
     }
 
-    public static function getMenuName() {
+    public static function getMenuName()
+    {
         return _x('plugin_info', 'Jamf plugin', 'jamf');
     }
 
-    public static function getIcon() {
+    public static function getIcon()
+    {
         return 'fas fa-tablet-alt';
     }
 
@@ -50,7 +54,8 @@ class PluginJamfMenu extends CommonGLPI {
      *
      * @return boolean
      */
-    public static function canView() {
+    public static function canView()
+    {
         return Config::canView();
     }
 }

@@ -24,12 +24,14 @@
  * PluginJamfComputer class. This represents a computer from Jamf.
  * This is mainly used to store extra fields that are not already in the GLPI Computer class.
  */
-class PluginJamfComputer extends PluginJamfAbstractDevice {
+class PluginJamfComputer extends PluginJamfAbstractDevice
+{
     static $rightname = 'plugin_jamf_computer';
 
     public static $jamftype_name = 'Computer';
 
-    public static function getTypeName($nb = 1) {
+    public static function getTypeName($nb = 1)
+    {
         return _nx('itemtype', 'Jamf computer', 'Jamf computers', $nb, 'jamf');
     }
 
@@ -41,7 +43,8 @@ class PluginJamfComputer extends PluginJamfAbstractDevice {
      * @since 2.0.0 Renamed from showForComputerOrPhoneMain to showForItem
      * @since 1.0.0
      */
-    public static function showForItem(array $params) {
+    public static function showForItem(array $params)
+    {
         global $CFG_GLPI;
 
         $item = $params['item'];
@@ -118,12 +121,14 @@ JAVASCRIPT;
      * @param int $jamf_id The Jamf ID of the device.
      * @return string Jamf URL for the mobile device.
      */
-    public static function getJamfDeviceUrl(int $jamf_id): string {
+    public static function getJamfDeviceUrl(int $jamf_id): string
+    {
         $config = PluginJamfConfig::getConfig();
         return "{$config['jssserver']}/computers.html?id={$jamf_id}";
     }
 
-    public function getMDMCommands() {
+    public function getMDMCommands()
+    {
         return [
             'completed' => [],
             'pending' => [],

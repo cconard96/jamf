@@ -26,16 +26,19 @@
  *
  * @since 1.1.0
  */
-class PluginJamfItem_ExtensionAttribute extends CommonDBChild {
+class PluginJamfItem_ExtensionAttribute extends CommonDBChild
+{
 
     static public $itemtype = 'itemtype';
     static public $items_id = 'items_id';
 
-    public static function getTypeName($nb = 1) {
+    public static function getTypeName($nb = 1)
+    {
         return _nx('itemtype', 'Extension attribute', 'Extension attributes', $nb, 'jamf');
     }
 
-    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0) {
+    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
+    {
         /** @var PluginJamfAbstractDevice $jamf_class */
         $jamf_class = PluginJamfAbstractDevice::getJamfItemClassForGLPIItem($item::getType(), $item->getID());
         if ($jamf_class === null) {
@@ -48,18 +51,21 @@ class PluginJamfItem_ExtensionAttribute extends CommonDBChild {
         return self::createTabEntry(self::getTypeName(2), self::countForJamfItem($jamf_item));
     }
 
-    public static function countForJamfItem($jamf_item) {
+    public static function countForJamfItem($jamf_item)
+    {
         return countElementsInTable(self::getTable(), [
             'itemtype' => $jamf_item::getType(),
             'items_id' => $jamf_item->getID()
         ]);
     }
 
-    public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0) {
+    public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
+    {
         return self::showForItem($item);
     }
 
-    public static function showForItem(CommonDBTM $item) {
+    public static function showForItem(CommonDBTM $item)
+    {
         /** @var PluginJamfAbstractDevice $jamf_class */
         $jamf_class = PluginJamfAbstractDevice::getJamfItemClassForGLPIItem($item::getType(), $item->getID());
         if ($jamf_class === null || !$jamf_class::canView()) {
