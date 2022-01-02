@@ -23,63 +23,62 @@
 
 class PluginJamfToolbox {
 
-   public static function getHumanReadableTimeDiff($start, $end = null) {
-      if ($start === null || $start == 'NULL') {
-         return null;
-      }
-      if ($end === null) {
-         $end = $_SESSION['glpi_currenttime'];
-      }
-      $diff = date_diff(date_create($start), date_create($end));
-      $text_arr = [];
-      if ($diff->y > 0) {
-         $text_arr[] = sprintf('%d Y', $diff->y);
-      }
-      if ($diff->m > 0) {
-         $text_arr[] = sprintf('%d M', $diff->m);
-      }
-      if ($diff->d > 0) {
-         $text_arr[] = sprintf('%d D', $diff->d);
-      }
-      if ($diff->h > 0) {
-         $text_arr[] = sprintf('%d H', $diff->h);
-      }
-      if ($diff->i > 0) {
-         $text_arr[] = sprintf('%d m', $diff->i);
-      }
-      if ($diff->s > 0) {
-         $text_arr[] = sprintf('%d s', $diff->s);
-      }
-      return implode(' ', $text_arr);
-   }
+    public static function getHumanReadableTimeDiff($start, $end = null) {
+        if ($start === null || $start == 'NULL') {
+            return null;
+        }
+        if ($end === null) {
+            $end = $_SESSION['glpi_currenttime'];
+        }
+        $diff = date_diff(date_create($start), date_create($end));
+        $text_arr = [];
+        if ($diff->y > 0) {
+            $text_arr[] = sprintf('%d Y', $diff->y);
+        }
+        if ($diff->m > 0) {
+            $text_arr[] = sprintf('%d M', $diff->m);
+        }
+        if ($diff->d > 0) {
+            $text_arr[] = sprintf('%d D', $diff->d);
+        }
+        if ($diff->h > 0) {
+            $text_arr[] = sprintf('%d H', $diff->h);
+        }
+        if ($diff->i > 0) {
+            $text_arr[] = sprintf('%d m', $diff->i);
+        }
+        if ($diff->s > 0) {
+            $text_arr[] = sprintf('%d s', $diff->s);
+        }
+        return implode(' ', $text_arr);
+    }
 
-   /**
-    * Helper function to convert the UTC timestamps from JSS to a local DateTime.
-    * @param DateTime|string $utc The UTC DateTime from JSS.
-    * @param int $format
-    * @return string The local date and time.
-    * @throws Exception
-    */
-   public static function utcToLocal($utc, int $format = null): string
-   {
-      if (!is_a($utc, DateTime::class)) {
-         $utc = new DateTime($utc);
-      }
-      $mask = 'Y-m-d H:i:s';
+    /**
+     * Helper function to convert the UTC timestamps from JSS to a local DateTime.
+     * @param DateTime|string $utc The UTC DateTime from JSS.
+     * @param int $format
+     * @return string The local date and time.
+     * @throws Exception
+     */
+    public static function utcToLocal($utc, int $format = null): string {
+        if (!is_a($utc, DateTime::class)) {
+            $utc = new DateTime($utc);
+        }
+        $mask = 'Y-m-d H:i:s';
 
-      if ($format === null) {
-         $format = $_SESSION['glpidate_format'];
-      }
-      switch ($format) {
-         case 1 : // DD-MM-YYYY
-            $mask = 'd-m-Y H:i:s';
-            break;
-         case 2 : // MM-DD-YYYY
-            $mask = 'm-d-Y H:i:s';
-            break;
-      }
-      $tz = new DateTimeZone($_SESSION['glpi_tz'] ?? date_default_timezone_get());
-      $utc->setTimezone($tz);
-      return $utc->format($mask);
-   }
+        if ($format === null) {
+            $format = $_SESSION['glpidate_format'];
+        }
+        switch ($format) {
+            case 1 : // DD-MM-YYYY
+                $mask = 'd-m-Y H:i:s';
+                break;
+            case 2 : // MM-DD-YYYY
+                $mask = 'm-d-Y H:i:s';
+                break;
+        }
+        $tz = new DateTimeZone($_SESSION['glpi_tz'] ?? date_default_timezone_get());
+        $utc->setTimezone($tz);
+        return $utc->format($mask);
+    }
 }

@@ -25,69 +25,65 @@
  * PluginJamfSoftware class.
  * @since 1.0.0
  */
-class PluginJamfSoftware extends CommonDBTM
-{
+class PluginJamfSoftware extends CommonDBTM {
 
-   public static function getTypeName($nb = 0)
-   {
-      return Software::getTypeName($nb);
-   }
+    public static function getTypeName($nb = 0) {
+        return Software::getTypeName($nb);
+    }
 
-   /**
-    * Cleanup relations when an item is purged.
-    * @global DBmysql $DB
-    * @param Software $item
-    */
-   public static function plugin_jamf_purgeSoftware(Software $item)
-   {
-      global $DB;
+    /**
+     * Cleanup relations when an item is purged.
+     * @param Software $item
+     * @global DBmysql $DB
+     */
+    public static function plugin_jamf_purgeSoftware(Software $item) {
+        global $DB;
 
-      $software_classes = [PluginJamfComputerSoftware::class, PluginJamfMobileDeviceSoftware::class];
+        $software_classes = [PluginJamfComputerSoftware::class, PluginJamfMobileDeviceSoftware::class];
 
-      foreach ($software_classes as $software_class) {
-         $DB->delete($software_class::getTable(), [
-            'softwares_id' => $item->getID(),
-         ]);
-      }
-   }
+        foreach ($software_classes as $software_class) {
+            $DB->delete($software_class::getTable(), [
+                'softwares_id' => $item->getID(),
+            ]);
+        }
+    }
 
-   public static function getForGlpiItem(CommonDBTM $item): array
-   {
-      global $DB;
+    public static function getForGlpiItem(CommonDBTM $item): array {
+        global $DB;
 
-      $iterator = $DB->request([
-         'SELECT'    => [static::getTable().'.*'],
-         'FROM'      => static::getTable(),
-         'LEFT JOIN' => [
-            Software::getTable()             => [
-               'ON'  => [
-                  Software::getTable()             => 'id',
-                  static::getTable()               => 'softwares_id'
-               ]
+        $iterator = $DB->request([
+            'SELECT' => [static::getTable() . '.*'],
+            'FROM' => static::getTable(),
+            'LEFT JOIN' => [
+                Software::getTable() => [
+                    'ON' => [
+                        Software::getTable() => 'id',
+                        static::getTable() => 'softwares_id'
+                    ]
+                ],
+                SoftwareVersion::getTable() => [
+                    'ON' => [
+                        Software::getTable() => 'id',
+                        SoftwareVersion::getTable() => 'softwares_id'
+                    ]
+                ],
+                Item_SoftwareVersion::getTable() => [
+                    'ON' => [
+                        SoftwareVersion::getTable() => 'id',
+                        Item_SoftwareVersion::getTable() => 'softwareversions_id'
+                    ]
+                ]
             ],
-            SoftwareVersion::getTable()      => [
-               'ON'  => [
-                  Software::getTable()             => 'id',
-                  SoftwareVersion::getTable()      => 'softwares_id'
-               ]
-            ],
-            Item_SoftwareVersion::getTable() => [
-               'ON'  => [
-                  SoftwareVersion::getTable()      => 'id',
-                  Item_SoftwareVersion::getTable() => 'softwareversions_id'
-               ]
+            'WHERE' => [
+                'itemtype' => $item::getType(),
+                'items_id' => $item->getID()
             ]
-         ],
-         'WHERE'  => [
-            'itemtype'  => $item::getType(),
-            'items_id'  => $item->getID()
-         ]
-      ]);
+        ]);
 
-      $result = [];
-      while ($data = $iterator->next()) {
-         $result[] = $data;
-      }
-      return $result;
-   }
+        $result = [];
+        while ($data = $iterator->next()) {
+            $result[] = $data;
+        }
+        return $result;
+    }
 }

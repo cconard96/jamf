@@ -30,15 +30,15 @@ class PluginJamfExtField extends CommonDBTM {
     public static function getValue($itemtype, $items_id, $name) {
         $ext_field = new self();
         $match = $ext_field->find([
-            'itemtype'  => $itemtype,
-            'items_id'  => $items_id,
-            'name'      => $name
+            'itemtype' => $itemtype,
+            'items_id' => $items_id,
+            'name' => $name
         ], [], 1);
         if (count($match)) {
             return reset($match)['value'];
         }
 
-       return '';
+        return '';
     }
 
     public static function setValue($itemtype, $items_id, $name, $value) {
@@ -47,9 +47,9 @@ class PluginJamfExtField extends CommonDBTM {
         $DB->updateOrInsert(self::getTable(), [
             'value' => $value
         ], [
-            'itemtype'  => $itemtype,
-            'items_id'  => $items_id,
-            'name'      => $name
+            'itemtype' => $itemtype,
+            'items_id' => $items_id,
+            'name' => $name
         ]);
     }
 }

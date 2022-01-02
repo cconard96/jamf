@@ -28,82 +28,78 @@
  */
 class PluginJamfExtensionAttribute extends CommonDBTM {
 
-    public static function getTypeName($nb = 1)
-    {
-       return _nx('itemtype', 'Extension attribute', 'Extension attributes', $nb, 'jamf');
+    public static function getTypeName($nb = 1) {
+        return _nx('itemtype', 'Extension attribute', 'Extension attributes', $nb, 'jamf');
     }
 
-    public function addOrUpdate($input)
-    {
-       global $DB;
+    public function addOrUpdate($input) {
+        global $DB;
 
-       if (!isset($input['jamf_id'])) {
-          return false;
-       }
-       $jamf_id = $input['jamf_id'];
-       unset($input['jamf_id']);
-       return $DB->updateOrInsert(self::getTable(), $input, ['jamf_id' => $jamf_id]);
+        if (!isset($input['jamf_id'])) {
+            return false;
+        }
+        $jamf_id = $input['jamf_id'];
+        unset($input['jamf_id']);
+        return $DB->updateOrInsert(self::getTable(), $input, ['jamf_id' => $jamf_id]);
     }
 
-    public static function dashboardCards()
-    {
-       global $DB;
+    public static function dashboardCards() {
+        global $DB;
 
-       $table = self::getTable();
-       $iterator = $DB->request([
-          'SELECT'   => ['name'],
-          'FROM'  => $table
-       ]);
-       $cards = [];
+        $table = self::getTable();
+        $iterator = $DB->request([
+            'SELECT' => ['name'],
+            'FROM' => $table
+        ]);
+        $cards = [];
 
-       while ($data = $iterator->next()) {
-          $slug = strtolower(str_replace(' ', '_', $data['name']));
-          $cards["plugin_jamf_extensionattribute_{$slug}"] = [
-             'widgettype'  => ['halfdonut'],
-             'label'       => sprintf(_x('dashboard', 'Jamf Attribute - %s', 'jamf'), $data['name']),
-             'provider'    => 'PluginJamfExtensionAttribute::cardProvider',
-             'args'        => ['name' => $data['name']]
-          ];
-       }
+        while ($data = $iterator->next()) {
+            $slug = strtolower(str_replace(' ', '_', $data['name']));
+            $cards["plugin_jamf_extensionattribute_{$slug}"] = [
+                'widgettype' => ['halfdonut'],
+                'label' => sprintf(_x('dashboard', 'Jamf Attribute - %s', 'jamf'), $data['name']),
+                'provider' => 'PluginJamfExtensionAttribute::cardProvider',
+                'args' => ['name' => $data['name']]
+            ];
+        }
 
-       return $cards;
+        return $cards;
     }
 
-    public static function cardProvider($name, array $params = [])
-    {
-       global $DB;
+    public static function cardProvider($name, array $params = []) {
+        global $DB;
 
-       $rel_table = PluginJamfItem_ExtensionAttribute::getTable();
-       $table = self::getTable();
-       $iterator = $DB->request([
-          'SELECT'   => [
-             'value',
-             'COUNT' => "{$rel_table}.id as cpt"
-          ],
-          'FROM'  => $table,
-          'JOIN'  => [
-             $rel_table => [
-                'ON' => [
-                   $rel_table => 'glpi_plugin_jamf_extensionattributes_id',
-                   $table     => 'id'
+        $rel_table = PluginJamfItem_ExtensionAttribute::getTable();
+        $table = self::getTable();
+        $iterator = $DB->request([
+            'SELECT' => [
+                'value',
+                'COUNT' => "{$rel_table}.id as cpt"
+            ],
+            'FROM' => $table,
+            'JOIN' => [
+                $rel_table => [
+                    'ON' => [
+                        $rel_table => 'glpi_plugin_jamf_extensionattributes_id',
+                        $table => 'id'
+                    ]
                 ]
-             ]
-          ],
-          'WHERE' => ['name' => $name],
-          'GROUP' => "{$rel_table}.value"
-       ]);
+            ],
+            'WHERE' => ['name' => $name],
+            'GROUP' => "{$rel_table}.value"
+        ]);
 
-       $card_data = [];
-       while ($data = $iterator->next()) {
-          $card_data[] = [
-             'label'    => $data['value'],
-             'number'   => $data['cpt'],
-             'url'      => '#'
-          ];
-       }
-       return [
-          'label' => sprintf(_x('dashboard', 'Jamf Attribute - %s', 'jamf'), $name),
-          'data'  => $card_data
-       ];
+        $card_data = [];
+        while ($data = $iterator->next()) {
+            $card_data[] = [
+                'label' => $data['value'],
+                'number' => $data['cpt'],
+                'url' => '#'
+            ];
+        }
+        return [
+            'label' => sprintf(_x('dashboard', 'Jamf Attribute - %s', 'jamf'), $name),
+            'data' => $card_data
+        ];
     }
 }

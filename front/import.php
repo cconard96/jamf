@@ -25,7 +25,7 @@ include('../../../inc/includes.php');
 
 $plugin = new Plugin();
 if (!$plugin->isActivated('jamf')) {
-   Html::displayNotFoundError();
+    Html::displayNotFoundError();
 }
 
 Session::checkRight("plugin_jamf_mobiledevice", CREATE);
@@ -38,9 +38,9 @@ $start = isset($_GET['start']) ? $_GET['start'] : 0;
 $import = new PluginJamfImport();
 $importcount = countElementsInTable(PluginJamfImport::getTable());
 $pending = $DB->request([
-   'FROM'   => PluginJamfImport::getTable(),
-   'START'  => $start,
-   'LIMIT'  => $_SESSION['glpilist_limit']
+    'FROM' => PluginJamfImport::getTable(),
+    'START' => $start,
+    'LIMIT' => $_SESSION['glpilist_limit']
 ]);
 
 $check_all = Html::getCheckAllAsCheckbox('import_table');
@@ -50,40 +50,40 @@ echo "<form>";
 echo "<div class='center'><table id='import_table' class='tab_cadre' style='width: 50%'>";
 echo "<thead>";
 echo "<th>{$check_all}</th>";
-echo "<th>"._x('field', 'Jamf ID', 'jamf')."</th>";
-echo "<th>"._x('field', 'Jamf Type', 'jamf')."</th>";
-echo "<th>"._x('field', 'Name', 'jamf')."</th>";
-echo "<th>"._x('field', 'Type', 'jamf')."</th>";
-echo "<th>"._x('field', 'UDID', 'jamf')."</th>";
-echo "<th>"._x('field', 'Discovery Date', 'jamf')."</th>";
+echo "<th>" . _x('field', 'Jamf ID', 'jamf') . "</th>";
+echo "<th>" . _x('field', 'Jamf Type', 'jamf') . "</th>";
+echo "<th>" . _x('field', 'Name', 'jamf') . "</th>";
+echo "<th>" . _x('field', 'Type', 'jamf') . "</th>";
+echo "<th>" . _x('field', 'UDID', 'jamf') . "</th>";
+echo "<th>" . _x('field', 'Discovery Date', 'jamf') . "</th>";
 echo "</thead><tbody>";
 while ($data = $pending->next()) {
-   $rowid = $data['jamf_items_id'];
-   echo "<tr>";
-   $import_checkbox = Html::input("import_{$data['id']}", [
-      'type'      => 'checkbox',
-      'display'   => false
-   ]);
-   echo "<td>{$import_checkbox}</td>";
-   echo "<td>{$data['jamf_items_id']}</td>";
-   echo "<td>{$data['jamf_type']}</td>";
-   $plugin_itemtype = 'PluginJamf'.$data['jamf_type'];
-   $jamf_link = Html::link($data['name'], $plugin_itemtype::getJamfDeviceURL($data['jamf_items_id']));
-   echo "<td>{$jamf_link}</td>";
-   echo "<td>{$data['type']}</td>";
-   $udid = !empty($data['udid']) ? $data['udid'] : '<i>('._x('message', 'Not collected during discovery', 'jamf').')</i>';
-   echo "<td>{$udid}</td>";
-   $date_discover = Html::convDateTime($data['date_discover']);
-   echo "<td>{$date_discover}</td>";
-   echo "</tr>";
+    $rowid = $data['jamf_items_id'];
+    echo "<tr>";
+    $import_checkbox = Html::input("import_{$data['id']}", [
+        'type' => 'checkbox',
+        'display' => false
+    ]);
+    echo "<td>{$import_checkbox}</td>";
+    echo "<td>{$data['jamf_items_id']}</td>";
+    echo "<td>{$data['jamf_type']}</td>";
+    $plugin_itemtype = 'PluginJamf' . $data['jamf_type'];
+    $jamf_link = Html::link($data['name'], $plugin_itemtype::getJamfDeviceURL($data['jamf_items_id']));
+    echo "<td>{$jamf_link}</td>";
+    echo "<td>{$data['type']}</td>";
+    $udid = !empty($data['udid']) ? $data['udid'] : '<i>(' . _x('message', 'Not collected during discovery', 'jamf') . ')</i>';
+    echo "<td>{$udid}</td>";
+    $date_discover = Html::convDateTime($data['date_discover']);
+    echo "<td>{$date_discover}</td>";
+    echo "</tr>";
 }
 echo "</tbody></table><br>";
 
-echo "<a class='vsubmit' onclick='importDevices(); return false;'>"._x('action', 'Import', 'jamf')."</a>";
-echo "&nbsp;<a class='vsubmit' onclick='discoverNow(); return false;'>"._x('action', 'Discover now', 'jamf')."</a>";
-echo "&nbsp;<a class='vsubmit' onclick='clearPendingImports(); return false;'>"._x('action', 'Clear pending imports', 'jamf')."</a>";
+echo "<a class='vsubmit' onclick='importDevices(); return false;'>" . _x('action', 'Import', 'jamf') . "</a>";
+echo "&nbsp;<a class='vsubmit' onclick='discoverNow(); return false;'>" . _x('action', 'Discover now', 'jamf') . "</a>";
+echo "&nbsp;<a class='vsubmit' onclick='clearPendingImports(); return false;'>" . _x('action', 'Clear pending imports', 'jamf') . "</a>";
 echo "</div>";
-$ajax_root = Plugin::getWebDir('jamf').'/ajax/';
+$ajax_root = Plugin::getWebDir('jamf') . '/ajax/';
 $import_msg = _x('action', 'Importing', 'jamf') . '...';
 $discover_msg = _x('action', 'Discovering', 'jamf') . '...';
 $clear_msg = _x('action', 'Clearing', 'jamf') . '...';
@@ -152,6 +152,6 @@ echo Html::scriptBlock($js);
 $position = "position: fixed; top: 0; left: 0; right: 0; bottom: 0;";
 $style = "display: none; {$position} width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 2; cursor: progress;";
 echo "<div id='loading-overlay' style='{$style}'><table class='tab_cadre' style='margin-top: 10%;'>";
-echo "<thead><tr><th class='center'><h3>".$import_msg."</h3></th></tr></thead>";
+echo "<thead><tr><th class='center'><h3>" . $import_msg . "</h3></th></tr></thead>";
 echo "</table></div>";
 Html::footer();

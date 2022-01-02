@@ -21,18 +21,18 @@
  --------------------------------------------------------------------------
  */
 
-include ('../../../inc/includes.php');
+include('../../../inc/includes.php');
 
 $plugin = new Plugin();
 if (!$plugin->isActivated('jamf')) {
-   Html::displayNotFoundError();
+    Html::displayNotFoundError();
 }
 
 Session::checkLoginUser();
 
 // An action must be specified
 if (!isset($_GET['command'])) {
-   throw new \RuntimeException('Required argument missing!');
+    throw new RuntimeException('Required argument missing!');
 }
 
 $form = PluginJamfMDMCommand::getFormForCommand($_GET['command']);

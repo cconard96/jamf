@@ -21,11 +21,11 @@
  --------------------------------------------------------------------------
  */
 
-include ('../../../inc/includes.php');
+include('../../../inc/includes.php');
 
 $plugin = new Plugin();
 if (!$plugin->isActivated('jamf')) {
-   Html::displayNotFoundError();
+    Html::displayNotFoundError();
 }
 
 Html::header_nocache();
@@ -40,38 +40,38 @@ parse_str($input, $_REQUEST);
 
 // An action must be specified
 if (!isset($_REQUEST['action'])) {
-   throw new RuntimeException('Required argument missing!');
+    throw new RuntimeException('Required argument missing!');
 }
 
 if ($_REQUEST['action'] == 'import') {
-   // An array of item IDs is required
-   if (isset($_REQUEST['import_ids']) && is_array($_REQUEST['import_ids'])) {
-      // Get data for each item to import
-      $toimport = $DB->request([
-         'SELECT' => ['type', 'jamf_type', 'jamf_items_id'],
-         'FROM'   => PluginJamfImport::getTable(),
-         'WHERE'  => [
-            'id'  => $_REQUEST['import_ids']
-         ]
-      ]);
-      // Trigger extension attribute definition sync
-      PluginJamfMobileSync::syncExtensionAttributeDefinitions();
-      PluginJamfComputerSync::syncExtensionAttributeDefinitions();
-      // Import the requested device(s)
-      while ($data = $toimport->next()) {
-         if ($data['jamf_type'] === 'MobileDevice') {
-            PluginJamfMobileSync::import($data['type'], $data['jamf_items_id']);
-         } else {
-            PluginJamfComputerSync::import($data['type'], $data['jamf_items_id']);
-         }
-      }
-   } else {
-      throw new RuntimeException('Required argument missing!');
-   }
+    // An array of item IDs is required
+    if (isset($_REQUEST['import_ids']) && is_array($_REQUEST['import_ids'])) {
+        // Get data for each item to import
+        $toimport = $DB->request([
+            'SELECT' => ['type', 'jamf_type', 'jamf_items_id'],
+            'FROM' => PluginJamfImport::getTable(),
+            'WHERE' => [
+                'id' => $_REQUEST['import_ids']
+            ]
+        ]);
+        // Trigger extension attribute definition sync
+        PluginJamfMobileSync::syncExtensionAttributeDefinitions();
+        PluginJamfComputerSync::syncExtensionAttributeDefinitions();
+        // Import the requested device(s)
+        while ($data = $toimport->next()) {
+            if ($data['jamf_type'] === 'MobileDevice') {
+                PluginJamfMobileSync::import($data['type'], $data['jamf_items_id']);
+            } else {
+                PluginJamfComputerSync::import($data['type'], $data['jamf_items_id']);
+            }
+        }
+    } else {
+        throw new RuntimeException('Required argument missing!');
+    }
 } else if ($_REQUEST['action'] == 'clear') {
-   if (PluginJamfMobileDevice::canCreate() || PluginJamfComputer::canCreate()) {
-      PluginJamfImport::clearPendingImports();
-   }
+    if (PluginJamfMobileDevice::canCreate() || PluginJamfComputer::canCreate()) {
+        PluginJamfImport::clearPendingImports();
+    }
 } else {
-   throw new RuntimeException('Invalid action!');
+    throw new RuntimeException('Invalid action!');
 }

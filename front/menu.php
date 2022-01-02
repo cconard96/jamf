@@ -25,7 +25,7 @@ include('../../../inc/includes.php');
 
 $plugin = new Plugin();
 if (!$plugin->isActivated('jamf')) {
-   Html::displayNotFoundError();
+    Html::displayNotFoundError();
 }
 
 Html::header('Jamf Plugin', '', 'tools', 'PluginJamfMenu', 'import');
@@ -35,25 +35,25 @@ global $CFG_GLPI;
 $plugin_dir = Plugin::getWebDir('jamf');
 $links = [];
 if (Session::haveRight('plugin_jamf_mobiledevice', CREATE)) {
-   $links[] = Html::link(_x('menu', 'Import devices', 'jamf'), PluginJamfImport::getSearchURL());
-   $links[] = Html::link(_x('menu', 'Merge existing devices', 'jamf'), "{$plugin_dir}/front/merge.php");
+    $links[] = Html::link(_x('menu', 'Import devices', 'jamf'), PluginJamfImport::getSearchURL());
+    $links[] = Html::link(_x('menu', 'Merge existing devices', 'jamf'), "{$plugin_dir}/front/merge.php");
 }
 if (Session::haveRight('config', UPDATE)) {
-   $links[] = Html::link(_x('action', 'Configure plugin', 'jamf'), Config::getFormURL()."?forcetab=PluginJamfConfig$1");
+    $links[] = Html::link(_x('action', 'Configure plugin', 'jamf'), Config::getFormURL() . "?forcetab=PluginJamfConfig$1");
 }
 
 if (count($links)) {
-   echo "<div class='center'><table class='tab_cadre'>";
-   echo "<thead><th>"._x('plugin_info', 'Jamf plugin', 'jamf')."</th></thead>";
-   echo "<tbody>";
-   foreach ($links as $link) {
-      echo "<tr><td>{$link}</td></tr>";
-   }
-   echo "</tbody></table></div>";
+    echo "<div class='center'><table class='tab_cadre'>";
+    echo "<thead><th>" . _x('plugin_info', 'Jamf plugin', 'jamf') . "</th></thead>";
+    echo "<tbody>";
+    foreach ($links as $link) {
+        echo "<tr><td>{$link}</td></tr>";
+    }
+    echo "</tbody></table></div>";
 } else {
-   echo "<div class='center warning' style='width: 40%; margin: auto;'>";
-   echo "<i class='fa fa-exclamation-triangle fa-3x'></i>";
-   echo "<p>"._x('error', 'You do not have access to any Jamf plugin items', 'jamf')."</p>";
-   echo "</div>";
+    echo "<div class='center warning' style='width: 40%; margin: auto;'>";
+    echo "<i class='fa fa-exclamation-triangle fa-3x'></i>";
+    echo "<p>" . _x('error', 'You do not have access to any Jamf plugin items', 'jamf') . "</p>";
+    echo "</div>";
 }
 Html::footer();

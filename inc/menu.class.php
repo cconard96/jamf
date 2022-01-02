@@ -27,31 +27,30 @@
  */
 class PluginJamfMenu extends CommonGLPI {
 
-   /**
-    * Get name of this type by language of the user connected
-    *
-    * @param integer $nb number of elements
-    * @return string name of this type
-    */
-   public static function getTypeName($nb = 0) {
-      return _x('plugin_info', 'Jamf plugin', 'jamf');
-   }
+    /**
+     * Get name of this type by language of the user connected
+     *
+     * @param integer $nb number of elements
+     * @return string name of this type
+     */
+    public static function getTypeName($nb = 0) {
+        return _x('plugin_info', 'Jamf plugin', 'jamf');
+    }
 
-   public static function getMenuName()
-   {
-      return _x('plugin_info', 'Jamf plugin', 'jamf');
-   }
+    public static function getMenuName() {
+        return _x('plugin_info', 'Jamf plugin', 'jamf');
+    }
 
-   public static function getIcon() {
-      return 'fas fa-tablet-alt';
-   }
+    public static function getIcon() {
+        return 'fas fa-tablet-alt';
+    }
 
-   /**
-    * Check if can view item
-    *
-    * @return boolean
-    */
-   public static function canView() {
-      return Config::canView();
-   }
+    /**
+     * Check if can view item
+     *
+     * @return boolean
+     */
+    public static function canView() {
+        return Config::canView();
+    }
 }
