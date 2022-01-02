@@ -265,7 +265,7 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
             return $value ? __('Yes') : __('No');
         };
 
-        $out = '';
+        $out = '<table class="table">';
         if ($item::getType() === 'Phone') {
             $uuid = PluginJamfExtField::getValue('Phone', $item->getID(), 'uuid');
             $out .= '<tr><td>' . _x('field', 'UUID', 'jamf') . '</td><td>';
@@ -366,6 +366,7 @@ JAVASCRIPT;
             $out .= "<td>" . _x('field', 'Lost location date') . "</td>";
             $out .= "<td>" . Html::convDateTime($match['lost_location_date']) . "</td></tr>";
         }
+        $out .= "</table>";
 
         echo $out;
     }
