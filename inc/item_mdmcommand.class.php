@@ -119,9 +119,67 @@ class PluginJamfItem_MDMCommand extends CommonDBTM
                     }
                 }
             }
+            self::applySpecificParams($allcommands, $mobiledevice);
             return $allcommands;
         }
         return [];
+    }
+
+    private static function getPMVData(): array
+    {
+        static $data = null;
+
+        if ($data === null) {
+            $pmv_file = Plugin::getPhpDir('jamf').'/tools/pmv.json';
+            if (file_exists($pmv_file)) {
+                $data = json_decode(file_get_contents($pmv_file), true)['AssetSets'];
+            } else {
+                $data = [];
+            }
+        }
+
+        return $data;
+    }
+
+    private static function getAvailableUpdates($model_identifier): array
+    {
+        $data = self::getPMVData();
+        $data['iOS'] = array_filter($data['iOS'], static function ($item) use ($model_identifier) {
+            return $item['ExpirationDate'] > date('Y-m-d') &&
+                in_array($model_identifier, $item['SupportedDevices'], true);
+        });
+        $data['macOS'] = array_filter($data['macOS'], static function ($item) use ($model_identifier) {
+            return $item['ExpirationDate'] > date('Y-m-d') &&
+                in_array($model_identifier, $item['SupportedDevices'], true);
+        });
+
+        // Sort so newest updates are first
+        usort($data['iOS'], static function ($a, $b) {
+            return version_compare($b['ProductVersion'], $a['ProductVersion']);
+        });
+        usort($data['macOS'], static function ($a, $b) {
+            return version_compare($b['ProductVersion'], $a['ProductVersion']);
+        });
+
+        if (count($data['iOS']) > 0) {
+            return array_column($data['iOS'], 'ProductVersion');
+        } else if (count($data['macOS']) > 0) {
+            return array_column($data['macOS'], 'ProductVersion');
+        } else {
+            return [];
+        }
+    }
+
+    public static function applySpecificParams(&$commands, PluginJamfAbstractDevice $mobiledevice): void
+    {
+        if (isset($commands['ScheduleOSUpdate'])) {
+            $applicable_updates = self::getAvailableUpdates($mobiledevice->getJamfDeviceData()['model_identifier']);
+            if (count($applicable_updates) > 0) {
+                // Replace product_version plain-text field with a dropdown of versions
+                $commands['ScheduleOSUpdate']['params']['product_version']['type'] = 'dropdown';
+                $commands['ScheduleOSUpdate']['params']['product_version']['values'] = $applicable_updates;
+            }
+        }
     }
 
     public static function showForItem(CommonDBTM $item)

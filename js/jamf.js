@@ -81,68 +81,68 @@
             method: 'GET',
             url: (self.ajax_root + "getMDMCommandForm.php"),
             data: {
-               command: command
+               command: command,
+               jamf_id: self.jamf_id,
+               itemtype: self.itemtype,
+               items_id: self.items_id
             }
          }).done(function (data) {
             if (data !== undefined && data !== null) {
                if (self.dialog_send_command !== undefined && self.dialog_send_command !== null) {
                   self.dialog_send_command.remove();
                }
-               self.dialog_send_command = $(data).appendTo('#page');
-               self.dialog_send_command.dialog({
-                  autoOpen: false,
-                  modal: true,
-                  close: function () {
-                     self.dialog_send_command.remove();
+               self.dialog_send_command = $(`
+<div class="modal" role="dialog">
+   <div class="modal-dialog" role="dialog">
+       <div class="modal-content">
+          <div class="modal-body">`+data+`</div>
+          <div class="modal-footer">
+             <button type="button" name="close" class="btn btn-secondary" data-dismiss="modal">`+__('Cancel')+`</button>
+             <button type="button" name="send" class="btn btn-primary">`+__('Send')+`</button>
+          </div>
+       </div>
+    </div>
+</div>`).appendTo('#page');
+               self.dialog_send_command.on('click', 'button[name="send"]', () => {
+                  if (self.commands[command]['confirm'] !== undefined && self.commands[command]['confirm'] === true) {
+                     showMDMCommandConfirmation(command, self.dialog_send_command.serialize());
+                  } else {
+                     self.sendMDMCommand(command, self.dialog_send_command.serialize());
                   }
                });
-               self.dialog_send_command.dialog({
-                  buttons: {
-                     "Send": function () {
-                        if (self.commands[command]['confirm'] !== undefined && self.commands[command]['confirm'] === true) {
-                           showMDMCommandConfirmation(command, self.dialog_send_command.serialize());
-                        } else {
-                           self.sendMDMCommand(command, self.dialog_send_command.serialize());
-                        }
-                     },
-                     "Cancel": function () {
-                        $(this).dialog("close");
-                     }
-                  }
+               self.dialog_send_command.on('click', 'button[name="close"]', (e) => {
+                  $(e.target).closest('.modal').modal('hide');
                });
-               self.dialog_send_command.dialog("open");
+               self.dialog_send_command.modal('show');
             }
          });
       };
 
       var showMDMCommandConfirmation = function (command, params) {
          if (self.dialog_confirm_command === undefined || self.dialog_confirm_command === null) {
-            self.dialog_confirm_command = $("<div id='jamf-mdmcommand-confirm'></div>").appendTo('#page');
-            $(document).ready(function () {
-               $('#jamf-mdmcommand-confirm').dialog({
-                  autoOpen: false,
-                  modal: true,
-                  close: function () {
-                     self.dialog_confirm_command.remove();
-                  }
-               });
+            const warn_text = _x('message', 'Are you sure you want to send the command: %s?', 'jamf').replace("%s", _x('mdm_command', self.commands[command].name, 'jamf'));
+
+            self.dialog_confirm_command = $(`
+<div class="modal" role="dialog">
+   <div class="modal-dialog" role="dialog">
+       <div class="modal-content">
+          <div class="modal-body">${warn_text}</div>
+          <div class="modal-footer">
+             <button type="button" name="close" class="btn btn-secondary" data-dismiss="modal">`+__('Cancel')+`</button>
+             <button type="button" name="confirm" class="btn btn-primary">`+__('Confirm')+`</button>
+          </div>
+       </div>
+    </div>
+</div>`).appendTo('#page');
+
+            self.dialog_confirm_command.on('click', 'button[name="confirm"]', () => {
+               self.sendMDMCommand(command, params);
             });
+            self.dialog_confirm_command.on('click', 'button[name="close"]', (e) => {
+               $(e.target).closest('.modal').modal('hide');
+            });
+            self.dialog_confirm_command.modal('show');
          }
-
-         self.dialog_confirm_command.dialog({
-            buttons: {
-               "Confirm": function () {
-                  self.sendMDMCommand(command, params);
-               },
-               "Cancel": function () {
-                  $(this).dialog("close");
-               }
-            }
-         });
-
-         var warn_text = _x('message', 'Are you sure you want to send the command: %s?', 'jamf').replace("%s", _x('mdm_command', self.commands[command].name, 'jamf'));
-         self.dialog_confirm_command.text(warn_text);
-         self.dialog_confirm_command.dialog("open");
       };
 
       /**
