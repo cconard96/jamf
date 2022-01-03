@@ -33,7 +33,7 @@ function plugin_init_jamf()
     if (!isCommandLine() && isset($_SESSION['glpipalette']) && $_SESSION['glpipalette'] === 'darker') {
         $PLUGIN_HOOKS['add_css']['jamf'][] = 'css/jamf-dark.css';
     }
-    $PLUGIN_HOOKS['add_javascript']['jamf'][] = 'js/jamf.min.js';
+    $PLUGIN_HOOKS['add_javascript']['jamf'][] = 'js/jamf.js';
     Plugin::registerClass('PluginJamfConfig', ['addtabon' => 'Config']);
     $PLUGIN_HOOKS['post_item_form']['jamf'] = 'plugin_jamf_showJamfInfoForItem';
     $PLUGIN_HOOKS['pre_item_update']['jamf']['Phone'] = ['PluginJamfMobileDevice', 'preUpdatePhone'];

@@ -590,5 +590,17 @@ final class PluginJamfMigration
                 }
             }
         }
+
+        // Copy default pmv from tools dir
+        $pmv_file_path = GLPI_PLUGIN_DOC_DIR.'/jamf/pmv.json';
+        if (!file_exists($pmv_file_path)) {
+            copy(Plugin::getPhpDir('jamf').'/pmv.json', $pmv_file_path);
+        }
+
+        // Register Cron task to update PMV periodically
+        CronTask::register(PluginJamfCron::class, 'updatePMV', DAY_TIMESTAMP, [
+            'comment'   => 'Update JSON file containing information about applicable OS versions for different Apple product models',
+            'state'     => CronTask::STATE_WAITING,
+        ]);
     }
 }

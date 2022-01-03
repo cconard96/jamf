@@ -280,10 +280,11 @@ class PluginJamfMDMCommand
      * @param string $command The name of the command such as "UpdateInventory".
      * @return string|null HTML form or null if it is not applicable.
      */
-    public static function getFormForCommand($command)
+    public static function getFormForCommand($command, $device = null)
     {
-        if (isset(self::getAvailableCommands()[$command])) {
-            $command_data = self::getAvailableCommands()[$command];
+        $all_commands = $device ? PluginJamfItem_MDMCommand::getApplicableCommands($device) : self::getAvailableCommands();
+        if (isset($all_commands[$command])) {
+            $command_data = $all_commands[$command];
             if (!isset($command_data['params'])) {
                 return null;
             }
@@ -315,6 +316,7 @@ class PluginJamfMDMCommand
                 $out .= "</td>";
                 $out .= "</tr>";
             }
+            $out .= "</table>";
             $out .= "</form>";
             echo $out;
         }
