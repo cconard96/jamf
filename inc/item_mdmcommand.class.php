@@ -130,7 +130,7 @@ class PluginJamfItem_MDMCommand extends CommonDBTM
         static $data = null;
 
         if ($data === null) {
-            $pmv_file = Plugin::getPhpDir('jamf').'/tools/pmv.json';
+            $pmv_file = GLPI_PLUGIN_DOC_DIR.'/jamf/pmv.json';
             if (file_exists($pmv_file)) {
                 $data = json_decode(file_get_contents($pmv_file), true)['AssetSets'];
             } else {
