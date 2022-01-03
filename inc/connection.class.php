@@ -38,7 +38,8 @@ class PluginJamfConnection
         $jamf_config = Config::getConfigurationValues('plugin:Jamf', [
             'jssserver', 'jssuser', 'jsspassword', 'jssignorecert']);
         $this->config = $jamf_config;
-        $this->config['jsspassword'] = Toolbox::sodiumDecrypt($this->config['jsspassword']);
+        $glpikey = new GLPIKey();
+        $this->config['jsspassword'] = $glpikey->decrypt($this->config['jsspassword']);
     }
 
     /**
@@ -52,7 +53,8 @@ class PluginJamfConnection
     {
         global $DB;
 
-        $enc = Toolbox::sodiumEncrypt($jsspassword);
+        $glpikey = new GLPIKey();
+        $enc = $glpikey->encrypt($jsspassword);
         Config::setConfigurationValues('plugin:Jamf', [
             'jssserver' => $jssserver,
             'jssuser' => $jssuser,

@@ -472,8 +472,9 @@ final class PluginJamfMigration
 
         $old_jsspassword = Config::getConfigurationValues('plugin:Jamf', ['jsspassword'])['jsspassword'];
         if (!empty($old_jsspassword)) {
+            $glpi_key = new GLPIKey();
             $this->db->update(Config::getTable(), [
-                'value' => Toolbox::sodiumEncrypt(Toolbox::decrypt($old_jsspassword))
+                'value' => $glpi_key->encrypt(Toolbox::decrypt($old_jsspassword))
             ], [
                 'context' => 'plugin:Jamf',
                 'name' => 'jsspassword'
