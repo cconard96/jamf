@@ -21,6 +21,8 @@
  --------------------------------------------------------------------------
  */
 
+use Glpi\Application\View\TemplateRenderer;
+
 /**
  * JamfMobileDevice class. This represents a mobile device from Jamf.
  * This is mainly used to store extra fields that are not already in Computer or Phone classes.
@@ -252,8 +254,6 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
 
     public static function showForItem(array $params)
     {
-        global $CFG_GLPI, $DB;
-
         /** @var CommonDBTM $item */
         $item = $params['item'];
 
@@ -265,57 +265,16 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
             return $value ? __('Yes') : __('No');
         };
 
-        $out = '<table class="table">';
-        if ($item::getType() === 'Phone') {
-            $uuid = PluginJamfExtField::getValue('Phone', $item->getID(), 'uuid');
-            $out .= '<tr><td>' . _x('field', 'UUID', 'jamf') . '</td><td>';
-            $out .= Html::input('_plugin_jamf_uuid', [
-                'value' => $uuid
-            ]);
-            $out .= "</td></tr>";
-        }
         $jamf_item = static::getJamfItemForGLPIItem($item);
 
         if ($jamf_item === null) {
-            echo $out;
             return false;
         }
         $match = $jamf_item->fields;
         $match = array_merge($match, $jamf_item->getJamfDeviceData());
 
-        $out .= "<tr><th colspan='4'>" . _x('form_section', 'Jamf General Information', 'jamf') . "</th></tr>";
-        $out .= "<tr><td>" . _x('field', 'Import date', 'jamf') . "</td>";
-        $out .= "<td>" . Html::convDateTime($match['import_date']) . "</td>";
-        $out .= "<td>" . _x('field', 'Last sync', 'jamf') . "</td>";
-        $out .= "<td>" . Html::convDateTime($match['sync_date']) . "</td></tr>";
-
-        $out .= "<tr><td>" . _x('field', 'Jamf last inventory', 'jamf') . "</td>";
-        $out .= "<td>" . Html::convDateTime($match['last_inventory']) . "</td>";
-        $out .= "<td>" . _x('field', 'Jamf import date', 'jamf') . "</td>";
-        $out .= "<td>" . Html::convDateTime($match['entry_date']) . "</td></tr>";
-
-        $out .= "<tr><td>" . _x('field', 'Enrollment date', 'jamf') . "</td>";
-        $out .= "<td>" . Html::convDateTime($match['enroll_date']) . "</td>";
-        $out .= "<td>" . _x('field', 'Shared device', 'jamf') . "</td>";
-        $out .= "<td>" . $match['shared'] . "</td></tr>";
-
-        $out .= "<tr><td>" . _x('field', 'Supervised', 'jamf') . "</td>";
-        $out .= "<td>" . $getYesNo($match['supervised']) . "</td>";
-        $out .= "<td>" . _x('field', 'Managed', 'jamf') . "</td>";
-        $out .= "<td>" . $getYesNo($match['managed']) . "</td></tr>";
-
-        $out .= "<td>" . _x('field', 'Cloud backup enabled', 'jamf') . "</td>";
-        $out .= "<td>" . $getYesNo($match['cloud_backup_enabled']) . "</td>";
-        $out .= "<td>" . _x('field', 'Activation locked', 'jamf') . "</td>";
-        $out .= "<td>" . $getYesNo($match['activation_lock_enabled']) . "</td></tr>";
-
-        $link = self::getJamfDeviceURL($match['jamf_items_id']);
-        $view_msg = _x('field', 'View in Jamf', 'jamf');
-        $out .= "<tr><td colspan='4' class='center'>";
-        $out .= "<a class='vsubmit' href='{$link}' target='_blank'>{$view_msg}</a>";
-
+        $js = '';
         if ($item->canUpdate()) {
-            $out .= "&nbsp;&nbsp;<a class='vsubmit' onclick='syncDevice(&quot;{$item::getType()}&quot;, {$item->getID()}) return false;'>" . _x('action', 'Sync now', 'jamf') . "</a>";
             $ajax_url = Plugin::getWebDir('jamf') . '/ajax/sync.php';
             $js = <<<JAVASCRIPT
                function syncDevice(itemtype, items_id) {
@@ -330,44 +289,125 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
                   });
                }
 JAVASCRIPT;
-            $out .= Html::scriptBlock($js);
         }
-        $out .= "</td></tr>";
+        $info = [
+            'general'   => [
+                'caption' => _x('form_section', 'Jamf General Information', 'jamf'),
+                'fields'    => [
+                    'import_date' => [
+                        'caption' => _x('field', 'Import date', 'jamf'),
+                        'value' => Html::convDateTime($match['import_date']),
+                    ],
+                    'sync_date' => [
+                        'caption' => _x('field', 'Last sync', 'jamf'),
+                        'value' => Html::convDateTime($match['sync_date']),
+                    ],
+                    'last_inventory' => [
+                        'caption' => _x('field', 'Jamf last inventory', 'jamf'),
+                        'value' => PluginJamfToolbox::utcToLocal($match['last_inventory']),
+                    ],
+                    'entry_date' => [
+                        'caption' => _x('field', 'Jamf import date', 'jamf'),
+                        'value' => PluginJamfToolbox::utcToLocal($match['entry_date']),
+                    ],
+                    'enroll_date' => [
+                        'caption' => _x('field', 'Enrollment date', 'jamf'),
+                        'value' => PluginJamfToolbox::utcToLocal($match['enroll_date']),
+                    ],
+                    'shared' => [
+                        'caption' => _x('field', 'Shared device', 'jamf'),
+                        'value' => $match['shared'],
+                    ],
+                    'supervised' => [
+                        'caption' => _x('field', 'Supervised', 'jamf'),
+                        'value' => $getYesNo($match['supervised']),
+                    ],
+                    'managed' => [
+                        'caption' => _x('field', 'Managed', 'jamf'),
+                        'value' => $getYesNo($match['managed']),
+                    ],
+                    'cloud_backup_enabled' => [
+                        'caption' => _x('field', 'Cloud backup enabled', 'jamf'),
+                        'value' => $getYesNo($match['cloud_backup_enabled']),
+                    ],
+                    'activation_lock_enabled' => [
+                        'caption' => _x('field', 'Activation locked', 'jamf'),
+                        'value' => $getYesNo($match['activation_lock_enabled']),
+                    ],
+                ],
+                'buttons' => [
+                    'view_in_jamf' => [
+                        'caption' => _x('action', 'View in Jamf', 'jamf'),
+                        'url' => self::getJamfDeviceURL($match['jamf_items_id'])
+                    ],
+                    'sync' => [
+                        'caption' => _x('action', 'Sync now', 'jamf'),
+                        'on_click' => "syncDevice(\"{$item::getType()}\", {$item->getID()}); return false;"
+                    ],
+                ],
+                'extra_js'  => $js
+            ],
+            'lost_mode' => [
+                'caption' => _x('form_section', 'Jamf Lost Mode Information', 'jamf'),
+                'fields'    => []
+            ]
+        ];
 
-        $out .= "<tr><th colspan='4'>" . _x('form_section', 'Jamf Lost Mode Information', 'jamf') . "</th></tr>";
-        $enabled = $match['lost_mode_enabled'];
-        if (!$enabled || ($enabled != 'true')) {
-            $out .= "<tr class='center'><td colspan='4'>" . _x('field', 'Lost mode is not enabled') . "</td></tr>";
+        $lost_mode_enabled = $match['lost_mode_enabled'];
+        if (!$lost_mode_enabled || ($lost_mode_enabled != 'true')) {
+            $info['lost_mode']['fields'] = [
+                'lost_mode_enabled' => [
+                    'caption' => _x('field', 'Enabled', 'jamf'),
+                    'value' => _x('field', 'Lost mode is not enabled', 'jamf'),
+                ]
+            ];
         } else {
-            $out .= "<tr><td>" . _x('field', 'Enabled', 'jamf') . "</td>";
-            $out .= "<td>" . $enabled . "</td>";
-            $out .= "<td>" . _x('field', 'Enforced', 'jamf') . "</td>";
-            $out .= "<td>" . $getYesNo($match['lost_mode_enforced']) . "</td></tr>";
-
-            $out .= "<tr><td>" . _x('field', 'Enable date', 'jamf') . "</td>";
-            $out .= "<td>" . Html::convDateTime($match['lost_mode_enable_date']) . "</td></tr>";
-
-            $out .= "<tr><td>" . _x('field', 'Message', 'jamf') . "</td>";
-            $out .= "<td>" . $match['lost_mode_message'] . "</td>";
-            $out .= "<td>" . _x('field', 'Phone', 'jamf') . "</td>";
-            $out .= "<td>" . $match['lost_mode_phone'] . "</td></tr>";
-
             $lat = $match['lost_location_latitude'];
             $long = $match['lost_location_longitude'];
-            $out .= "<td>" . _x('field', 'GPS') . "</td><td>";
-            //TODO Use leaflet
-            $out .= Html::link("$lat, $long", "https://www.google.com/maps/place/$lat,$long", [
-                'display' => false
-            ]);
-            $out .= "</td><td>" . _x('field', 'Altitude') . "</td>";
-            $out .= "<td>" . $match['lost_location_altitude'] . "</td>";
-            $out .= "<tr><td>" . _x('field', 'Speed', 'jamf') . "</td>";
-            $out .= "<td>" . $match['lost_location_speed'] . "</td>";
-            $out .= "<td>" . _x('field', 'Lost location date') . "</td>";
-            $out .= "<td>" . Html::convDateTime($match['lost_location_date']) . "</td></tr>";
+            $info['lost_mode']['fields'] = [
+                'lost_mode_enabled' => [
+                    'caption' => _x('field', 'Enabled', 'jamf'),
+                    'value' => $getYesNo($lost_mode_enabled),
+                ],
+                'lost_mode_enforced' => [
+                    'caption' => _x('field', 'Enforced', 'jamf'),
+                    'value' => $getYesNo($match['lost_mode_enforced']),
+                ],
+                'lost_mode_enable_date' => [
+                    'caption' => _x('field', 'Enable date', 'jamf'),
+                    'value' => Html::convDateTime($match['lost_mode_enable_date']),
+                ],
+                'lost_mode_message' => [
+                    'caption' => _x('field', 'Message', 'jamf'),
+                    'value' => $match['lost_mode_message'],
+                ],
+                'lost_mode_phone' => [
+                    'caption' => _x('field', 'Phone', 'jamf'),
+                    'value' => $match['lost_mode_phone'],
+                ],
+                'lost_location' => [
+                    'caption' => _x('field', 'GPS', 'jamf'),
+                    'value' => Html::link("$lat, $long", "https://www.google.com/maps/place/$lat,$long", [
+                        'display' => false
+                    ])
+                ],
+                'lost_location_altitude' => [
+                    'caption' => _x('field', 'Altitude', 'jamf'),
+                    'value' => $match['lost_location_altitude'],
+                ],
+                'lost_location_speed' => [
+                    'caption' => _x('field', 'Speed', 'jamf'),
+                    'value' => $match['lost_location_speed'],
+                ],
+                'lost_location_date' => [
+                    'caption' => _x('field', 'Lost location date'),
+                    'value' => Html::convDateTime($match['lost_location_date']),
+                ],
+            ];
         }
-        $out .= "</table>";
 
-        echo $out;
+        TemplateRenderer::getInstance()->display('@jamf/inventory_info.html.twig', [
+            'info' => $info,
+        ]);
     }
 }

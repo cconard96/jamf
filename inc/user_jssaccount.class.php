@@ -21,6 +21,8 @@
  * --------------------------------------------------------------------------
  */
 
+use Glpi\Application\View\TemplateRenderer;
+
 /**
  * User_JSSAccount class. Links GLPI users to a JSS account for the purpose of managing permissions.
  * A user may be linked to any JSS account, which is why it is recommended to only give JSS Account Links rights to
@@ -211,36 +213,18 @@ class PluginJamfUser_JSSAccount extends CommonDBChild
         foreach ($allusers as $user) {
             $values[$user['id']] = $user['name'];
         }
-        if ($canedit) {
-            echo "<form method='POST' action='" . self::getFormURL() . "'>";
-        } else {
+        if (!$canedit) {
             $values = [$mylink['jssaccounts_id'] => $values[$mylink['jssaccounts_id']]];
         }
 
-        echo Html::hidden('users_id', ['value' => $item->getID()]);
-        echo "<table class='tab_cadre_fixe'><tr>";
-        echo "<td>" . _x('itemtype', 'JSS Account', 'jamf') . "</td><td>";
-        Dropdown::showFromArray('jssaccounts_id', $values, [
-            'display_emptychoice' => true,
-            'value' => isset($mylink) ? $mylink['jssaccounts_id'] : 0
+        TemplateRenderer::getInstance()->display('@jamf/user_jssaccount.html.twig', [
+            'can_edit' => $canedit,
+            'jssaccounts_id' => $mylink['jssaccounts_id'] ?? null,
+            'jssaccount_link' => $mylink ? self::getJSSAccountURL($mylink['jssaccounts_id']) : null,
+            'users_id' => $item->getID(),
+            'url' => self::getFormURL(),
+            'jssaccounts' => $values
         ]);
-        echo "</td><td></td><td></td></td></tr><tr><td class='tab_bg_2 center' colspan='4'>";
-        if ($canedit) {
-            $title = _x('action', 'Update account link', 'jamf');
-            echo "<input title='{$title}' type='submit' name='update' value='" . _sx('button', 'Save') . "' class='submit'/>";
-        }
-        echo "</td></tr></table>";
-        if ($canedit) {
-            Html::closeForm();
-        }
-
-        if ($mylink !== null) {
-            $link = self::getJSSAccountURL($mylink['jssaccounts_id']);
-            $view_msg = _x('action', 'View in Jamf', 'jamf');
-            echo "<table class='tab_cadre_fixe'><tr><td colspan='4' class='center'>";
-            echo "<a class='vsubmit' href='{$link}' target='_blank'>{$view_msg}</a>";
-            echo "</td></tr></table>";
-        }
     }
 
     /**

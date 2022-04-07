@@ -1,0 +1,61 @@
+{#
+/*
+ * -------------------------------------------------------------------------
+ * JAMF plugin for GLPI
+ * Copyright (C) 2019-2021 by Curtis Conard
+ * https://github.com/cconard96/jamf
+ * -------------------------------------------------------------------------
+ * LICENSE
+ * This file is part of JAMF plugin for GLPI.
+ * JAMF plugin for GLPI is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * JAMF plugin for GLPI is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with JAMF plugin for GLPI. If not, see <http://www.gnu.org/licenses/>.
+ * --------------------------------------------------------------------------
+ */
+#}
+
+{% import 'components/form/fields_macros.html.twig' as fields %}
+
+{% for section in info %}
+   {{ fields.smallTitle(section.caption) }}
+   {% for field_name,field in section.fields %}
+      {% set field_content %}
+         <span class="form-control-plaintext">{{ field.value }}</span>
+      {% endset %}
+      {{ fields.field(field_name, field_content, field.caption) }}
+   {% endfor %}
+   {% if section.buttons is defined %}
+      <div class="inventory-info-buttons d-flex justify-content-center">
+         {% for button_name,button in section.buttons %}
+            {% if button.url %}
+               <a class="btn btn-outline-secondary {{ loop.index0 != 0 ? 'ms-3' : '' }}" href="{{ button.url }}">{{ button.caption }}</a>
+            {% else %}
+               <button class="btn btn-outline-secondary {{ loop.index0 != 0 ? 'ms-3' : '' }}" type="button" onclick="{{ button.on_click|default('') }}">{{ button.caption }}</button>
+            {% endif %}
+         {% endfor %}
+      </div>
+   {% endif %}
+   {% if section.extra_js is defined %}
+      <script>
+         {{ section.extra_js|raw }}
+      </script>
+   {% endif %}
+{% endfor %}
+
+<script>
+    // Hack to remove the native inventory info section
+    // It shows because this plugin marks inventoried assets as dynamic, but does not use the native inventory feature
+   const main_form = $('form[name="asset_form"]');
+
+   const card_title_icon = main_form.next('.card').find('.card-header .ribbon i');
+   if (card_title_icon.length > 0 && card_title_icon.eq(0).hasClass('fa-cloud-download-alt')) {
+       card_title_icon.closest('.card').remove();
+   }
+</script>

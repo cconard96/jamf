@@ -21,6 +21,8 @@
  * --------------------------------------------------------------------------
  */
 
+use Glpi\Application\View\TemplateRenderer;
+
 /**
  * JSS MDM Command class
  *
@@ -288,37 +290,10 @@ class PluginJamfMDMCommand
             if (!isset($command_data['params'])) {
                 return null;
             }
-            $out = "<form id='jamf-mdmcommand-send-$command'>";
-            $out .= "<table>";
-            foreach ($command_data['params'] as $name => $params) {
-                $out .= "<tr>";
-                $fieldtype = $params['type'] ?? 'text';
-                $displayname = $params['name'] ?? $name;
-                $out .= "<td><label for='$name'>$displayname</label></td>";
-                $out .= "<td>";
-                if ($fieldtype === 'number') {
-                    $min = $params['min'] ?? 0;
-                    $max = $params['max'] ?? PHP_INT_MAX;
-                    $out .= "<input title='$displayname' name='$name' type='number' min='$min' max='$max'/>";
-                } else if ($fieldtype === 'boolean') {
-                    $out .= "<input title='$displayname' name='$name' type='checkbox'";
-                    if (isset($params['value']) && $params['value'] === true) {
-                        $out .= " checked='checked'";
-                    }
-                    $out .= "/>";
-                } else if ($fieldtype === 'dropdown') {
-                    $out .= Dropdown::showFromArray($name, $params['values'], [
-                        'display' => false
-                    ]);
-                } else {
-                    $out .= "<input title='$displayname' name='$name' type='text'/>";
-                }
-                $out .= "</td>";
-                $out .= "</tr>";
-            }
-            $out .= "</table>";
-            $out .= "</form>";
-            echo $out;
+            return TemplateRenderer::getInstance()->render('@jamf/mdm_command.html.twig', [
+                'command' => $command,
+                'command_data' => $command_data,
+            ]);
         }
         return null;
     }
