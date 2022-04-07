@@ -1,0 +1,100 @@
+{#
+/*
+ * -------------------------------------------------------------------------
+ * JAMF plugin for GLPI
+ * Copyright (C) 2019-2021 by Curtis Conard
+ * https://github.com/cconard96/jamf
+ * -------------------------------------------------------------------------
+ * LICENSE
+ * This file is part of JAMF plugin for GLPI.
+ * JAMF plugin for GLPI is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * JAMF plugin for GLPI is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with JAMF plugin for GLPI. If not, see <http://www.gnu.org/licenses/>.
+ * --------------------------------------------------------------------------
+ */
+#}
+
+{% import 'components/form/fields_macros.html.twig' as fields %}
+
+{{ fields.hiddenField('itemtype', itemtype, '', {
+   no_label: true,
+}) }}
+{{ fields.hiddenField('items_id', items_id, '', {
+   no_label: true,
+}) }}
+
+<div class="mdm-button-group">
+   {% for command, command_params in commands %}
+      <div class="mdm-button" onclick="jamfPlugin.onMDMCommandButtonClick('{{ command }}', event)">
+         <i class="{{ command_params.icon }}" style="color: {{ command_params.icon_color|default('inherit') }}"></i>
+         {{ command_params.name }}
+      </div>
+   {% endfor %}
+</div>
+
+<h3>{{ _x('form_section', 'Pending Commands', 'jamf') }}</h3>
+<table class="table">
+   <thead>
+      <tr>
+         <th>{{ _x('form_field', 'Command', 'jamf') }}</th>
+         <th>{{ _x('form_field', 'Status', 'jamf') }}</th>
+         <th>{{ _x('field', 'Date issued', 'jamf') }}</th>
+         <th>{{ _x('field', 'Date of last push', 'jamf') }}</th>
+         <th>{{ _x('field', 'Username', 'jamf') }}</th>
+      </tr>
+   </thead>
+   <tbody>
+      {% for command in pending_commands %}
+         <tr>
+            <td>{{ command.name }}</td>
+            <td>{{ command.status }}</td>
+            <td>{{ command.date_time_issued }}</td>
+            <td>{{ command.date_time_failed }}</td>
+            <td>{{ command.username }}</td>
+         </tr>
+      {% endfor %}
+   </tbody>
+</table>
+
+<h3>{{ _x('form_section', 'Failed Commands', 'jamf') }}</h3>
+<table class="table table-striped">
+   <thead>
+   <tr>
+      <th>{{ _x('form_field', 'Command', 'jamf') }}</th>
+      <th>{{ _x('form_field', 'Error', 'jamf') }}</th>
+      <th>{{ _x('field', 'Date issued', 'jamf') }}</th>
+      <th>{{ _x('field', 'Date of last push', 'jamf') }}</th>
+      <th>{{ _x('field', 'Username', 'jamf') }}</th>
+   </tr>
+   </thead>
+   <tbody>
+   {% for command in failed_commands %}
+      <tr>
+         <td>{{ command.name }}</td>
+         <td>{{ command.error }}</td>
+         <td>{{ command.date_time_issued }}</td>
+         <td>{{ command.date_time_failed }}</td>
+         <td>{{ command.username }}</td>
+      </tr>
+   {% endfor %}
+   </tbody>
+</table>
+
+<script>
+   $(function() {
+       jamfPlugin = new JamfPlugin();
+       jamfPlugin.init({
+           commands: {{ commands|json_encode|raw }},
+           jamf_id: {{ jamf_id }},
+           itemtype: "{{ jamf_itemtype }}",
+           items_id: {{ jamf_items_id }},
+       });
+   });
+</script>

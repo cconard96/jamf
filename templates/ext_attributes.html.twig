@@ -1,0 +1,43 @@
+{#
+/*
+ * -------------------------------------------------------------------------
+ * JAMF plugin for GLPI
+ * Copyright (C) 2019-2021 by Curtis Conard
+ * https://github.com/cconard96/jamf
+ * -------------------------------------------------------------------------
+ * LICENSE
+ * This file is part of JAMF plugin for GLPI.
+ * JAMF plugin for GLPI is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * JAMF plugin for GLPI is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with JAMF plugin for GLPI. If not, see <http://www.gnu.org/licenses/>.
+ * --------------------------------------------------------------------------
+ */
+#}
+
+{% import 'components/form/fields_macros.html.twig' as fields %}
+
+<table class="table">
+   <thead>
+      <tr>
+         <th>{{ _x('field', 'Name', 'jamf') }}</th>
+         <th>{{ _x('field', 'Type', 'jamf') }}</th>
+         <th>{{ _x('field', 'Value', 'jamf') }}</th>
+      </tr>
+   </thead>
+   <tbody>
+      {% for ext_attr in attributes %}
+         <tr>
+            <td>{{ ext_attr.name }}</td>
+            <td>{{ ext_attr.data_type }}</td>
+            <td>{{ ext_attr.value }}</td>
+         </tr>
+      {% endfor %}
+   </tbody>
+</table>

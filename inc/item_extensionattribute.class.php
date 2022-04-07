@@ -21,6 +21,8 @@
  * --------------------------------------------------------------------------
  */
 
+use Glpi\Application\View\TemplateRenderer;
+
 /**
  * JSS Extension Attribute Item Link class
  *
@@ -78,19 +80,9 @@ class PluginJamfItem_ExtensionAttribute extends CommonDBChild
         }
 
         $attributes = $mobiledevice->getExtensionAttributes();
-
-        echo "<table class='tab_cadre_fixe'>";
-        echo "<thead>";
-        echo "<th>" . _x('field', 'Name', 'jamf') . "</th>";
-        echo "<th>" . _x('field', 'Type', 'jamf') . "</th>";
-        echo "<th>" . _x('field', 'Value', 'jamf') . "</th>";
-        echo "</thead>";
-        echo "<tbody>";
-        foreach ($attributes as $attribute) {
-            echo "<tr><td>{$attribute['name']}</td><td>{$attribute['data_type']}</td><td>{$attribute['value']}</td></tr>";
-        }
-        echo "</tbody>";
-        echo "</table>";
+        TemplateRenderer::getInstance()->display('@jamf/ext_attributes.html.twig', [
+            'attributes' => $attributes
+        ]);
         return true;
     }
 }

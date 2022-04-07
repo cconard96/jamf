@@ -1,0 +1,47 @@
+{#
+/*
+ * -------------------------------------------------------------------------
+ * JAMF plugin for GLPI
+ * Copyright (C) 2019-2021 by Curtis Conard
+ * https://github.com/cconard96/jamf
+ * -------------------------------------------------------------------------
+ * LICENSE
+ * This file is part of JAMF plugin for GLPI.
+ * JAMF plugin for GLPI is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * JAMF plugin for GLPI is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with JAMF plugin for GLPI. If not, see <http://www.gnu.org/licenses/>.
+ * --------------------------------------------------------------------------
+ */
+#}
+
+{% import 'components/form/fields_macros.html.twig' as fields %}
+
+{% if can_edit %}
+   <form method="POST" action="{{ url }}">
+{% endif %}
+{{ fields.hiddenField('users_id', users_id, '', {
+   no_label: true,
+}) }}
+{{ fields.dropdownArrayField('jssaccounts_id', jssaccounts_id, jssaccounts, _x('itemtype', 'JSS Account', 'jamf'), {
+   display_emptychoice: true,
+   readonly: not can_edit,
+}) }}
+
+{% if can_edit %}
+   <button name="update" type="submit" class="btn btn-primary">{{ _x('action', 'Update account link', 'jamf') }}</button>
+   <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}" />
+   </form>
+{% endif %}
+
+{% if jssaccounts_id != null and jssaccount_link != null %}
+   <a  class="btn btn-outline-secondary" href="{{ jssaccount_link }}">
+      {{ _x('action', 'View in Jamf', 'jamf') }}
+   </a>
+{% endif %}

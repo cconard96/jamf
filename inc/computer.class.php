@@ -20,6 +20,8 @@
  --------------------------------------------------------------------------
  */
 
+use Glpi\Application\View\TemplateRenderer;
+
 /**
  * PluginJamfComputer class. This represents a computer from Jamf.
  * This is mainly used to store extra fields that are not already in the GLPI Computer class.
@@ -45,8 +47,6 @@ class PluginJamfComputer extends PluginJamfAbstractDevice
      */
     public static function showForItem(array $params)
     {
-        global $CFG_GLPI;
-
         $item = $params['item'];
 
         if (!self::canView() || $item::getType() !== 'Computer') {
@@ -57,45 +57,15 @@ class PluginJamfComputer extends PluginJamfAbstractDevice
             return $value ? __('Yes') : __('No');
         };
 
-        $out = '';
         $jamf_item = static::getJamfItemForGLPIItem($item);
-
         if ($jamf_item === null) {
-            echo $out;
             return false;
         }
         $match = $jamf_item->fields;
         $match = array_merge($match, $jamf_item->getJamfDeviceData());
 
-        $out .= "<tr><th colspan='4'>" . _x('form_section', 'Jamf General Information', 'jamf') . '</th></tr>';
-        $out .= '<tr><td>' . _x('field', 'Import date', 'jamf') . '</td>';
-        $out .= '<td>' . Html::convDateTime($match['import_date']) . '</td>';
-        $out .= '<td>' . _x('field', 'Last sync', 'jamf') . '</td>';
-        $out .= '<td>' . Html::convDateTime($match['sync_date']) . '</td></tr>';
-
-        $out .= '<tr><td>' . _x('field', 'Jamf last inventory', 'jamf') . '</td>';
-        $out .= '<td>' . PluginJamfToolbox::utcToLocal($match['last_inventory']) . '</td>';
-        $out .= '<td>' . _x('field', 'Jamf import date', 'jamf') . '</td>';
-        $out .= '<td>' . PluginJamfToolbox::utcToLocal($match['entry_date']) . '</td></tr>';
-
-        $out .= '<tr><td>' . _x('field', 'Enrollment date', 'jamf') . '</td>';
-        $out .= '<td>' . PluginJamfToolbox::utcToLocal($match['enroll_date']) . '</td>';
-        $out .= '<td>' . _x('field', 'Supervised', 'jamf') . '</td>';
-        $out .= '<td>' . $getYesNo($match['supervised']) . '</td></tr>';
-
-        $out .= '<tr><td>' . _x('field', 'Managed', 'jamf') . '</td>';
-        $out .= '<td>' . $getYesNo($match['managed']) . '</td>';
-        $out .= '<td>' . _x('field', 'Activation locked', 'jamf') . '</td>';
-        $out .= '<td>' . $getYesNo($match['activation_lock_enabled']) . '</td></tr>';
-
-        $link = self::getJamfDeviceURL($match['jamf_items_id']);
-        $view_msg = _x('action', 'View in Jamf', 'jamf');
-        $out .= "<tr><td colspan='4' class='center'>";
-        $out .= "<a class='vsubmit' href='{$link}' target='_blank'>{$view_msg}</a>";
-
+        $js = '';
         if ($item->canUpdate()) {
-            $onclick = "syncDevice(\"{$item::getType()}\", {$item->getID()}); return false;";
-            $out .= "&nbsp;&nbsp;<a class='vsubmit' onclick='{$onclick}'>" . _x('action', 'Sync now', 'jamf') . '</a>';
             $ajax_url = Plugin::getWebDir('jamf') . '/ajax/sync.php';
             $js = <<<JAVASCRIPT
                function syncDevice(itemtype, items_id) {
@@ -110,10 +80,61 @@ class PluginJamfComputer extends PluginJamfAbstractDevice
                   });
                }
 JAVASCRIPT;
-            $out .= Html::scriptBlock($js);
         }
-        $out .= '</td></tr>';
-        echo $out;
+        $info = [
+            'general'   => [
+                'caption' => _x('form_section', 'Jamf General Information', 'jamf'),
+                'fields'    => [
+                    'import_date' => [
+                        'caption' => _x('field', 'Import date', 'jamf'),
+                        'value' => Html::convDateTime($match['import_date']),
+                    ],
+                    'sync_date' => [
+                        'caption' => _x('field', 'Last sync', 'jamf'),
+                        'value' => Html::convDateTime($match['sync_date']),
+                    ],
+                    'last_inventory' => [
+                        'caption' => _x('field', 'Jamf last inventory', 'jamf'),
+                        'value' => PluginJamfToolbox::utcToLocal($match['last_inventory']),
+                    ],
+                    'entry_date' => [
+                        'caption' => _x('field', 'Jamf import date', 'jamf'),
+                        'value' => PluginJamfToolbox::utcToLocal($match['entry_date']),
+                    ],
+                    'enroll_date' => [
+                        'caption' => _x('field', 'Enrollment date', 'jamf'),
+                        'value' => PluginJamfToolbox::utcToLocal($match['enroll_date']),
+                    ],
+                    'supervised' => [
+                        'caption' => _x('field', 'Supervised', 'jamf'),
+                        'value' => $getYesNo($match['supervised']),
+                    ],
+                    'managed' => [
+                        'caption' => _x('field', 'Managed', 'jamf'),
+                        'value' => $getYesNo($match['managed']),
+                    ],
+                    'activation_lock_enabled' => [
+                        'caption' => _x('field', 'Activation locked', 'jamf'),
+                        'value' => $getYesNo($match['activation_lock_enabled']),
+                    ],
+                ],
+                'buttons' => [
+                    'view_in_jamf' => [
+                        'caption' => _x('action', 'View in Jamf', 'jamf'),
+                        'url' => self::getJamfDeviceURL($match['jamf_items_id'])
+                    ],
+                    'sync' => [
+                        'caption' => _x('action', 'Sync now', 'jamf'),
+                        'on_click' => "syncDevice(\"{$item::getType()}\", {$item->getID()}); return false;"
+                    ],
+                ],
+                'extra_js'  => $js
+            ]
+        ];
+
+        TemplateRenderer::getInstance()->display('@jamf/inventory_info.html.twig', [
+            'info' => $info,
+        ]);
     }
 
     /**

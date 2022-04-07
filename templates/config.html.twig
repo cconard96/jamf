@@ -1,0 +1,92 @@
+{#
+/*
+ * -------------------------------------------------------------------------
+ * JAMF plugin for GLPI
+ * Copyright (C) 2019-2021 by Curtis Conard
+ * https://github.com/cconard96/jamf
+ * -------------------------------------------------------------------------
+ * LICENSE
+ * This file is part of JAMF plugin for GLPI.
+ * JAMF plugin for GLPI is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * JAMF plugin for GLPI is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with JAMF plugin for GLPI. If not, see <http://www.gnu.org/licenses/>.
+ * --------------------------------------------------------------------------
+ */
+#}
+
+{% import 'components/form/fields_macros.html.twig' as fields %}
+
+<form name="form" action="{{ url }}" method="post" data-track-changes="true" data-submit-once>
+   <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}" />
+   <div class="card-body d-flex flex-wrap">
+      <div class="col-12 col-xxl-{{ item_has_pictures ? '9' : '12' }} flex-column">
+         <div class="d-flex flex-row flex-wrap flex-xl-nowrap">
+            <div class="row flex-row align-items-start flex-grow-1">
+               <div class="row flex-row">
+                  {{ fields.largeTitle(_x('form_section', 'Server Settings', 'jamf'), 'ti ti-server') }}
+                  {{ fields.textField('jssserver', config.jssserver|default(''), _x('config', 'JSS Server', 'jamf')) }}
+                  {{ fields.textField('jssuser', config.jssuser|default(''), _x('config', 'JSS User', 'jamf')) }}
+                  {% set password_set = config.jsspassword is defined and config.jsspassword|length > 0 %}
+                  {% if config.jsspassword is defined and config.jsspassword|length > 0 %}
+                     {% set field_value %}
+                        <button name="reset_password" type="button" class="btn btn-outline-secondary btn-sm">
+                           <i class="ti ti-key"></i>
+                           {{ _x('button', 'Reset password', 'jamf') }}
+                        </button>
+                     {% endset %}
+                     {{ fields.field('password_reset_btn', field_value, _x('config', 'JSS Password', 'jamf'), {
+                        add_field_class: 'align-items-center',
+                     }) }}
+                     <script>
+                        $('button[name="reset_password"]').on('click', (e) => {
+                           const password_input = $('input[name="jsspassword"]');
+                           $(e.currentTarget).closest('div.form-field').hide();
+                           password_input.val('');
+                           password_input.closest('div.form-field').attr('hidden', null);
+                        });
+                     </script>
+                  {% endif %}
+                  {{ fields.passwordField('jsspassword', config.jsspassword|default(null), _x('config', 'JSS Password', 'jamf'), {
+                     add_field_attribs: password_set ? {'hidden': 'hidden'} : {},
+                  }) }}
+                  {{ fields.dropdownYesNo('jssignorecert', config.jssignorecert|default(true), _x('config', 'Ignore JSS Certificate', 'jamf')) }}
+
+                  {{ fields.largeTitle(_x('form_section', 'Sync Settings', 'jamf'), 'ti ti-server') }}
+                  {{ fields.dropdownYesNo('sync_general', config.sync_general|default(false), _x('config', 'Sync General', 'jamf')) }}
+                  {{ fields.dropdownYesNo('sync_os', config.sync_os|default(false), _x('config', 'Sync OS', 'jamf')) }}
+                  {{ fields.dropdownYesNo('sync_software', config.sync_software|default(false), _x('config', 'Sync Software', 'jamf')) }}
+                  {{ fields.dropdownYesNo('sync_financial', config.sync_financial|default(false), _x('config', 'Sync Financial', 'jamf')) }}
+                  {{ fields.dropdownYesNo('sync_user', config.sync_user|default(false), _x('config', 'Sync User', 'jamf')) }}
+                  {{ fields.dropdownYesNo('sync_components', config.sync_components|default(false), _x('config', 'Sync Components', 'jamf')) }}
+                  {{ fields.dropdownYesNo('autoimport', config.autoimport|default(false), _x('config', 'Auto Import', 'jamf')) }}
+
+                  {{ fields.largeTitle(_x('form_section', 'Default Settings', 'jamf'), 'ti ti-server') }}
+                  {{ fields.dropdownField('Manufacturer', default_manufacturer, config.default_manufacturer|default(null), _x('config', 'Manufacturer', 'jamf')) }}
+                  {{ fields.dropdownField('PhoneType', iphone_type, config.iphone_type|default(null), _x('config', 'iPhone Type', 'jamf')) }}
+                  {{ fields.dropdownField('ComputerType', ipad_type, config.ipad_type|default(null), _x('config', 'iPad Type', 'jamf')) }}
+                  {{ fields.dropdownField('ComputerType', appletv_type, config.appletv_type|default(null), _x('config', 'AppleTV Type', 'jamf')) }}
+                  {{ fields.dropdownField('State', default_status, config.default_status|default(null), _x('config', 'Default status', 'jamf'), {
+                     entity: 0,
+                     condition: {
+                        is_visible_computer: true,
+                        is_visible_phone: true,
+                     }
+                  }) }}
+
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <button class="btn btn-primary me-2" type="submit" name="update" value="1">
+      <i class="far fa-save"></i>
+      <span>{{ _x('button', 'Save') }}</span>
+   </button>
+</form>

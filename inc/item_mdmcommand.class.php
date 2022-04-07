@@ -21,6 +21,8 @@
  * --------------------------------------------------------------------------
  */
 
+use Glpi\Application\View\TemplateRenderer;
+
 /**
  * JSS Item_MDMCommand class
  *
@@ -144,6 +146,9 @@ class PluginJamfItem_MDMCommand extends CommonDBTM
     private static function getAvailableUpdates($model_identifier): array
     {
         $data = self::getPMVData();
+        if (empty($data)) {
+            return [];
+        }
         $data['iOS'] = array_filter($data['iOS'], static function ($item) use ($model_identifier) {
             return $item['ExpirationDate'] > date('Y-m-d') &&
                 in_array($model_identifier, $item['SupportedDevices'], true);
@@ -194,76 +199,19 @@ class PluginJamfItem_MDMCommand extends CommonDBTM
         }
 
         $commands = self::getApplicableCommands($mobiledevice);
-
-        echo Html::hidden('itemtype', ['value' => $item->getType()]);
-        echo Html::hidden('items_id', ['value' => $item->getID()]);
-        echo "<div class='mdm-button-group'>";
-        foreach ($commands as $command => $params) {
-            $title = $params['name'];
-            $icon = $params['icon'] ?? '';
-            $icon_color = $params['icon_color'] ?? 'inherit';
-            $onclick = "jamfPlugin.onMDMCommandButtonClick('$command', event)";
-            echo "<div class='mdm-button' onclick=\"$onclick\"><i class='$icon' style='color: $icon_color'></i>$title</div>";
-        }
-        echo "</div>";
-
         $item_commands = $mobiledevice->getMDMCommands();
-
-        echo "<h3>" . _x('form_section', 'Pending Commands', 'jamf') . "</h3>";
-        echo "<table class='tab_cadre_fixe'>";
-        echo "<thead>";
-        echo "<th>" . _x('field', 'Command', 'jamf') . "</th>";
-        echo "<th>" . _x('field', 'Status', 'jamf') . "</th>";
-        echo "<th>" . _x('field', 'Date issued', 'jamf') . "</th>";
-        echo "<th>" . _x('field', 'Date of last push', 'jamf') . "</th>";
-        echo "<th>" . _x('field', 'Username', 'jamf') . "</th>";
-        echo "</thead>";
-        echo "<tbody>";
-        foreach ($item_commands['pending'] as $entry) {
-            $last_push = $entry['date_time_failed'] ?? '';
-            $username = $entry['username'] ?? '';
-            $issued = $entry['date_time_issued'];
-            echo "<tr><td>{$entry['name']}</td><td>{$entry['status']}</td><td>{$issued}</td><td>{$last_push}</td><td>{$username}</td></tr>";
-        }
-        echo "</tbody>";
-        echo "</table>";
-
-        echo "<h3>" . _x('form_section', 'Failed Commands', 'jamf') . "</h3>";
-        echo "<table class='tab_cadre_fixe'>";
-        echo "<thead>";
-        echo "<th>" . _x('field', 'Command', 'jamf') . "</th>";
-        echo "<th>" . _x('field', 'Error', 'jamf') . "</th>";
-        echo "<th>" . _x('field', 'Date issued', 'jamf') . "</th>";
-        echo "<th>" . _x('field', 'Date of last push', 'jamf') . "</th>";
-        echo "<th>" . _x('field', 'Username', 'jamf') . "</th>";
-        echo "</thead>";
-        echo "<tbody>";
-        foreach ($item_commands['failed'] as $entry) {
-            $last_push = $entry['date_time_failed'];
-            $username = $entry['username'] ?? '';
-            $issued = $entry['date_time_issued'];
-            echo "<tr><td>{$entry['name']}</td><td>{$entry['error']}</td><td>{$issued}</td><td>{$last_push}</td><td>{$username}</td></tr>";
-        }
-        echo "</tbody>";
-        echo "</table>";
-        $commands_json = json_encode($commands, JSON_FORCE_OBJECT);
         $device_data = $mobiledevice->getJamfDeviceData();
-        $jamf_id = $device_data['jamf_items_id'];
-        $itemtype = 'MobileDevice';
-        $items_id = $mobiledevice->getID();
-        $js = <<<JAVASCRIPT
-         $(function(){
-            jamfPlugin = new JamfPlugin();
-            jamfPlugin.init({
-               commands: $commands_json,
-               jamf_id: $jamf_id,
-               itemtype: "$itemtype",
-               items_id: $items_id,
-            });
-         });
-JAVASCRIPT;
 
-        echo Html::scriptBlock($js);
+        TemplateRenderer::getInstance()->display('@jamf/mdm_commands.html.twig', [
+            'commands' => $commands,
+            'pending_commands' => $item_commands['pending'],
+            'failed_commands' => $item_commands['failed'],
+            'itemtype' => $item->getType(),
+            'items_id' => $item->getID(),
+            'jamf_itemtype' => 'MobileDevice',
+            'jamf_items_id' => $mobiledevice->getID(),
+            'jamf_id' => $device_data['jamf_items_id'],
+        ]);
         return true;
     }
 
