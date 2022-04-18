@@ -125,7 +125,7 @@ foreach ($pending as $data) {
 }
 echo "</tbody></table><br>";
 
-echo "<a class='vsubmit' onclick='mergeDevices(); return false;'>" . _x('action', 'Merge', 'jamf') . "</a>";
+echo "<button class='btn btn-primary' onclick='mergeDevices(); return false;'>" . _x('action', 'Merge', 'jamf') . "</button>";
 echo "</div>";
 $js = <<<JAVASCRIPT
       function mergeDevices() {

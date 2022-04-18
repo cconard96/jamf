@@ -79,9 +79,9 @@ foreach ($pending as $data) {
 }
 echo "</tbody></table><br>";
 
-echo "<a class='vsubmit' onclick='importDevices(); return false;'>" . _x('action', 'Import', 'jamf') . "</a>";
-echo "&nbsp;<a class='vsubmit' onclick='discoverNow(); return false;'>" . _x('action', 'Discover now', 'jamf') . "</a>";
-echo "&nbsp;<a class='vsubmit' onclick='clearPendingImports(); return false;'>" . _x('action', 'Clear pending imports', 'jamf') . "</a>";
+echo "<button class='btn btn-primary' onclick='importDevices(); return false;'>" . _x('action', 'Import', 'jamf') . "</button>";
+echo "&nbsp;<button class='btn btn-primary' onclick='discoverNow(); return false;'>" . _x('action', 'Discover now', 'jamf') . "</button>";
+echo "&nbsp;<button class='btn btn-primary' onclick='clearPendingImports(); return false;'>" . _x('action', 'Clear pending imports', 'jamf') . "</button>";
 echo "</div>";
 $ajax_root = Plugin::getWebDir('jamf') . '/ajax/';
 $import_msg = _x('action', 'Importing', 'jamf') . '...';
