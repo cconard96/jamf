@@ -49,7 +49,7 @@ $linked_devices = $DB->request([
 ]);
 
 $linked = [];
-while ($data = $linked_devices->next()) {
+foreach ($linked_devices as $data) {
     $linked[$data['itemtype']][] = $data;
 }
 
@@ -66,7 +66,7 @@ echo "<th>" . _x('field', 'UDID', 'jamf') . "</th>";
 echo "<th>" . _x('field', 'Discovery Date', 'jamf') . "</th>";
 echo "<th>" . _x('field', 'GLPI Item', 'jamf') . "</th>";
 echo "</thead><tbody>";
-while ($data = $pending->next()) {
+foreach ($pending as $data) {
     $rowid = $data['jamf_items_id'];
     $itemtype = $data['type'];
     /** @var CommonDBTM $item */

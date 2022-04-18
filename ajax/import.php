@@ -58,7 +58,7 @@ if ($_REQUEST['action'] == 'import') {
         PluginJamfMobileSync::syncExtensionAttributeDefinitions();
         PluginJamfComputerSync::syncExtensionAttributeDefinitions();
         // Import the requested device(s)
-        while ($data = $toimport->next()) {
+        foreach ($toimport as $data) {
             if ($data['jamf_type'] === 'MobileDevice') {
                 PluginJamfMobileSync::import($data['type'], $data['jamf_items_id']);
             } else {

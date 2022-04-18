@@ -57,7 +57,7 @@ echo "<th>" . _x('field', 'Type', 'jamf') . "</th>";
 echo "<th>" . _x('field', 'UDID', 'jamf') . "</th>";
 echo "<th>" . _x('field', 'Discovery Date', 'jamf') . "</th>";
 echo "</thead><tbody>";
-while ($data = $pending->next()) {
+foreach ($pending as $data) {
     $rowid = $data['jamf_items_id'];
     echo "<tr>";
     $import_checkbox = Html::input("import_{$data['id']}", [
