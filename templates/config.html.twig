@@ -36,7 +36,7 @@
                   {{ fields.textField('jssserver', config.jssserver|default(''), _x('config', 'JSS Server', 'jamf')) }}
                   {{ fields.textField('jssuser', config.jssuser|default(''), _x('config', 'JSS User', 'jamf')) }}
                   {% set password_set = config.jsspassword is defined and config.jsspassword|length > 0 %}
-                  {% if config.jsspassword is defined and config.jsspassword|length > 0 %}
+                  {% if password_set %}
                      {% set field_value %}
                         <button name="reset_password" type="button" class="btn btn-outline-secondary btn-sm">
                            <i class="ti ti-key"></i>
