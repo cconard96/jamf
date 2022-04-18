@@ -47,8 +47,10 @@ $check_all = Html::getCheckAllAsCheckbox('import_table');
 
 Html::printPager($start, $importcount, PluginJamfImport::getSearchURL(), '');
 echo "<form>";
-echo "<div class='center'><table id='import_table' class='tab_cadre' style='width: 50%'>";
+echo "<div class='center'><table id='import_table' class='table table-striped'>";
 echo "<thead>";
+echo '<tr><th colspan="7"><h1>' . _x('form', 'Discovered devices', 'jamf') . '</h1></th></tr>';
+echo '<tr>';
 echo "<th>{$check_all}</th>";
 echo "<th>" . _x('field', 'Jamf ID', 'jamf') . "</th>";
 echo "<th>" . _x('field', 'Jamf Type', 'jamf') . "</th>";
@@ -56,13 +58,15 @@ echo "<th>" . _x('field', 'Name', 'jamf') . "</th>";
 echo "<th>" . _x('field', 'Type', 'jamf') . "</th>";
 echo "<th>" . _x('field', 'UDID', 'jamf') . "</th>";
 echo "<th>" . _x('field', 'Discovery Date', 'jamf') . "</th>";
+echo '</tr>';
 echo "</thead><tbody>";
 foreach ($pending as $data) {
     $rowid = $data['jamf_items_id'];
     echo "<tr>";
     $import_checkbox = Html::input("import_{$data['id']}", [
         'type' => 'checkbox',
-        'display' => false
+        'display' => false,
+        'class' => 'form-check-input'
     ]);
     echo "<td>{$import_checkbox}</td>";
     echo "<td>{$data['jamf_items_id']}</td>";

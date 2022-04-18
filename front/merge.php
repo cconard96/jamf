@@ -57,14 +57,16 @@ $ajax_url = Plugin::getWebDir('jamf') . '/ajax/merge.php';
 
 Html::printPager($start, $importcount, $ajax_url, '');
 echo "<form>";
-echo "<div class='center'><table id='merge_table' class='tab_cadre' style='width: 50%'>";
+echo "<div class='center'><table id='merge_table' class='table table-striped'>";
 echo "<thead>";
+echo '<tr>';
 echo "<th>" . _x('field', 'Jamf ID', 'jamf') . "</th>";
 echo "<th>" . _x('field', 'Name', 'jamf') . "</th>";
 echo "<th>" . _x('field', 'Type', 'jamf') . "</th>";
 echo "<th>" . _x('field', 'UDID', 'jamf') . "</th>";
 echo "<th>" . _x('field', 'Discovery Date', 'jamf') . "</th>";
 echo "<th>" . _x('field', 'GLPI Item', 'jamf') . "</th>";
+echo '</tr>';
 echo "</thead><tbody>";
 foreach ($pending as $data) {
     $rowid = $data['jamf_items_id'];
