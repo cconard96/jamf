@@ -25,6 +25,8 @@
 
 <form name="form" action="{{ url }}" method="post" data-track-changes="true" data-submit-once>
    <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}" />
+   <input type="hidden" name="config_class" value="PluginJamfConfig" />
+   <input type="hidden" name="config_context" value="plugin:Jamf" />
    <div class="card-body d-flex flex-wrap">
       <div class="col-12 col-xxl-{{ item_has_pictures ? '9' : '12' }} flex-column">
          <div class="d-flex flex-row flex-wrap flex-xl-nowrap">
