@@ -21,8 +21,6 @@
  --------------------------------------------------------------------------
  */
 
-use mageekguy\atoum\writers\std\err;
-
 /**
  * JSS Classic API interface class
  * @since 1.0.0
