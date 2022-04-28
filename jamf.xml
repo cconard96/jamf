@@ -51,9 +51,9 @@ Versioning/Support
    </authors>
    <versions>
       <version>
-         <num>3.0.0-rc1</num>
+         <num>3.0.0</num>
          <compatibility>~10.0.0</compatibility>
-         <download_url>https://github.com/cconard96/jamf/releases/download/v3.0.0-rc1/glpi-jamf-v3.0.0-rc1.tar.bz2</download_url>
+         <download_url>https://github.com/cconard96/jamf/releases/download/v3.0.0/glpi-jamf-v3.0.0.tar.bz2</download_url>
       </version>
       <version>
          <num>2.2.0</num>
