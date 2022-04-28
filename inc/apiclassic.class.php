@@ -49,8 +49,7 @@ class PluginJamfAPIClassic
         $url = (self::$connection)->getAPIUrl($endpoint);
         $curl = curl_init($url);
         // Set the username and password in an authentication header
-        self::$connection->setCurlAuth($curl);
-        self::$connection->setCurlSecurity($curl);
+        self::$connection->setCurlOptions($curl);
         curl_setopt($curl, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json',
             "Accept: {$response_type}"
@@ -94,8 +93,7 @@ class PluginJamfAPIClassic
         $url = (self::$connection)->getAPIUrl($endpoint);
         $curl = curl_init($url);
         // Set the username and password in an authentication header
-        self::$connection->setCurlAuth($curl);
-        self::$connection->setCurlSecurity($curl);
+        self::$connection->setCurlOptions($curl);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($curl, CURLOPT_HTTPHEADER, [
             'Content-Type: application/xml',
@@ -122,10 +120,9 @@ class PluginJamfAPIClassic
         $url = (self::$connection)->getAPIUrl($endpoint);
         $curl = curl_init($url);
         // Set the username and password in an authentication header
-        self::$connection->setCurlAuth($curl);
+        self::$connection->setCurlOptions($curl);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
         curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
-        self::$connection->setCurlSecurity($curl);
         curl_setopt($curl, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json',
             'Accept: application/json'
@@ -150,9 +147,8 @@ class PluginJamfAPIClassic
         $url = (self::$connection)->getAPIUrl($endpoint);
         $curl = curl_init($url);
         // Set the username and password in an authentication header
-        self::$connection->setCurlAuth($curl);
+        self::$connection->setCurlOptions($curl);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
-        self::$connection->setCurlSecurity($curl);
         curl_exec($curl);
         $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);

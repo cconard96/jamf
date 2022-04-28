@@ -45,8 +45,7 @@ class PluginJamfAPIPro
         $url = (self::$connection)->getAPIUrl($endpoint, true);
         $curl = curl_init($url);
         // Set the username and password in an authentication header
-        self::$connection->setCurlAuth($curl);
-        self::$connection->setCurlSecurity($curl);
+        self::$connection->setCurlOptions($curl);
         curl_setopt($curl, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json',
             'Accept: application/json'
