@@ -1,5 +1,11 @@
 # Jamf Plugin for GLPI Changelog
 
+## [3.0.0]
+
+- The UI was redone a little bit to match the new UI added in GLPI 10 better
+- The plugin now adds information to the GLPI status check system meaning you can now monitor this plugin's connection to your Jamf server
+- You can specify a version when using the Update MDM command. The versions listed will be restricted to versions released by Apple and marked compatible with that device's model. A new automatic action was added to periodically update the "PMV" file provided by Apple which contains a list of firmware versions and the supported models for each.
+
 ## [2.2.0]
 
 - Added "Clear pending imports" button on the import page
