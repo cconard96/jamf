@@ -91,11 +91,31 @@ class PluginJamfConnection
         return "{$this->config['jssserver']}/JSSResource/{$endpoint}";
     }
 
+    public static function getUserAgentString(): string
+    {
+        return "Jamf%20Plugin%20for%20GLPI/".PLUGIN_JAMF_VERSION;
+    }
+
+    /**
+     * Sets all common curl options needed for the API calls.
+     *
+     * @param $curl
+     * @return void
+     */
+    public function setCurlOptions(&$curl): void
+    {
+        $this->setCurlAuth($curl);
+        $this->setCurlSecurity($curl);
+
+        // Set user agent
+        curl_setopt($curl, CURLOPT_USERAGENT, self::getUserAgentString());
+    }
+
     /**
      * Set the username and password for the specified curl connection.
      * @param resource $curl The curl handle.
      */
-    public function setCurlAuth(&$curl)
+    protected function setCurlAuth(&$curl)
     {
         if (isset($this->config['jssuser']) && !empty($this->config['jssuser'])) {
             curl_setopt($curl, CURLOPT_USERPWD, $this->config['jssuser'] . ':' . $this->config['jsspassword']);
@@ -107,7 +127,7 @@ class PluginJamfConnection
      * @param $curl
      * @since 2.0.0
      */
-    public function setCurlSecurity(&$curl)
+    protected function setCurlSecurity(&$curl)
     {
         curl_setopt($curl, CURLOPT_SSLVERSION, 6);
         if ($this->config['jssignorecert']) {
