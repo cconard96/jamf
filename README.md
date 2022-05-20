@@ -20,9 +20,18 @@ Syncs data from JAMF Pro to GLPI.
 - Contribute to French and Spanish localizations on [POEditor](https://poeditor.com/join/project/BepTgrM7ab).
 - To request new languages, please open a GitHub issue.
 
-## Versioning/Support
-- For each new major version of GLPI supported, the major version number of this plugin gets incremented.
-- For each feature release on the same major GLPI version, the minor version number of this plugin gets incremented.
-- Each bugfix release will increment the patch version number.
-- Bugfixes for the current and previous major versions of the plugin will be supported at least. Older versions may be supported depending on community interest and my own company's need. This plugin will not be backported to support versions older than 9.4.0.
-- I will strive to have at least a beta release for the latest major version of GLPi within a week of the full release.
+## Version Support
+
+Multiple versions of this plugin are supported at the same time to ease migration.
+Only 2 major versions will be supported at the same time (Ex: v1 and v2).
+When a new minor version is released, the previous minor version will have support ended after a month.
+Only the latest bug fix version of each minor release will be supported.
+
+Note: There was no official version support policy before 2022-05-19.
+The following version table may be reduced based on the policy stated above.
+
+| Plugin Version | GLPI Versions | Start of Support | End of Support |
+|----------------|---------------|------------------|----------------|
+| 1.2.1          | 9.4.X         | 2020-06-28       | 2022-05-19     |
+| 2.2.0          | 9.5.X         | 2021-06-11       | In Support     |
+| 3.0.0          | 10.0.X        | 2022-04-28       | In Support     |
