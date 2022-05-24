@@ -603,4 +603,10 @@ final class PluginJamfMigration
             'state'     => CronTask::STATE_WAITING,
         ]);
     }
+
+    public function apply_3_0_1_migration(): void
+    {
+        // Change udid column in glpi_plugin_jamf_imports to allow NULL values
+        $this->db->queryOrDie('ALTER TABLE `glpi_plugin_jamf_imports` MODIFY `udid` VARCHAR(100) NULL DEFAULT NULL');
+    }
 }
