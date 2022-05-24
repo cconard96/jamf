@@ -505,4 +505,8 @@ final class PluginJamfMigration {
          }
       }
    }
+
+   public function apply_2_2_1_migration() {
+      $this->db->queryOrDie('ALTER TABLE `glpi_plugin_jamf_imports` MODIFY `udid` VARCHAR(100) NULL DEFAULT NULL');
+   }
 }
