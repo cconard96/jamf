@@ -788,7 +788,7 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync
                 'udid' => $jamf_item['general']['udid'],
                 'jamf_type' => static::$jamf_itemtype,
                 'jamf_items_id' => $jamf_item['general']['id'],
-                'model_identifer' => $jamf_item['general']['model_identifier'],
+                'model_identifier' => $jamf_item['general']['model_identifier'],
             ]);
             if ($r === false) {
                 if ($use_transaction) {
