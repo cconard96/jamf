@@ -68,6 +68,11 @@
                   {{ fields.dropdownYesNo('sync_user', config.sync_user|default(false), _x('config', 'Sync User', 'jamf')) }}
                   {{ fields.dropdownYesNo('sync_components', config.sync_components|default(false), _x('config', 'Sync Components', 'jamf')) }}
                   {{ fields.dropdownYesNo('autoimport', config.autoimport|default(false), _x('config', 'Auto Import', 'jamf')) }}
+                  {{ fields.dropdownNumberField('sync_interval', config.sync_interval|default(60*8), _x('config', 'Sync Interval (minutes)', 'jamf'), {
+                     min: 60,
+                     max: 24*60,
+                     step: 60,
+                  }) }}
 
                   {{ fields.largeTitle(_x('form_section', 'Default Settings', 'jamf'), 'ti ti-server') }}
                   {{ fields.dropdownField('Manufacturer', default_manufacturer, config.default_manufacturer|default(null), _x('config', 'Manufacturer', 'jamf')) }}
