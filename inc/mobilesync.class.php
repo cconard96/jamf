@@ -301,11 +301,11 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync
             $purchasing = $this->data['purchasing'];
             $infocom_changes = [];
             if (!empty($purchasing['po_date_utc'])) {
-                $purchase_date = PluginJamfToolbox::utcToLocal(new DateTime($purchasing['po_date_utc']));
+                $purchase_date = PluginJamfToolbox::utcToLocal(new DateTime($purchasing['po_date_utc']), 0);
                 $infocom_changes['buy_date'] = $purchase_date;
                 if (!empty($purchasing['warranty_expires_utc'])) {
                     $infocom_changes['warranty_date'] = $purchase_date;
-                    $warranty_expiration = PluginJamfToolbox::utcToLocal(new DateTime($purchasing['warranty_expires_utc']));
+                    $warranty_expiration = PluginJamfToolbox::utcToLocal(new DateTime($purchasing['warranty_expires_utc']), 0);
                     $diff = date_diff(new DateTime($warranty_expiration), new DateTime($purchase_date));
                     $warranty_length = $diff->m + ($diff->y * 12);
                     $infocom_changes['warranty_duration'] = $warranty_length;
@@ -375,11 +375,11 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync
         try {
             $security = $this->data['security'];
             if (!empty($security['lost_mode_enable_issued_utc'])) {
-                $lost_mode_enable_date = PluginJamfToolbox::utcToLocal($security['lost_mode_enable_issued_utc']);
+                $lost_mode_enable_date = PluginJamfToolbox::utcToLocal($security['lost_mode_enable_issued_utc'], 0);
                 $this->jamfplugin_item_changes['lost_mode_enable_date'] = $lost_mode_enable_date;
             }
             if (!empty($security['lost_location_utc'])) {
-                $lost_location_date = PluginJamfToolbox::utcToLocal($security['lost_location_utc']);
+                $lost_location_date = PluginJamfToolbox::utcToLocal($security['lost_location_utc'], 0);
                 $this->jamfplugin_item_changes['lost_location_date'] = $lost_location_date;
             }
             $this->commondevice_changes['activation_lock_enabled'] = $security['activation_lock_enabled'];
@@ -547,15 +547,15 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync
         try {
             $general = $this->data['general'];
             if (!empty($general['last_inventory_update_utc'])) {
-                $last_inventory = PluginJamfToolbox::utcToLocal($general['last_inventory_update_utc']);
+                $last_inventory = PluginJamfToolbox::utcToLocal($general['last_inventory_update_utc'], 0);
                 $this->commondevice_changes['last_inventory'] = $last_inventory;
             }
             if (!empty($general['initial_entry_date_utc'])) {
-                $entry_date = PluginJamfToolbox::utcToLocal($general['initial_entry_date_utc']);
+                $entry_date = PluginJamfToolbox::utcToLocal($general['initial_entry_date_utc'], 0);
                 $this->commondevice_changes['entry_date'] = $entry_date;
             }
             if (!empty($general['last_enrollment_utc'])) {
-                $enroll_date = PluginJamfToolbox::utcToLocal($general['last_enrollment_utc']);
+                $enroll_date = PluginJamfToolbox::utcToLocal($general['last_enrollment_utc'], 0);
                 $this->commondevice_changes['enroll_date'] = $enroll_date;
             }
 
@@ -720,7 +720,7 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync
             '_jamf_type' => 'MobileDevice',
             'name' => $jamf_item['general']['name'],
             'itemtype' => $itemtype,
-            'last_inventory' => PluginJamfToolbox::utcToLocal($jamf_item['general']['last_inventory_update_utc']),
+            'last_inventory' => PluginJamfToolbox::utcToLocal($jamf_item['general']['last_inventory_update_utc'], 0),
             'managed' => $jamf_item['general']['managed'],
             'supervised' => $jamf_item['general']['supervised'],
         ];

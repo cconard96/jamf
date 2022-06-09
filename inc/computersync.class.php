@@ -242,11 +242,11 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync
             $purchasing = $this->data['purchasing'];
             $infocom_changes = [];
             if (!empty($purchasing['po_date_utc'])) {
-                $purchase_date = PluginJamfToolbox::utcToLocal(new DateTime($purchasing['po_date_utc']));
+                $purchase_date = PluginJamfToolbox::utcToLocal(new DateTime($purchasing['po_date_utc']), 0);
                 $infocom_changes['buy_date'] = $purchase_date;
                 if (!empty($purchasing['warranty_expires_utc'])) {
                     $infocom_changes['warranty_date'] = $purchase_date;
-                    $warranty_expiration = PluginJamfToolbox::utcToLocal(new DateTime($purchasing['warranty_expires_utc']));
+                    $warranty_expiration = PluginJamfToolbox::utcToLocal(new DateTime($purchasing['warranty_expires_utc']), 0);
                     $diff = date_diff(new DateTime($warranty_expiration), new DateTime($purchase_date));
                     $warranty_length = $diff->m + ($diff->y * 12);
                     $infocom_changes['warranty_duration'] = $warranty_length;
