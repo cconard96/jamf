@@ -90,7 +90,7 @@ while ($data = $pending->next()) {
       ], [new QueryExpression("CASE WHEN uuid='".$data['udid']."' THEN 0 ELSE 1 END")], 1);
 
       $params = [
-         'used'   => array_column($linked['Computer'], 'items_id')
+         'used'   => array_column($linked['Computer'] ?? [], 'items_id')
       ];
       if (count($guess)) {
          $params['value'] = reset($guess)['id'];
@@ -109,7 +109,7 @@ while ($data = $pending->next()) {
          ], [], 1);
       }
       $params = [
-         'used'   => array_column($linked['Phone'], 'items_id')
+         'used'   => array_column($linked['Phone'] ?? [], 'items_id')
       ];
       if (count($guess)) {
          $match = reset($guess);
