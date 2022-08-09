@@ -1,5 +1,16 @@
 # Jamf Plugin for GLPI Changelog
 
+## [3.0.1]
+
+### Fixes
+
+- Fix typo in the `model_identifier` DB column that caused model data to not import correctly for mobile devices
+- Fix issue with the `uuid` DB column for imports not accepting NULL values that caused discovery issues with Computers
+- Fixed issues with date and time timezone handling during syncing
+- Fixed possible issue with date and time handling if the GLPI date format preference is not YYYY-MM-DD
+- Fixed error that preventing showing the device merge form if the list of either Computers or Mobile Devices is empty
+- Fixed potential issue with the sync automatic action if the sync interval configuration value is missing or invalid
+
 ## [3.0.0]
 
 - The UI was redone a little bit to match the new UI added in GLPI 10 better
