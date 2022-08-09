@@ -178,7 +178,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
         $volume = 0;
 
         $config = PluginJamfConfig::getConfig();
-        $valid_sync_interval = isset($config['sync_interval']) && !empty($config['sync_interval']) && ((int) $config['sync_interval'] < 1);
+        $valid_sync_interval = isset($config['sync_interval']) && !empty($config['sync_interval']) && ((int) $config['sync_interval'] >= 1);
         if (!$valid_sync_interval) {
             $config['sync_interval'] = 8 * 60;
         }
