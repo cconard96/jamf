@@ -287,7 +287,7 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync
             foreach ($extension_attributes as $attr) {
                 $attr_match = $ext_attribute->find([
                     'jamf_id' => $attr['id'],
-                    'itemtype' => $this->jamfplugin_device::getType(),
+                    //'itemtype' => $this->jamfplugin_device::getType(),
                     'jamf_type' => 'Computer'
                 ], [], 1);
 
@@ -432,15 +432,15 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync
         try {
             $general = $this->data['general'];
             if (!empty($general['last_inventory_update_utc'])) {
-                $last_inventory = new DateTime($general['last_inventory_update_utc']);
+                $last_inventory = PluginJamfToolbox::utcToLocal($general['last_inventory_update_utc']);
                 $this->commondevice_changes['last_inventory'] = $last_inventory;
             }
             if (!empty($general['initial_entry_date_utc'])) {
-                $entry_date = $general['initial_entry_date_utc'];
+                $entry_date = PluginJamfToolbox::utcToLocal($general['initial_entry_date_utc']);
                 $this->commondevice_changes['entry_date'] = $entry_date;
             }
             if (!empty($general['last_enrollment_utc'])) {
-                $enroll_date = new DateTime($general['last_enrollment_utc']);
+                $enroll_date = PluginJamfToolbox::utcToLocal($general['last_enrollment_utc']);
                 $this->commondevice_changes['enroll_date'] = $enroll_date;
             }
 

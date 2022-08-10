@@ -261,7 +261,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
                 if ($use_transaction) {
                     $DB->rollBack();
                 }
-                throw new RuntimeException('One or more sync actions failed [' . implode(', ', $failed) . ']');
+                throw new RuntimeException('One or more sync actions failed [' . implode(', ', array_keys($failed)) . ']');
             }
 
             if ($use_transaction) {
@@ -269,7 +269,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
             }
             return true;
         } catch (Exception $e) {
-            Toolbox::logError($e->getMessage());
+            trigger_error($e->getMessage());
             if ($use_transaction) {
                 $DB->rollBack();
             }

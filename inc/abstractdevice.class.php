@@ -150,7 +150,7 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
                     static::getTable() . '.id',
                     'itemtype',
                     'items_id',
-                    'jamf_items_id'
+                    'glpi_plugin_jamf_devices.jamf_items_id'
                 ],
                 'FROM' => 'glpi_plugin_jamf_devices',
                 'LEFT JOIN' => [
