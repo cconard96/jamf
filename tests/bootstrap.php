@@ -14,7 +14,7 @@ include GLPI_ROOT . "/inc/includes.php";
 include "tests/abstractdbtest.class.php";
 
 $plugin = new Plugin();
-//$plugin->checkStates(true);
+$plugin->checkPluginState('jamf');
 $plugin->getFromDBbyDir('jamf');
 
 if (!plugin_jamf_check_prerequisites()) {
