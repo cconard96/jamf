@@ -4,12 +4,17 @@ global $CFG_GLPI;
 define('GLPI_ROOT', dirname(dirname(dirname(__DIR__))));
 define("GLPI_CONFIG_DIR", GLPI_ROOT . "/tests");
 
+if (file_exists("vendor/autoload.php")) {
+    require_once "vendor/autoload.php";
+}
+require_once "vendor/cjdevstudios/atoum-phpunit-shim/src/bootstrap.php";
 include GLPI_ROOT . "/inc/includes.php";
-include_once GLPI_ROOT . '/tests/GLPITestCase.php';
-include_once GLPI_ROOT . '/tests/DbTestCase.php';
+//include_once GLPI_ROOT . '/tests/GLPITestCase.php';
+//include_once GLPI_ROOT . '/tests/DbTestCase.php';
+include "tests/abstractdbtest.class.php";
 
 $plugin = new Plugin();
-$plugin->checkStates(true);
+//$plugin->checkStates(true);
 $plugin->getFromDBbyDir('jamf');
 
 if (!plugin_jamf_check_prerequisites()) {

@@ -23,14 +23,14 @@
 
 namespace tests\units;
 
-use DbTestCase;
+use AbstractDBTest;
 use PluginJamfComputer;
 use PluginJamfComputerTestSync;
 use PluginJamfExtensionAttribute;
 use PluginJamfImport;
 use PluginJamfItem_ExtensionAttribute;
 
-class PluginJamfComputerSync extends DbTestCase {
+class PluginJamfComputerSync extends AbstractDBTest {
 
     public function testDiscover() {
         global $DB;

@@ -23,7 +23,7 @@
 
 namespace tests\units;
 
-use DbTestCase;
+use AbstractDBTest;
 use Phone;
 use PluginJamfAbstractDevice;
 use PluginJamfExtensionAttribute;
@@ -35,7 +35,7 @@ use PluginJamfMobileTestSync;
 use PluginJamfSync;
 use ReflectionClass;
 
-class PluginJamfMobileSync extends DbTestCase {
+class PluginJamfMobileSync extends AbstractDBTest {
 
     public function testDiscover() {
         global $DB;
