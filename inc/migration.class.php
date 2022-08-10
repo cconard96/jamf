@@ -356,13 +356,13 @@ final class PluginJamfMigration
 
         // Add default status config option
         if (!isset($config['default_status'])) {
-            $this->glpiMigration->addConfig(['default_status', null], 'plugin:Jamf');
+            $this->glpiMigration->addConfig(['default_status' => null], 'plugin:Jamf');
         }
         if (!isset($config['sync_components'])) {
-            $this->glpiMigration->addConfig(['sync_components', 0], 'plugin:Jamf');
+            $this->glpiMigration->addConfig(['sync_components' => 0], 'plugin:Jamf');
         }
         if (!isset($config['jssignorecert'])) {
-            $this->glpiMigration->addConfig(['jssignorecert', 0], 'plugin:Jamf');
+            $this->glpiMigration->addConfig(['jssignorecert' => 0], 'plugin:Jamf');
         }
     }
 
