@@ -35,6 +35,7 @@ class PluginJamfComputerSync extends AbstractDBTest {
     public function testDiscover() {
         global $DB;
 
+        self::assertDirectoryExists(GLPI_ROOT . '/plugins/jamf/tools/samples/classic_api/');
         PluginJamfComputerTestSync::discover();
 
         $iterator = $DB->request([
@@ -83,25 +84,33 @@ class PluginJamfComputerSync extends AbstractDBTest {
             ]
         ]);
         $this->integer($iterator->count())->isEqualTo(1);
-        $item = $iterator->next();
+        $item = $iterator->current();
 
         // Make sure the new computer is linked properly
         $link_iterator = $DB->request([
-            //'SELECT' => ['id', 'udid'],
-            'FROM' => PluginJamfComputer::getTable(),
+            'SELECT' => [PluginJamfComputer::getTable() . '.id', 'udid'],
+            'FROM' => 'glpi_plugin_jamf_devices',
             'WHERE' => [
                 'itemtype' => 'Computer',
                 'items_id' => $item['id']
+            ],
+            'LEFT JOIN' => [
+                PluginJamfComputer::getTable() => [
+                    'ON' => [
+                        PluginJamfComputer::getTable() => 'glpi_plugin_jamf_devices_id',
+                        'glpi_plugin_jamf_devices' => 'id'
+                    ]
+                ]
             ]
         ]);
         $this->integer($link_iterator->count())->isEqualTo(1);
-        $link = $link_iterator->next();
+        $link = $link_iterator->current();
         $this->string($link['udid'])->isEqualTo('CA40DA58-60A3-11E4-90B8-12DF261F2C7E');
 
         $ext_attr_iterator = $DB->request([
             'FROM' => PluginJamfItem_ExtensionAttribute::getTable(),
             'WHERE' => [
-                'itemtype' => PluginJamfComputer::class,
+                'itemtype' => 'PluginJamfComputer',
                 'items_id' => $link['id']
             ]
         ]);

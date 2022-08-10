@@ -40,6 +40,30 @@ abstract class AbstractDBTest extends \CJDevStudios\AtoumShim\Atoum
         $PHPLOGGER->setHandlers([static::$php_log_handler]);
         static::$sql_log_handler = new TestHandler(LogLevel::DEBUG);
         $SQLLOGGER->setHandlers([static::$sql_log_handler]);
+
+        $default_config = [
+            'autoimport' => 0,
+            'sync_general' => 1,
+            'sync_components' => 1,
+            'sync_financial' => 1,
+            'sync_os' => 1,
+            'sync_software' => 1,
+            'sync_user' => 1,
+            'ipad_type' => 0,
+            'iphone_type' => 0,
+            'appletv_type' => 0,
+            'default_manufacturer' => 0,
+        ];
+        foreach ($default_config as $name => $value) {
+            $DB->updateOrInsert('glpi_configs', [
+                'value' => $value,
+                'context' => 'plugin:Jamf',
+                'name' => $name,
+            ], [
+                'context' => 'plugin:Jamf',
+                'name' => $name,
+            ]);
+        }
     }
 
     public static function tearDownAfterClass(): void

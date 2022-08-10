@@ -40,6 +40,7 @@ class PluginJamfMobileSync extends AbstractDBTest {
     public function testDiscover() {
         global $DB;
 
+        self::assertDirectoryExists(GLPI_ROOT . '/plugins/jamf/tools/samples/classic_api/');
         PluginJamfMobileTestSync::discover();
 
         $iterator = $DB->request([
@@ -90,18 +91,35 @@ class PluginJamfMobileSync extends AbstractDBTest {
             ]
         ]);
         $this->integer($iterator->count())->isEqualTo(1);
-        $item = $iterator->next();
+        $item = $iterator->current();
+        self::assertIsArray($item);
 
         // Make sure the new computer is linked properly
         $link_iterator = $DB->request([
-            'FROM' => PluginJamfMobileDevice::getTable(),
+            'SELECT' => [
+                PluginJamfMobileDevice::getTable() . '.id',
+                'udid',
+                'managed',
+                'supervised',
+                'activation_lock_enabled',
+                PluginJamfMobileDevice::getTable() . '.lost_mode_enabled',
+            ],
+            'FROM' => 'glpi_plugin_jamf_devices',
             'WHERE' => [
                 'itemtype' => 'Computer',
                 'items_id' => $item['id']
+            ],
+            'LEFT JOIN' => [
+                PluginJamfMobileDevice::getTable() => [
+                    'ON' => [
+                        PluginJamfMobileDevice::getTable() => 'glpi_plugin_jamf_devices_id',
+                        'glpi_plugin_jamf_devices' => 'id'
+                    ]
+                ]
             ]
         ]);
         $this->integer($link_iterator->count())->isEqualTo(1);
-        $link = $link_iterator->next();
+        $link = $link_iterator->current();
         $this->string($link['udid'])->isEqualTo('ca44c88e60a311e490b812df261f2c7e');
         $this->integer($link['managed'])->isEqualTo(1);
         $this->integer($link['supervised'])->isEqualTo(0);
@@ -130,18 +148,18 @@ class PluginJamfMobileSync extends AbstractDBTest {
             ]
         ]);
         $this->integer($iterator->count())->isEqualTo(1);
-        $item = $iterator->next();
+        $item = $iterator->current();
 
         // Make sure the new phone is linked properly
         $link_iterator = $DB->request([
-            'FROM' => PluginJamfMobileDevice::getTable(),
+            'FROM' => 'glpi_plugin_jamf_devices',
             'WHERE' => [
                 'itemtype' => 'Phone',
                 'items_id' => $item['id']
             ]
         ]);
         $this->integer($link_iterator->count())->isEqualTo(1);
-        $link = $link_iterator->next();
+        $link = $link_iterator->current();
         $this->integer($link['jamf_items_id'])->isEqualTo(28);
 
         $ext_iterator = $DB->request([
@@ -153,7 +171,7 @@ class PluginJamfMobileSync extends AbstractDBTest {
             ]
         ]);
         $this->integer($ext_iterator->count())->isEqualTo(1);
-        $ext_field = $ext_iterator->next();
+        $ext_field = $ext_iterator->current();
         $this->string($ext_field['value'])->isEqualTo('ca44c88e60a311e490b812df261f2c7e');
     }
 
