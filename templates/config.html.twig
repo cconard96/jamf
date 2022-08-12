@@ -75,11 +75,11 @@
                   }) }}
 
                   {{ fields.largeTitle(_x('form_section', 'Default Settings', 'jamf'), 'ti ti-server') }}
-                  {{ fields.dropdownField('Manufacturer', default_manufacturer, config.default_manufacturer|default(null), _x('config', 'Manufacturer', 'jamf')) }}
-                  {{ fields.dropdownField('PhoneType', iphone_type, config.iphone_type|default(null), _x('config', 'iPhone Type', 'jamf')) }}
-                  {{ fields.dropdownField('ComputerType', ipad_type, config.ipad_type|default(null), _x('config', 'iPad Type', 'jamf')) }}
-                  {{ fields.dropdownField('ComputerType', appletv_type, config.appletv_type|default(null), _x('config', 'AppleTV Type', 'jamf')) }}
-                  {{ fields.dropdownField('State', default_status, config.default_status|default(null), _x('config', 'Default status', 'jamf'), {
+                  {{ fields.dropdownField('Manufacturer', default_manufacturer, config.default_manufacturer|default(0), _x('config', 'Manufacturer', 'jamf')) }}
+                  {{ fields.dropdownField('PhoneType', iphone_type, config.iphone_type|default(0), _x('config', 'iPhone Type', 'jamf')) }}
+                  {{ fields.dropdownField('ComputerType', ipad_type, config.ipad_type|default(0), _x('config', 'iPad Type', 'jamf')) }}
+                  {{ fields.dropdownField('ComputerType', appletv_type, config.appletv_type|default(0), _x('config', 'AppleTV Type', 'jamf')) }}
+                  {{ fields.dropdownField('State', default_status, config.default_status|default(0), _x('config', 'Default status', 'jamf'), {
                      entity: 0,
                      condition: {
                         is_visible_computer: true,
