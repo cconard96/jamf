@@ -1,3 +1,6 @@
+# /!\ This plugin is looking for contributors /!\
+[See the pinned issue for more information](https://github.com/cconard96/jamf/issues/121)
+
 # JAMF Plugin for GLPI
 
 [![CodeFactor](https://www.codefactor.io/repository/github/cconard96/jamf/badge/master)](https://www.codefactor.io/repository/github/cconard96/jamf/overview/master)
