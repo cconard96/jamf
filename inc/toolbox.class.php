@@ -57,13 +57,16 @@ class PluginJamfToolbox
 
     /**
      * Helper function to convert the UTC timestamps from JSS to a local DateTime.
-     * @param DateTime|string $utc The UTC DateTime from JSS.
-     * @param int $format
+     * @param DateTime|string|null $utc The UTC DateTime from JSS.
+     * @param ?int $format
      * @return string The local date and time.
      * @throws Exception
      */
-    public static function utcToLocal($utc, int $format = null): string
+    public static function utcToLocal($utc, ?int $format = null): string
     {
+        if ($utc === null) {
+            return '';
+        }
         if (!is_a($utc, DateTime::class)) {
             $utc = new DateTime($utc);
         }
