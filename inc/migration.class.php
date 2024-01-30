@@ -307,11 +307,11 @@ final class PluginJamfMigration
             // Find all devices that don't have the jamf id recorded, and retrieve it.
             $unassigned = $mobiledevice->find(['jamf_items_id' => -1]);
             foreach ($unassigned as $item) {
-                $jamf_item = PluginJamfAPIClassic::getItems('mobiledevices', ['udid' => $item['udid'], 'subset' => 'General']);
+                $jamf_item = PluginJamfAPI::getMobileDeviceByUDID($item['udid']);
                 if ($jamf_item !== null && count($jamf_item) === 1) {
                     $mobiledevice->update([
                         'id' => $item['id'],
-                        'jamf_items_id' => $jamf_item['general']['id']
+                        'jamf_items_id' => $jamf_item['mobileDeviceId']
                     ]);
                 }
             }
@@ -552,16 +552,16 @@ final class PluginJamfMigration
                     'FROM' => 'glpi_plugin_jamf_devices'
                 ]);
 
-                $jss_mobiledevices = PluginJamfAPIClassic::getItems('mobiledevices');
+                $jss_mobiledevices = PluginJamfAPI::getAllMobileDevices();
                 foreach ($devices as $device) {
                     if ($device['jamf_type'] === 'MobileDevice') {
                         // We can get the model identifier directly from the list of mobile devices
                         foreach ($jss_mobiledevices as $jss_mobile) {
-                            if ($jss_mobile['id'] === $device['jamf_items_id']) {
+                            if ((int) $jss_mobile['id'] === $device['jamf_items_id']) {
                                 $this->db->update(
                                     'glpi_plugin_jamf_devices',
                                     [
-                                        'model_identifier' => $jss_mobile['model_identifier']
+                                        'model_identifier' => $jss_mobile['modelIdentifier']
                                     ],
                                     [
                                         'id' => $device['id']
@@ -572,12 +572,12 @@ final class PluginJamfMigration
                         }
                     } else if ($device['jamf_type'] === 'Computer') {
                         // We need to query the JSS for the computer's model identifier
-                        $computer = PluginJamfAPIClassic::getItems('computers', ['id' => $device['jamf_items_id']]);
+                        $computer = PluginJamfAPI::getComputerByID($device['jamf_items_id'], 'hardware');
                         if ($computer !== null) {
                             $this->db->update(
                                 'glpi_plugin_jamf_devices',
                                 [
-                                    'model_identifier' => $computer['hardware']['model_identifier']
+                                    'model_identifier' => $computer['hardware']['modelIdentifier']
                                 ],
                                 [
                                     'id' => $device['id']

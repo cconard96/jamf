@@ -106,14 +106,9 @@ abstract class PluginJamfSync
     protected $db;
 
     /**
-     * @var PluginJamfAPIClassic
+     * @var PluginJamfAPI
      */
-    protected static $api_classic = PluginJamfAPIClassic::class;
-
-    /**
-     * @var PluginJamfAPIPro
-     */
-    protected static $api_pro = PluginJamfAPIPro::class;
+    protected static $api = PluginJamfAPI::class;
 
     /**
      * PluginJamfSync constructor.
