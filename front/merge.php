@@ -83,46 +83,20 @@ foreach ($pending as $data) {
     echo "<td>{$data['udid']}</td>";
     $date_discover = Html::convDateTime($data['date_discover']);
     echo "<td>{$date_discover}</td><td>";
-    if ($itemtype === 'Computer') {
-        $guess = $item->find([
-            'OR' => [
-                'uuid' => $data['udid'],
-                'name' => $data['name']
-            ]
-        ], [new QueryExpression("CASE WHEN uuid='" . $data['udid'] . "' THEN 0 ELSE 1 END")], 1);
+    $guess = $item->find([
+        'OR' => [
+            'uuid' => $data['udid'],
+            'name' => $data['name']
+        ]
+    ], [new QueryExpression("CASE WHEN uuid='" . $data['udid'] . "' THEN 0 ELSE 1 END")], 1);
 
-        $params = [
-            'used' => array_column($linked['Computer'] ?? [], 'items_id')
-        ];
-        if (count($guess)) {
-            $params['value'] = reset($guess)['id'];
-        }
-        $itemtype::dropdown($params);
-    } else {
-        $extfield = new PluginJamfExtField();
-        $guess = $extfield->find([
-            'itemtype' => $itemtype,
-            'name' => 'uuid',
-            'value' => $data['udid']
-        ], [], 1);
-        if (!count($guess)) {
-            $guess = $item->find([
-                'name' => $data['name']
-            ], [], 1);
-        }
-        $params = [
-            'used' => array_column($linked['Phone'] ?? [], 'items_id')
-        ];
-        if (count($guess)) {
-            $match = reset($guess);
-            if (isset($match['items_id'])) {
-                $params['value'] = $match['items_id'];
-            } else {
-                $params['value'] = $match['id'];
-            }
-        }
-        $itemtype::dropdown($params);
+    $params = [
+        'used' => array_column($linked[$itemtype] ?? [], 'items_id')
+    ];
+    if (count($guess)) {
+        $params['value'] = reset($guess)['id'];
     }
+    $itemtype::dropdown($params);
     echo "</td></tr>";
 }
 echo "</tbody></table><br>";

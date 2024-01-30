@@ -68,7 +68,7 @@ if ($_REQUEST['action'] === 'merge') {
                 $plugin_sync_itemtype = 'PluginJamfMobileSync';
             }
 
-            $jamf_item = PluginJamfAPIClassic::getItems('mobiledevices', ['id' => $jamf_id]);
+            $jamf_item = PluginJamfAPI::getMobileDeviceByID($jamf_id, true);
             if ($jamf_item === null) {
                 // API error or device no longer exists in Jamf
                 throw new RuntimeException('Jamf API error or item no longer exists!');
@@ -76,12 +76,15 @@ if ($_REQUEST['action'] === 'merge') {
 
             // Run import rules on merged devices manually since this doesn't go through the usual import process
             $rules = new PluginJamfRuleImportCollection();
+
+            //WTF is this, Jamf?
+            $os_details = $jamf_item['ios'] ?? $jamf_item['tvos'];
             $ruleinput = [
-                'name' => $jamf_item['general']['name'],
+                'name' => $jamf_item['name'],
                 'itemtype' => $itemtype,
-                'last_inventory' => $jamf_item['general']['last_inventory_update_utc'],
-                'managed' => $jamf_item['general']['managed'],
-                'supervised' => $jamf_item['general']['supervised'],
+                'last_inventory' => $jamf_item['lastInventoryUpdateTimestamp'],
+                'managed' => $os_details['managed'],
+                'supervised' => $os_details['supervised'],
             ];
             $ruleinput = $rules->processAllRules($ruleinput, $ruleinput, ['recursive' => true]);
             $import = isset($ruleinput['_import']) ? $ruleinput['_import'] : 'NS';

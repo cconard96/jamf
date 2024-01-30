@@ -21,6 +21,8 @@
  --------------------------------------------------------------------------
  */
 
+use GuzzleHttp\Client;
+
 /**
  * JamfConnection class
  * @since 1.0.0
@@ -28,6 +30,10 @@
 class PluginJamfConnection
 {
     private $config;
+
+    private ?string $bearer_token = null;
+
+    private Client $client;
 
     /**
      * Load connection details from the DB and store them in the $config array.
@@ -71,7 +77,7 @@ class PluginJamfConnection
     {
         static $version = null;
         if (is_null($version)) {
-            $version = PluginJamfAPIPro::getLobby()['version'];
+            $version = PluginJamfAPI::getJamfProVersion();
         }
         return $version;
     }
@@ -85,7 +91,7 @@ class PluginJamfConnection
     public function getAPIUrl($endpoint, $pro_api = false)
     {
         if ($pro_api) {
-            return "{$this->config['jssserver']}/uapi/{$endpoint}";
+            return "{$this->config['jssserver']}/api/{$endpoint}";
         }
 
         return "{$this->config['jssserver']}/JSSResource/{$endpoint}";
@@ -93,7 +99,7 @@ class PluginJamfConnection
 
     public static function getUserAgentString(): string
     {
-        return "Jamf%20Plugin%20for%20GLPI/".PLUGIN_JAMF_VERSION;
+        return "Jamf%20Plugin%20for%20GLPI/" . PLUGIN_JAMF_VERSION;
     }
 
     /**
@@ -113,13 +119,36 @@ class PluginJamfConnection
 
     /**
      * Set the username and password for the specified curl connection.
-     * @param resource $curl The curl handle.
+     * @param resource|CurlHandle $curl The curl handle.
      */
     protected function setCurlAuth(&$curl)
     {
-        if (isset($this->config['jssuser']) && !empty($this->config['jssuser'])) {
-            curl_setopt($curl, CURLOPT_USERPWD, $this->config['jssuser'] . ':' . $this->config['jsspassword']);
+        if ($this->bearer_token === null) {
+            $auth_curl = curl_init($this->getAPIUrl('v1/auth/token', true));
+            if (isset($this->config['jssuser']) && !empty($this->config['jssuser'])) {
+                $basic_auth = base64_encode($this->config['jssuser'] . ':' . $this->config['jsspassword']);
+                curl_setopt($auth_curl, CURLOPT_HTTPHEADER, [
+                    'Authorization: Basic ' . $basic_auth,
+                ]);
+
+                //curl_setopt($auth_curl, CURLOPT_USERPWD, $this->config['jssuser'] . ':' . $this->config['jsspassword']);
+            }
+            curl_setopt($auth_curl, CURLOPT_POST, true);
+            curl_setopt($auth_curl, CURLOPT_POSTFIELDS, []);
+            curl_setopt($auth_curl, CURLOPT_RETURNTRANSFER, true);
+            // token will be in 'token' property of the json response
+            $response = json_decode(curl_exec($auth_curl), true);
+            curl_close($auth_curl);
+            if (isset($response['token'])) {
+                $this->bearer_token = $response['token'];
+            }
         }
+
+        curl_setopt($curl, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $this->bearer_token,
+            'Content-Type: application/json',
+            'Accept: application/json'
+        ]);
     }
 
     /**
@@ -134,5 +163,55 @@ class PluginJamfConnection
             curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
         }
+    }
+
+    private function fetchBearerToken()
+    {
+        $auth_curl = curl_init($this->getAPIUrl('v1/auth/token', true));
+        if (isset($this->config['jssuser']) && !empty($this->config['jssuser'])) {
+            $basic_auth = base64_encode($this->config['jssuser'] . ':' . $this->config['jsspassword']);
+            curl_setopt($auth_curl, CURLOPT_HTTPHEADER, [
+                'Authorization: Basic ' . $basic_auth,
+            ]);
+        }
+        curl_setopt($auth_curl, CURLOPT_POST, true);
+        curl_setopt($auth_curl, CURLOPT_POSTFIELDS, []);
+        curl_setopt($auth_curl, CURLOPT_RETURNTRANSFER, true);
+        $response = json_decode(curl_exec($auth_curl), true);
+        curl_close($auth_curl);
+        if (isset($response['token'])) {
+            $this->bearer_token = $response['token'];
+        }
+    }
+
+    public function getClient(): Client
+    {
+        if (!isset($this->client)) {
+            if ($this->bearer_token === null) {
+                $this->fetchBearerToken();
+            }
+
+            $options = [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->bearer_token,
+                    'User-Agent' => self::getUserAgentString(),
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json'
+                ]
+            ];
+            //TODO use Toolbox::getGuzzleClient in GLPI 10.1
+            if (!empty($CFG_GLPI["proxy_name"])) {
+                $proxy_creds      = !empty($CFG_GLPI["proxy_user"])
+                    ? $CFG_GLPI["proxy_user"] . ":" . (new GLPIKey())->decrypt($CFG_GLPI["proxy_passwd"]) . "@"
+                    : "";
+                $proxy_string     = "http://{$proxy_creds}" . $CFG_GLPI['proxy_name'] . ":" . $CFG_GLPI['proxy_port'];
+                $options['proxy'] = $proxy_string;
+            }
+
+            $this->client = new Client($options);
+        }
+
+
+        return $this->client;
     }
 }

@@ -71,6 +71,7 @@ foreach ($pending as $data) {
     echo "<td>{$import_checkbox}</td>";
     echo "<td>{$data['jamf_items_id']}</td>";
     echo "<td>{$data['jamf_type']}</td>";
+    /** @var class-string<PluginJamfAbstractDevice> $plugin_itemtype */
     $plugin_itemtype = 'PluginJamf' . $data['jamf_type'];
     $jamf_link = Html::link($data['name'], $plugin_itemtype::getJamfDeviceURL($data['jamf_items_id']));
     echo "<td>{$jamf_link}</td>";

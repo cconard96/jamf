@@ -92,4 +92,4 @@ foreach ($items as $item) {
     $m = $mobile_devices->addChild('mobile_device');
     $m->addChild('id', $jamf_id);
 }
-echo PluginJamfAPIClassic::addItem('mobiledevicecommands', $payload->asXML(), true);
+echo PluginJamfAPI::sendMDMCommand($payload->asXML(), true);

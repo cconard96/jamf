@@ -21,7 +21,7 @@
  * --------------------------------------------------------------------------
  */
 
-class PluginJamfApiTestClassic extends PluginJamfAPIClassic {
+class PluginJamfApiTest extends PluginJamfAPI {
 
     /**
      * Convert a standard Classic API endpoint to filename which points to an appropriate sample response file.
@@ -37,10 +37,7 @@ class PluginJamfApiTestClassic extends PluginJamfAPIClassic {
         return GLPI_ROOT . '/plugins/jamf/tools/samples/classic_api/' . $endpoint . '.' . $response_ext;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected static function get(string $endpoint, $raw = false, $response_type = 'application/json') {
+    protected static function getClassic(string $endpoint, $raw = false, $response_type = 'application/json') {
         $file = self::endpointToFilename($endpoint, $response_type);
         if (!file_exists($file)) {
             return null;
@@ -55,26 +52,17 @@ class PluginJamfApiTestClassic extends PluginJamfAPIClassic {
         return json_decode($response, true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected static function add(string $endpoint, string $payload) {
+    protected static function addClassic(string $endpoint, string $payload) {
         // No-Op
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected static function update(string $endpoint, array $data) {
+    protected static function updateClassic(string $endpoint, array $data) {
         // No-Op
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected static function delete(string $endpoint) {
+    protected static function deleteClassic(string $endpoint) {
         // No-Op
         return true;
     }

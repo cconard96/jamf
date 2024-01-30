@@ -71,7 +71,7 @@ class PluginJamfUser_JSSAccount extends CommonDBChild
         static $privileges = [];
 
         if (!isset($privileges[$this->fields['jssaccounts_id']])) {
-            $privileges[$this->fields['jssaccounts_id']] = PluginJamfAPIClassic::getJSSAccountRights($this->fields['jssaccounts_id']);
+            $privileges[$this->fields['jssaccounts_id']] = PluginJamfAPI::getJSSAccountRights($this->fields['jssaccounts_id']);
         }
         return $privileges[$this->fields['jssaccounts_id']];
     }
@@ -208,7 +208,7 @@ class PluginJamfUser_JSSAccount extends CommonDBChild
             $mylink = null;
         }
 
-        $allusers = PluginJamfAPIClassic::getItems('accounts')['users'];
+        $allusers = PluginJamfAPI::getItemsClassic('accounts')['users'];
         $values = [];
         foreach ($allusers as $user) {
             $values[$user['id']] = $user['name'];

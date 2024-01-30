@@ -248,11 +248,15 @@ function plugin_jamf_showJamfInfoForItem(array $params)
 
 function plugin_jamf_status()
 {
-    $classic_api_status = PluginJamfAPIClassic::testConnection();
+    $classic_api_status = PluginJamfAPI::testClassicAPIConnection();
+    $pro_api_status = PluginJamfAPI::testProAPIConnection();
     return [
-        'status' => $classic_api_status ? StatusChecker::STATUS_OK : StatusChecker::STATUS_PROBLEM,
+        'status' => ($classic_api_status && $pro_api_status) ? StatusChecker::STATUS_OK : StatusChecker::STATUS_PROBLEM,
         'classic_api' => [
             'status' => $classic_api_status ? StatusChecker::STATUS_OK : StatusChecker::STATUS_PROBLEM,
-        ]
+        ],
+        'pro_api' => [
+            'status' => $pro_api_status ? StatusChecker::STATUS_OK : StatusChecker::STATUS_PROBLEM,
+        ],
     ];
 }

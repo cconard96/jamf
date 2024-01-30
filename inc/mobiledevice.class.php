@@ -139,7 +139,7 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
     public function getMDMCommands()
     {
         $device_data = $this->getJamfDeviceData();
-        $commandhistory = PluginJamfAPIClassic::getItems('mobiledevicehistory', [
+        $commandhistory = PluginJamfAPI::getItemsClassic('mobiledevicehistory', [
             'id' => $device_data['jamf_items_id'],
             'subset' => 'ManagementCommands'
         ]);

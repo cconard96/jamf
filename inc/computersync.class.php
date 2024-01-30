@@ -139,7 +139,7 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync
         try {
             $applications = $this->data['software']['applications'];
             foreach ($applications as $application) {
-                $software_data = static::$api_classic::getItems('mobiledeviceapplications', [
+                $software_data = static::$api::getItemsClassic('mobiledeviceapplications', [
                     'application' => $application['name'],
                     'version' => $application['version']
                 ]);
@@ -525,8 +525,8 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync
         global $DB;
 
         $volume = 0;
-        $jamf_devices = static::$api_classic::getItems('computers');
-        if ($jamf_devices === null || !count($jamf_devices)) {
+        $jamf_devices = static::$api::getAllComputers();
+        if (!count($jamf_devices)) {
             // API error or device no longer exists in Jamf
             return -1;
         }
@@ -552,7 +552,7 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync
 
         $config = Config::getConfigurationValues('plugin:Jamf');
         foreach ($jamf_devices as $jamf_device) {
-            if (!in_array($jamf_device['id'], $imported, true)) {
+            if (!in_array((int) $jamf_device['id'], $imported, true)) {
                 // Not already imported
                 if (isset($config['autoimport']) && $config['autoimport']) {
                     try {
@@ -569,9 +569,10 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync
                         $DB->insert('glpi_plugin_jamf_imports', [
                             'jamf_type' => 'Computer',
                             'jamf_items_id' => $jamf_device['id'],
-                            'name' => $DB->escape($jamf_device['name']),
+                            'name' => $DB->escape($jamf_device['general']['name']),
                             'type' => 'Computer',
-                            'date_discover' => $_SESSION['glpi_currenttime']
+                            'date_discover' => $_SESSION['glpi_currenttime'],
+                            'udid' => $jamf_device['udid']
                         ]);
                     }
                 }
@@ -590,7 +591,7 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync
         }
         $item = new $itemtype();
 
-        $jamf_item = static::$api_classic::getItems('computers', ['id' => $jamf_items_id]);
+        $jamf_item = static::$api::getItemsClassic('computers', ['id' => $jamf_items_id]);
         if ($jamf_item === null) {
             // API error or device no longer exists in Jamf
             return false;
@@ -705,7 +706,7 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync
         }
         $jamf_item = $iterator->current();
 
-        return static::$api_classic::getItems('computers', ['id' => $jamf_item['jamf_items_id']]) ?? [];
+        return static::$api::getItemsClassic('computers', ['id' => $jamf_item['jamf_items_id']]) ?? [];
     }
 
     public static function getSupportedGlpiItemtypes(): array
