@@ -77,6 +77,7 @@
                   {{ fields.largeTitle(_x('form_section', 'Default Settings', 'jamf'), 'ti ti-server') }}
                   {{ fields.dropdownField('Manufacturer', 'default_manufacturer', config.default_manufacturer|default(0), _x('config', 'Manufacturer', 'jamf')) }}
                   {{ fields.dropdownField('PhoneType', 'iphone_type', config.iphone_type|default(0), _x('config', 'iPhone Type', 'jamf')) }}
+                  {{ fields.dropdownField('ComputerType', 'computer_type', config.computer_type|default(0), _x('config', 'Computer Type', 'jamf')) }}
                   {{ fields.dropdownField('ComputerType', 'ipad_type', config.ipad_type|default(0), _x('config', 'iPad Type', 'jamf')) }}
                   {{ fields.dropdownField('ComputerType', 'appletv_type', config.appletv_type|default(0), _x('config', 'AppleTV Type', 'jamf')) }}
                   {{ fields.dropdownField('State', 'default_status', config.default_status|default(0), _x('config', 'Default status', 'jamf'), {
