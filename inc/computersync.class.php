@@ -68,7 +68,9 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync
             $this->item_changes['computermodels_id'] = $model->getID();
 
             // Set default type
-            //Not implemented yet
+            if ($this->config['computer_type']) {
+                $this->item_changes['computertypes_id'] = $this->config['computer_type'];
+            }
 
             // Set default manufacturer
             $preferred_manufacturer = $this->config['default_manufacturer'];
