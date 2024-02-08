@@ -22,76 +22,74 @@
 /* global GLPI_PLUGINS_PATH */
 /* global CFG_GLPI */
 (function () {
-   window.JamfPlugin = function () {
-      var self = this;
+    window.JamfPlugin = function () {
+        /**
+         * All possible MDM commands for the item on this page (if applicable).
+         * @since 1.1.0
+         * @type {{}}
+         */
+        this.commands = {};
 
-      /**
-       * All possible MDM commands for the item on this page (if applicable).
-       * @since 1.1.0
-       * @type {{}}
-       */
-      this.commands = {};
+        this.dialog_confirm_command = null;
 
-      this.dialog_confirm_command = null;
+        this.dialog_send_command = null;
 
-      this.dialog_send_command = null;
+        this.jamf_id = -1;
 
-      this.jamf_id = -1;
+        this.itemtype = null;
 
-      this.itemtype = null;
+        this.items_id = -1;
 
-      this.items_id = -1;
+        /**
+         * The AJAX directory.
+         * @since 1.1.0
+         * @type {string}
+         */
+        this.ajax_root = '';
 
-      /**
-       * The AJAX directory.
-       * @since 1.1.0
-       * @type {string}
-       */
-      this.ajax_root = '';
-
-      this.init = function (args) {
-         if (args !== undefined && args.commands !== undefined) {
-            self.commands = args.commands;
-            self.jamf_id = args.jamf_id;
-            self.itemtype = args.itemtype;
-            self.items_id = args.items_id;
-            self.ajax_root = args.ajax_root || CFG_GLPI.root_doc + "/" + GLPI_PLUGINS_PATH.jamf + "/ajax/";
-         }
-      };
-
-      this.onMDMCommandButtonClick = function (command, event) {
-         event.preventDefault();
-         if (self.commands[command] !== undefined) {
-            if (self.commands[command]['params'] !== undefined) {
-               showMDMCommandForm(command);
-            } else if (self.commands[command]['confirm'] !== undefined && self.commands[command]['confirm'] === true) {
-               showMDMCommandConfirmation(command);
-            } else {
-               self.sendMDMCommand(command);
+        this.init = (args) => {
+            if (args !== undefined && args.commands !== undefined) {
+                this.commands = args.commands;
+                this.jamf_id = args.jamf_id;
+                this.itemtype = args.itemtype;
+                this.items_id = args.items_id;
+                this.ajax_root = args.ajax_root || CFG_GLPI.root_doc + "/" + GLPI_PLUGINS_PATH.jamf + "/ajax/";
             }
-         }
-      };
+        };
 
-      /**
-       *
-       * @param {Object} command
-       */
-      var showMDMCommandForm = function (command) {
-         $.ajax({
-            method: 'GET',
-            url: (self.ajax_root + "getMDMCommandForm.php"),
-            data: {
-               command: command,
-               jamf_id: self.jamf_id,
-               itemtype: self.itemtype,
-               items_id: self.items_id
+        this.onMDMCommandButtonClick = (command, event) => {
+            event.preventDefault();
+            if (this.commands[command] !== undefined) {
+                if (this.commands[command]['params'] !== undefined) {
+                    showMDMCommandForm(command);
+                } else if (this.commands[command]['confirm'] !== undefined && this.commands[command]['confirm'] === true) {
+                    showMDMCommandConfirmation(command);
+                } else {
+                    this.sendMDMCommand(command);
+                }
             }
-         }).done(function (data) {
-            if (data !== undefined && data !== null) {
-               if (self.dialog_send_command !== undefined && self.dialog_send_command !== null) {
-                  self.dialog_send_command.remove();
-               }
-               self.dialog_send_command = $(`
+        };
+
+        /**
+         *
+         * @param {Object} command
+         */
+        const showMDMCommandForm = (command) => {
+            $.ajax({
+                method: 'GET',
+                url: (this.ajax_root + "getMDMCommandForm.php"),
+                data: {
+                    command: command,
+                    jamf_id: this.jamf_id,
+                    itemtype: this.itemtype,
+                    items_id: this.items_id
+                }
+            }).done((data) => {
+                if (data !== undefined && data !== null) {
+                    if (this.dialog_send_command !== undefined && this.dialog_send_command !== null) {
+                        this.dialog_send_command.remove();
+                    }
+                    this.dialog_send_command = $(`
 <div class="modal" role="dialog">
    <div class="modal-dialog" role="dialog">
        <div class="modal-content">
@@ -103,26 +101,26 @@
        </div>
     </div>
 </div>`).appendTo('#page');
-               self.dialog_send_command.on('click', 'button[name="send"]', () => {
-                  if (self.commands[command]['confirm'] !== undefined && self.commands[command]['confirm'] === true) {
-                     showMDMCommandConfirmation(command, self.dialog_send_command.serialize());
-                  } else {
-                     self.sendMDMCommand(command, self.dialog_send_command.serialize());
-                  }
-               });
-               self.dialog_send_command.on('click', 'button[name="close"]', (e) => {
-                  $(e.target).closest('.modal').modal('hide');
-               });
-               self.dialog_send_command.modal('show');
-            }
-         });
-      };
+                    this.dialog_send_command.on('click', 'button[name="send"]', () => {
+                        if (this.commands[command]['confirm'] !== undefined && this.commands[command]['confirm'] === true) {
+                            showMDMCommandConfirmation(command, this.dialog_send_command.serialize());
+                        } else {
+                            this.sendMDMCommand(command, this.dialog_send_command.serialize());
+                        }
+                    });
+                    this.dialog_send_command.on('click', 'button[name="close"]', (e) => {
+                        $(e.target).closest('.modal').modal('hide');
+                    });
+                    this.dialog_send_command.modal('show');
+                }
+            });
+        };
 
-      var showMDMCommandConfirmation = function (command, params) {
-         if (self.dialog_confirm_command === undefined || self.dialog_confirm_command === null) {
-            const warn_text = _x('message', 'Are you sure you want to send the command: %s?', 'jamf').replace("%s", _x('mdm_command', self.commands[command].name, 'jamf'));
+        const showMDMCommandConfirmation = (command, params) => {
+            if (this.dialog_confirm_command === undefined || this.dialog_confirm_command === null) {
+                const warn_text = _x('message', 'Are you sure you want to send the command: %s?', 'jamf').replace("%s", _x('mdm_command', this.commands[command].name, 'jamf'));
 
-            self.dialog_confirm_command = $(`
+                this.dialog_confirm_command = $(`
 <div class="modal" role="dialog">
    <div class="modal-dialog" role="dialog">
        <div class="modal-content">
@@ -135,36 +133,36 @@
     </div>
 </div>`).appendTo('#page');
 
-            self.dialog_confirm_command.on('click', 'button[name="confirm"]', () => {
-               self.sendMDMCommand(command, params);
-            });
-            self.dialog_confirm_command.on('click', 'button[name="close"]', (e) => {
-               $(e.target).closest('.modal').modal('hide');
-            });
-            self.dialog_confirm_command.modal('show');
-         }
-      };
-
-      /**
-       *
-       */
-      this.sendMDMCommand = function (command, params) {
-         if (params === undefined) {
-            params = '';
-         }
-         $.ajax({
-            method: 'POST',
-            url: (self.ajax_root + "sendMDMCommand.php"),
-            data: {
-               command: command,
-               fields: params,
-               jamf_id: self.jamf_id,
-               itemtype: self.itemtype,
-               items_id: self.items_id
+                this.dialog_confirm_command.on('click', 'button[name="confirm"]', () => {
+                    this.sendMDMCommand(command, params);
+                });
+                this.dialog_confirm_command.on('click', 'button[name="close"]', (e) => {
+                    $(e.target).closest('.modal').modal('hide');
+                });
+                this.dialog_confirm_command.modal('show');
             }
-         }).always(function () {
-            location.reload();
-         });
-      };
-   };
+        };
+
+        /**
+         *
+         */
+        this.sendMDMCommand = (command, params) => {
+            if (params === undefined) {
+                params = '';
+            }
+            $.ajax({
+                method: 'POST',
+                url: (this.ajax_root + "sendMDMCommand.php"),
+                data: {
+                    command: command,
+                    fields: params,
+                    jamf_id: this.jamf_id,
+                    itemtype: this.itemtype,
+                    items_id: this.items_id
+                }
+            }).always(function () {
+                location.reload();
+            });
+        };
+    };
 })();
