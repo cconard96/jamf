@@ -276,7 +276,7 @@ class PluginJamfAPI
         $response = static::getClassic("accounts/userid/$userid", true, 'application/xml');
         $account = simplexml_load_string($response);
 
-        $access_level = reset($account->access_level);
+        $access_level = $account->access_level;
         $rights = [
             'jss_objects' => [],
             'jss_actions' => [],
@@ -314,7 +314,7 @@ class PluginJamfAPI
                 $c = count($privileges->jss_objects->privilege);
                 if ($c > 0) {
                     for ($j = 0; $j < $c; $j++) {
-                        $rights['jss_objects'][] = reset($privileges->jss_objects->privilege[$j]);
+                        $rights['jss_objects'][] = $privileges->jss_objects->privilege[$j];
                     }
                 }
             }
@@ -322,7 +322,7 @@ class PluginJamfAPI
                 $c = count($privileges->jss_actions->privilege);
                 if ($c > 0) {
                     for ($j = 0; $j < $c; $j++) {
-                        $rights['jss_actions'][] = reset($privileges->jss_actions->privilege[$j]);
+                        $rights['jss_actions'][] = $privileges->jss_actions->privilege[$j];
                     }
                 }
             }
@@ -330,7 +330,7 @@ class PluginJamfAPI
                 $c = count($privileges->jss_settings->privilege);
                 if ($c > 0) {
                     for ($j = 0; $j < $c; $j++) {
-                        $rights['jss_settings'][] = reset($privileges->jss_settings->privilege[$j]);
+                        $rights['jss_settings'][] = $privileges->jss_settings->privilege[$j];
                     }
                 }
             }
