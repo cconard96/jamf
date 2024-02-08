@@ -32,8 +32,9 @@
 
 <div class="mdm-button-group">
    {% for command, command_params in commands %}
-      <div class="mdm-button" onclick="jamfPlugin.onMDMCommandButtonClick('{{ command }}', event)">
-         <i class="{{ command_params.icon }}" style="color: {{ command_params.icon_color|default('inherit') }}"></i>
+      <div class="mdm-button p-2 me-2 mb-2 d-inline-block cursor-pointer btn btn-outline-secondary" onclick="jamfPlugin.onMDMCommandButtonClick('{{ command }}', event)"
+           style="border-radius: 30px">
+         <i class="{{ command_params.icon }} me-2 fs-4 align-middle" style="color: {{ command_params.icon_color|default('inherit') }}"></i>
          {{ command_params.name }}
       </div>
    {% endfor %}
