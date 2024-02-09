@@ -219,12 +219,11 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
     {
         global $DB;
 
-        $table = self::getTable();
         $iterator = $DB->request([
             'SELECT' => [
                 'COUNT' => 'managed as cpt'
             ],
-            'FROM' => $table,
+            'FROM' => 'glpi_plugin_jamf_devices',
             'WHERE' => ['managed' => 1],
         ]);
 
@@ -238,12 +237,11 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
     {
         global $DB;
 
-        $table = self::getTable();
         $iterator = $DB->request([
             'SELECT' => [
                 'COUNT' => 'supervised as cpt'
             ],
-            'FROM' => $table,
+            'FROM' => 'glpi_plugin_jamf_devices',
             'WHERE' => ['supervised' => 1],
         ]);
         return [
