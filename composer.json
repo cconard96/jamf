@@ -3,22 +3,27 @@
     {
       "type": "vcs",
       "url": "https://github.com/cconard96/tools"
+    },
+    {
+      "type": "vcs",
+        "url": "https://github.com/CJDevStudios/atoum-phpunit-shim"
     }
   ],
   "require": {
-    "php": "^7.4"
+    "php": "^7.4|^8.0"
   },
   "require-dev": {
+    "cjdevstudios/atoum-phpunit-shim": "dev-main",
     "glpi-project/tools": "dev-debug/master"
   },
   "config": {
     "optimize-autoloader": true,
-    "platform": {
-      "php": "7.4.0"
-    },
     "sort-packages": true,
     "allow-plugins": {
       "dealerdirect/phpcodesniffer-composer-installer": false
     }
+  },
+  "scripts": {
+    "test": "phpunit -c tests/phpunit.xml"
   }
 }
