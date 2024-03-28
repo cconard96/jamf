@@ -90,11 +90,16 @@ class PluginJamfConnection
      */
     public function getAPIUrl($endpoint, $pro_api = false)
     {
+        $server_url = $this->config['jssserver'];
+        // Remove trailing slash
+        if (str_ends_with($server_url, '/')) {
+            $server_url = substr($server_url, 0, -1);
+        }
         if ($pro_api) {
-            return "{$this->config['jssserver']}/api/{$endpoint}";
+            return "{$server_url}/api/{$endpoint}";
         }
 
-        return "{$this->config['jssserver']}/JSSResource/{$endpoint}";
+        return "{$server_url}/JSSResource/{$endpoint}";
     }
 
     public static function getUserAgentString(): string
