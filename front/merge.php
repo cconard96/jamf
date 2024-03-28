@@ -55,7 +55,7 @@ foreach ($linked_devices as $data) {
 
 $ajax_url = Plugin::getWebDir('jamf') . '/ajax/merge.php';
 
-Html::printPager($start, $importcount, $ajax_url, '');
+Html::printPager($start, $importcount, Plugin::getWebDir('jamf') . '/front/merge.php', '');
 echo "<form>";
 echo "<div class='center'><table id='merge_table' class='table table-striped'>";
 echo "<thead>";
@@ -132,7 +132,7 @@ $js = <<<JAVASCRIPT
       }
 JAVASCRIPT;
 Html::closeForm();
-Html::printPager($start, $importcount, $ajax_url, '');
+Html::printPager($start, $importcount, Plugin::getWebDir('jamf') . '/front/merge.php', '');
 echo Html::scriptBlock($js);
 
 // Create loading indicator
