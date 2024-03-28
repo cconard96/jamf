@@ -48,6 +48,8 @@ if ($_REQUEST['action'] === 'merge') {
     PluginJamfComputerSync::syncExtensionAttributeDefinitions();
     // An array of item IDs is required
     if (isset($_REQUEST['item_ids']) && is_array($_REQUEST['item_ids'])) {
+        $failures = 0;
+        $successes = 0;
         foreach ($_REQUEST['item_ids'] as $glpi_id => $data) {
             if (!isset($data['jamf_id'], $data['itemtype'])) {
                 continue;
@@ -83,8 +85,8 @@ if ($_REQUEST['action'] === 'merge') {
                 'name' => $jamf_item['name'],
                 'itemtype' => $itemtype,
                 'last_inventory' => $jamf_item['lastInventoryUpdateTimestamp'],
-                'managed' => $os_details['managed'],
-                'supervised' => $os_details['supervised'],
+                'managed' => $jamf_item['managed'] ?? $os_details['managed'],
+                'supervised' => $jamf_item['supervised'] ?? $os_details['supervised'],
             ];
             $ruleinput = $rules->processAllRules($ruleinput, $ruleinput, ['recursive' => true]);
             $import = isset($ruleinput['_import']) ? $ruleinput['_import'] : 'NS';
@@ -96,12 +98,21 @@ if ($_REQUEST['action'] === 'merge') {
 
             $DB->beginTransaction();
             try {
-                // Link
-                $plugin_item = new $plugin_itemtype();
-                $plugin_item->add([
+                // Partial import
+                $r = $DB->insert('glpi_plugin_jamf_devices', [
                     'itemtype' => $itemtype,
                     'items_id' => $glpi_id,
+                    'udid' => $jamf_item['udid'],
+                    'jamf_type' => $data['jamf_type'],
                     'jamf_items_id' => $data['jamf_id'],
+                ]);
+                if ($r === false) {
+                    throw new \RuntimeException('Failed to import the device data!');
+                }
+                // Link
+                $plugin_item = new $plugin_itemtype();
+                $plugin_items_id = $plugin_item->add([
+                    'glpi_plugin_jamf_devices_id' => $DB->insertId(),
                 ]);
 
                 // Sync
@@ -120,13 +131,19 @@ if ($_REQUEST['action'] === 'merge') {
                         'jamf_items_id' => $jamf_id
                     ]);
                     $DB->commit();
+                    $successes++;
                 } else {
+                    $failures++;
                     $DB->rollBack();
                 }
             } catch (Exception $e) {
+                trigger_error($e->getMessage(), E_USER_WARNING);
+                $failures++;
                 $DB->rollBack();
             }
-
+        }
+        if ($failures) {
+            Session::addMessageAfterRedirect(sprintf(__('An error occurred while merging %d devices!', 'jamf'), $failures), false, ERROR);
         }
     } else {
         throw new RuntimeException('Required argument missing!');
