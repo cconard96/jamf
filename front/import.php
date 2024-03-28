@@ -66,7 +66,7 @@ foreach ($pending as $data) {
     $import_checkbox = Html::input("import_{$data['id']}", [
         'type' => 'checkbox',
         'display' => false,
-        'class' => 'form-check-input'
+        'class' => 'form-check-input massive_action_checkbox'
     ]);
     echo "<td>{$import_checkbox}</td>";
     echo "<td>{$data['jamf_items_id']}</td>";
