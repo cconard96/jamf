@@ -62,7 +62,8 @@ echo "<thead>";
 echo '<tr>';
 echo "<th>" . _x('field', 'Jamf ID', 'jamf') . "</th>";
 echo "<th>" . _x('field', 'Name', 'jamf') . "</th>";
-echo "<th>" . _x('field', 'Type', 'jamf') . "</th>";
+echo "<th>" . _x('field', 'GLPI Asset Type', 'jamf') . "</th>";
+echo "<th>" . _x('field', 'Jamf Type', 'jamf') . "</th>";
 echo "<th>" . _x('field', 'UDID', 'jamf') . "</th>";
 echo "<th>" . _x('field', 'Discovery Date', 'jamf') . "</th>";
 echo "<th>" . _x('field', 'GLPI Item', 'jamf') . "</th>";
@@ -80,6 +81,7 @@ foreach ($pending as $data) {
     $jamf_link = Html::link($data['name'], $jamftype::getJamfDeviceURL($data['jamf_items_id']));
     echo "<td>{$jamf_link}</td>";
     echo "<td>{$data['type']}</td>";
+    echo "<td>{$data['jamf_type']}</td>";
     echo "<td>{$data['udid']}</td>";
     $date_discover = Html::convDateTime($data['date_discover']);
     echo "<td>{$date_discover}</td><td>";
@@ -101,20 +103,23 @@ foreach ($pending as $data) {
 }
 echo "</tbody></table><br>";
 
-echo "<button class='btn btn-primary' onclick='mergeDevices(); return false;'>" . _x('action', 'Merge', 'jamf') . "</button>";
+echo "<button type='button' class='btn btn-primary' onclick='mergeDevices(); return false;'>" . _x('action', 'Merge', 'jamf') . "</button>";
 echo "</div>";
 $js = <<<JAVASCRIPT
       function mergeDevices() {
-         var post_data = [];
-         var table = $("#merge_table")[0];
-         for (var i = 1, row; row = table.rows[i]; i++) {
-            var jamf_id = row.cells[0].innerText;
-            var itemtype = row.cells[2].innerText;
-            var glpi_sel = row.cells[5].childNodes[0].childNodes[0];
-            var glpi_id = glpi_sel.value;
+         const post_data = {};
+         const table = $("#merge_table")[0];
+         const row_count = table.rows.length;
+         for (let i = 1; i < row_count; i++) {
+            const row = table.rows[i];
+            const jamf_id = row.cells[0].innerText;
+            const itemtype = row.cells[2].innerText;
+            const jamf_type = row.cells[3].innerText;
+            const glpi_sel = $(row.cells[6]).find('select')[0];
+            const glpi_id = glpi_sel.value;
             if (glpi_id && glpi_id > 0) {
                data = [];
-               post_data[glpi_id] = {'itemtype': itemtype, 'jamf_id': jamf_id};
+               post_data[glpi_id] = {'itemtype': itemtype, 'jamf_id': jamf_id, 'jamf_type': jamf_type};
             }
          }
          $.ajax({
@@ -122,10 +127,10 @@ $js = <<<JAVASCRIPT
             url: "{$ajax_url}",
             data: {action: "merge", item_ids: post_data},
             contentType: 'application/json',
-            beforeSend: function() {
+            beforeSend: () => {
                $('#loading-overlay').show();
             },
-            complete: function() {
+            complete: () => {
                location.reload();
             }
          });
