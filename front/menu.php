@@ -51,9 +51,15 @@ if (count($links)) {
     }
     echo "</tbody></table></div>";
 } else {
-    echo "<div class='center warning' style='width: 40%; margin: auto;'>";
-    echo "<i class='fa fa-exclamation-triangle fa-3x'></i>";
-    echo "<p>" . _x('error', 'You do not have access to any Jamf plugin items', 'jamf') . "</p>";
-    echo "</div>";
+    $msg = _x('error', 'You do not have access to any Jamf plugin items', 'jamf');
+    $submsg = _x('error', 'Please check your profile permissions', 'jamf');
+    echo <<<HTML
+        <div class="text-center">
+            <div class="alert alert-warning" role="alert">
+                <i class="alert-icon ti ti-alert-triangle fa-2x"></i>
+                <p class="alert-title">$msg</p>
+                <p>$submsg</p>
+        </div>
+HTML;
 }
 Html::footer();
