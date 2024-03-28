@@ -362,6 +362,9 @@ class PluginJamfAPI
      */
     public static function getJamfProVersion(): string
     {
+        if (!static::$connection) {
+            static::$connection = new PluginJamfConnection();
+        }
         $response = static::$connection->getClient()->get(static::$connection->getAPIUrl('v1/jamf-pro-version', true))->getBody()->getContents();
         return json_decode($response, true)['version'];
     }
@@ -377,6 +380,9 @@ class PluginJamfAPI
      */
     public static function getAllMobileDevices()
     {
+        if (!static::$connection) {
+            static::$connection = new PluginJamfConnection();
+        }
         $all_results = [];
 
         $endpoint_base = '/v2/mobile-devices';
@@ -412,6 +418,9 @@ class PluginJamfAPI
      */
     public static function getMobileDeviceByID(int $id, bool $detailed = false)
     {
+        if (!static::$connection) {
+            static::$connection = new PluginJamfConnection();
+        }
         $endpoint = "/v2/mobile-devices/{$id}" . ($detailed ? '/detail' : '');
         $response = static::$connection->getClient()->get(static::$connection->getAPIUrl($endpoint, true));
         return json_decode($response->getBody()->getContents(), true);
@@ -425,6 +434,9 @@ class PluginJamfAPI
      */
     public static function getMobileDeviceByUDID(string $udid, string $section = 'general'): ?array
     {
+        if (!static::$connection) {
+            static::$connection = new PluginJamfConnection();
+        }
         $query_params = [
             'section' => strtoupper($section),
             'filter' => 'udid=="' . $udid . '"'
@@ -444,6 +456,9 @@ class PluginJamfAPI
      */
     public static function getAllComputers()
     {
+        if (!static::$connection) {
+            static::$connection = new PluginJamfConnection();
+        }
         $all_results = [];
 
         $endpoint_base = '/v1/computers-inventory';
@@ -473,6 +488,9 @@ class PluginJamfAPI
 
     public static function getComputerByID(int $id, ?string $section = null): ?array
     {
+        if (!static::$connection) {
+            static::$connection = new PluginJamfConnection();
+        }
         $endpoint = "/v1/computer-inventory";
         $query_params = [
             'section' => $section,
