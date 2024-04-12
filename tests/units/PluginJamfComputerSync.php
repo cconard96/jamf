@@ -23,14 +23,13 @@
 
 namespace tests\units;
 
-use DbTestCase;
 use PluginJamfComputer;
 use PluginJamfComputerTestSync;
 use PluginJamfExtensionAttribute;
 use PluginJamfImport;
 use PluginJamfItem_ExtensionAttribute;
 
-class PluginJamfComputerSync extends DbTestCase {
+class PluginJamfComputerSync extends \AbstractDBTest {
 
     public function testDiscover() {
         global $DB;
@@ -40,7 +39,7 @@ class PluginJamfComputerSync extends DbTestCase {
         $iterator = $DB->request([
             'FROM' => PluginJamfImport::getTable()
         ]);
-        $this->integer($iterator->count())->isEqualTo(5);
+        $this->assertEquals(5, $iterator->count());
     }
 
     public function testSyncExtensionAttributeDefinitions() {
@@ -54,7 +53,7 @@ class PluginJamfComputerSync extends DbTestCase {
                 'jamf_type' => 'Computer'
             ]
         ]);
-        $this->integer($iterator->count())->isEqualTo(4);
+        $this->assertEquals(1, $iterator->count());
 
         // Make sure syncing again does not cause duplicates
         PluginJamfComputerTestSync::syncExtensionAttributeDefinitions();
@@ -65,7 +64,7 @@ class PluginJamfComputerSync extends DbTestCase {
                 'jamf_type' => 'Computer'
             ]
         ]);
-        $this->integer($iterator->count())->isEqualTo(4);
+        $this->assertEquals(1, $iterator->count());
     }
 
     public function testImport() {
@@ -73,38 +72,46 @@ class PluginJamfComputerSync extends DbTestCase {
 
         PluginJamfComputerTestSync::syncExtensionAttributeDefinitions();
 
-        PluginJamfComputerTestSync::import('Computer', 33, false);
+        PluginJamfComputerTestSync::import('Computer', 1, false);
 
         // Make sure the computer was created
         $iterator = $DB->request([
             'FROM' => \Computer::getTable(),
             'WHERE' => [
-                'name' => 'Computer 2'
+                'name' => 'CConardMBA'
             ]
         ]);
-        $this->integer($iterator->count())->isEqualTo(1);
-        $item = $iterator->next();
+        $this->assertEquals(1, $iterator->count());
+        $item = $iterator->current();
 
         // Make sure the new computer is linked properly
         $link_iterator = $DB->request([
-            //'SELECT' => ['id', 'udid'],
-            'FROM' => PluginJamfComputer::getTable(),
+            'SELECT' => [PluginJamfComputer::getTable() . '.id', 'udid'],
+            'FROM' => 'glpi_plugin_jamf_devices',
+            'LEFT JOIN' => [
+                PluginJamfComputer::getTable() => [
+                    'ON' => [
+                        PluginJamfComputer::getTable() => 'glpi_plugin_jamf_devices_id',
+                        'glpi_plugin_jamf_devices' => 'id'
+                    ]
+                ]
+            ],
             'WHERE' => [
                 'itemtype' => 'Computer',
                 'items_id' => $item['id']
             ]
         ]);
-        $this->integer($link_iterator->count())->isEqualTo(1);
-        $link = $link_iterator->next();
-        $this->string($link['udid'])->isEqualTo('CA40DA58-60A3-11E4-90B8-12DF261F2C7E');
+        $this->assertEquals(1, $link_iterator->count());
+        $link = $link_iterator->current();
+        $this->assertEquals('55900BDC-347C-58B1-D249-F32244B11D30', $link['udid']);
 
         $ext_attr_iterator = $DB->request([
             'FROM' => PluginJamfItem_ExtensionAttribute::getTable(),
             'WHERE' => [
-                'itemtype' => PluginJamfComputer::class,
+                'itemtype' => 'PluginJamfComputer',
                 'items_id' => $link['id']
             ]
         ]);
-        $this->integer($ext_attr_iterator->count())->isEqualTo(4);
+        $this->assertEquals(1, $ext_attr_iterator->count());
     }
 }

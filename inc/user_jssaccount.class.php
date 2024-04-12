@@ -46,10 +46,11 @@ class PluginJamfUser_JSSAccount extends CommonDBChild
     public function prepareInputForUpdate($input)
     {
         global $DB;
-        if ($input['jssaccounts_id'] == 0) {
+        if ($input['jssaccounts_id'] === 0) {
             $DB->delete(self::getTable(), ['id' => $this->fields['id']]);
             return false;
         }
+        return $input;
     }
 
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)

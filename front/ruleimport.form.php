@@ -28,6 +28,6 @@ if (!$plugin->isActivated('jamf')) {
     Html::displayNotFoundError();
 }
 
-$rulecollection = new PluginJamfRuleImportCollection($_SESSION['glpiactive_entity']);
+$rulecollection = new PluginJamfRuleImportCollection();
 
 include(GLPI_ROOT . "/front/rule.common.form.php");

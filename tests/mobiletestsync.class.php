@@ -23,7 +23,7 @@
 
 class PluginJamfMobileTestSync extends PluginJamfMobileSync {
 
-    protected static $api = PluginJamfApiTestClassic::class;
+    protected static $api = PluginJamfApiTest::class;
 
     public static function sync(string $itemtype, int $items_id, bool $use_transaction = true): bool {
         return parent::sync($itemtype, $items_id, false);

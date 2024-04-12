@@ -1,0 +1,9 @@
+{
+  "computer_extension_attributes": [
+    {
+      "id": 1,
+      "name": "Get Application's Developer Name",
+      "enabled": true
+    }
+  ]
+}

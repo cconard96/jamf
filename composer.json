@@ -1,18 +1,24 @@
 {
-  "require": {
-    "php": "^7.4"
-  },
-  "require-dev": {
-      "glpi-project/tools": "^0.7.2"
-  },
-  "config": {
-    "optimize-autoloader": true,
-    "platform": {
-      "php": "7.4.0"
+    "require": {
+        "php": "~7.4.0|~8.0.0|~8.1.0|~8.2.0"
     },
-    "sort-packages": true,
-    "allow-plugins": {
-      "dealerdirect/phpcodesniffer-composer-installer": false
+    "require-dev": {
+        "glpi-project/tools": "^0.7.2",
+        "phpstan/phpstan": "^1.10",
+        "phpunit/phpunit": "~9.6"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "platform": {
+            "php": "7.4"
+        },
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": false
+        }
+    },
+    "scripts": {
+        "test": "phpunit -c phpunit.xml",
+        "phpstan": "phpstan analyse -c phpstan.neon"
     }
-  }
 }

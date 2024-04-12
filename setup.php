@@ -29,36 +29,39 @@ function plugin_init_jamf()
     global $PLUGIN_HOOKS;
 
     $PLUGIN_HOOKS['csrf_compliant']['jamf'] = true;
-    $PLUGIN_HOOKS['add_javascript']['jamf'][] = 'js/jamf.js';
-    Plugin::registerClass('PluginJamfConfig', ['addtabon' => 'Config']);
-    $PLUGIN_HOOKS['post_item_form']['jamf'] = 'plugin_jamf_showJamfInfoForItem';
-    $PLUGIN_HOOKS['pre_item_update']['jamf']['Phone'] = ['PluginJamfMobileDevice', 'preUpdatePhone'];
-    $PLUGIN_HOOKS['undiscloseConfigValue']['jamf'] = [PluginJamfConfig::class, 'undiscloseConfigValue'];
-    Plugin::registerClass('PluginJamfRuleImportCollection', ['rulecollections_types' => true]);
-    Plugin::registerClass('PluginJamfProfile', ['addtabon' => ['Profile']]);
-    Plugin::registerClass('PluginJamfItem_ExtensionAttribute', ['addtabon' => [
-        'Computer',
-        'Phone'
-    ]]);
-    Plugin::registerClass('PluginJamfItem_MDMCommand', ['addtabon' => [
-        'Computer',
-        'Phone'
-    ]]);
-    Plugin::registerClass('PluginJamfUser_JSSAccount', ['addtabon' => ['User']]);
-    if (Session::haveRight('plugin_jamf_mobiledevice', READ)) {
-        $PLUGIN_HOOKS['menu_toadd']['jamf'] = ['tools' => 'PluginJamfMenu'];
+
+    if (Plugin::isPluginActive('jamf')) {
+        $PLUGIN_HOOKS['add_javascript']['jamf'][] = 'js/jamf.js';
+        Plugin::registerClass('PluginJamfConfig', ['addtabon' => 'Config']);
+        $PLUGIN_HOOKS['post_item_form']['jamf'] = 'plugin_jamf_showJamfInfoForItem';
+        $PLUGIN_HOOKS['pre_item_update']['jamf']['Phone'] = ['PluginJamfMobileDevice', 'preUpdatePhone'];
+        $PLUGIN_HOOKS['undiscloseConfigValue']['jamf'] = [PluginJamfConfig::class, 'undiscloseConfigValue'];
+        Plugin::registerClass('PluginJamfRuleImportCollection', ['rulecollections_types' => true]);
+        Plugin::registerClass('PluginJamfProfile', ['addtabon' => ['Profile']]);
+        Plugin::registerClass('PluginJamfItem_ExtensionAttribute', ['addtabon' => [
+            'Computer',
+            'Phone'
+        ]]);
+        Plugin::registerClass('PluginJamfItem_MDMCommand', ['addtabon' => [
+            'Computer',
+            'Phone'
+        ]]);
+        Plugin::registerClass('PluginJamfUser_JSSAccount', ['addtabon' => ['User']]);
+        if (Session::haveRight('plugin_jamf_mobiledevice', READ)) {
+            $PLUGIN_HOOKS['menu_toadd']['jamf'] = ['tools' => 'PluginJamfMenu'];
+        }
+        $PLUGIN_HOOKS['post_init']['jamf'] = 'plugin_jamf_postinit';
+        $PLUGIN_HOOKS['item_purge']['jamf'] = [
+            'Computer' => ['PluginJamfAbstractDevice', 'plugin_jamf_purgeComputer'],
+            'Phone' => ['PluginJamfAbstractDevice', 'plugin_jamf_purgePhone'],
+            'Software' => ['PluginJamfSoftware', 'plugin_jamf_purgeSoftware']
+        ];
+
+        // Dashboards
+        $PLUGIN_HOOKS['dashboard_cards']['jamf'] = 'plugin_jamf_dashboardCards';
+
+        $PLUGIN_HOOKS['secured_configs']['Jamf'] = ['jsspassword'];
     }
-    $PLUGIN_HOOKS['post_init']['jamf'] = 'plugin_jamf_postinit';
-    $PLUGIN_HOOKS['item_purge']['jamf'] = [
-        'Computer' => ['PluginJamfAbstractDevice', 'plugin_jamf_purgeComputer'],
-        'Phone' => ['PluginJamfAbstractDevice', 'plugin_jamf_purgePhone'],
-        'Software' => ['PluginJamfSoftware', 'plugin_jamf_purgeSoftware']
-    ];
-
-    // Dashboards
-    $PLUGIN_HOOKS['dashboard_cards']['jamf'] = 'plugin_jamf_dashboardCards';
-
-    $PLUGIN_HOOKS['secured_configs']['Jamf'] = ['jsspassword'];
 }
 
 function plugin_version_jamf()
