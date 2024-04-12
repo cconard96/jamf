@@ -80,6 +80,7 @@ if (!count($items)) {
     exit();
 }
 
+// The API endpoint for sending MDM commands only accepts XML, so we need to build the XML payload
 $payload = new SimpleXMLElement("<mobile_device_command/>");
 $general = $payload->addChild('general');
 $general->addChild('command', $_POST['command']);

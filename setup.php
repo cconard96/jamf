@@ -63,7 +63,6 @@ function plugin_init_jamf()
 
 function plugin_version_jamf()
 {
-
     return [
         'name' => _x('plugin_info', 'JAMF Plugin for GLPI', 'jamf'),
         'version' => PLUGIN_JAMF_VERSION,
