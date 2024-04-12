@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mobile_device>
+    <general>
+        <id>5</id>
+        <display_name>Test iPad 3</display_name>
+        <device_name>Test iPad 3</device_name>
+        <name>Test iPad 3</name>
+        <asset_tag>Test iPad 3</asset_tag>
+        <last_inventory_update>Tuesday, November 05 2019 at 6:33 PM</last_inventory_update>
+        <last_inventory_update_epoch>1572978826203</last_inventory_update_epoch>
+        <last_inventory_update_utc>2019-11-05T18:33:46.203+0000</last_inventory_update_utc>
+        <capacity>12159</capacity>
+        <capacity_mb>12159</capacity_mb>
+        <available>11487</available>
+        <available_mb>11487</available_mb>
+        <percentage_used>5</percentage_used>
+        <os_type>iOS</os_type>
+        <os_version>12.4.1</os_version>
+        <os_build>14F89</os_build>
+        <software_update_device_id/>
+        <serial_number>DDRF963ZKGG8</serial_number>
+        <udid>1aec6610a9401d2cc47cb55e1a2f7b500ab75864</udid>
+        <initial_entry_date_epoch>1572978826099</initial_entry_date_epoch>
+        <initial_entry_date_utc>2019-11-05T18:33:46.099+0000</initial_entry_date_utc>
+        <phone_number/>
+        <ip_address>192.0.0.1</ip_address>
+        <wifi_mac_address>39:05:d6:dd:5a:c3</wifi_mac_address>
+        <bluetooth_mac_address>d7:53:39:18:c3:63</bluetooth_mac_address>
+        <modem_firmware/>
+        <model>iPad 6th Generation (Wi-Fi)</model>
+        <model_identifier>iPad7,5</model_identifier>
+        <model_number>MR7F2LL</model_number>
+        <modelDisplay deprecated="9.4">iPad 6th Generation (Wi-Fi)</modelDisplay>
+        <model_display>iPad 6th Generation (Wi-Fi)</model_display>
+        <device_ownership_level>Institutional</device_ownership_level>
+        <enrollment_method/>
+        <last_enrollment_epoch>1572978131</last_enrollment_epoch>
+        <last_enrollment_utc>1970-01-19T04:56:18.131+0000</last_enrollment_utc>
+        <mdm_profile_expiration_epoch>0</mdm_profile_expiration_epoch>
+        <mdm_profile_expiration_utc/>
+        <managed>true</managed>
+        <supervised>true</supervised>
+        <exchange_activesync_device_identifier/>
+        <shared>No</shared>
+        <diagnostic_submission>Not Enabled</diagnostic_submission>
+        <app_analytics>Not Enabled</app_analytics>
+        <tethered/>
+        <battery_level>95</battery_level>
+        <ble_capable>false</ble_capable>
+        <device_locator_service_enabled>false</device_locator_service_enabled>
+        <do_not_disturb_enabled>false</do_not_disturb_enabled>
+        <cloud_backup_enabled>false</cloud_backup_enabled>
+        <last_cloud_backup_date_epoch>0</last_cloud_backup_date_epoch>
+        <last_cloud_backup_date_utc/>
+        <location_services_enabled>false</location_services_enabled>
+        <itunes_store_account_is_active>false</itunes_store_account_is_active>
+        <last_backup_time_epoch>0</last_backup_time_epoch>
+        <last_backup_time_utc/>
+        <site>
+            <id>-1</id>
+            <name>None</name>
+        </site>
+    </general>
+    <location>
+        <username/>
+        <realname/>
+        <real_name/>
+        <email_address/>
+        <position/>
+        <phone/>
+        <phone_number/>
+        <department/>
+        <building/>
+        <room/>
+    </location>
+    <purchasing>
+        <is_purchased>true</is_purchased>
+        <is_leased>false</is_leased>
+        <po_number/>
+        <vendor/>
+        <applecare_id/>
+        <purchase_price/>
+        <purchasing_account/>
+        <po_date/>
+        <po_date_epoch>0</po_date_epoch>
+        <po_date_utc/>
+        <warranty_expires/>
+        <warranty_expires_epoch>0</warranty_expires_epoch>
+        <warranty_expires_utc/>
+        <lease_expires/>
+        <lease_expires_epoch>0</lease_expires_epoch>
+        <lease_expires_utc/>
+        <life_expectancy>0</life_expectancy>
+        <purchasing_contact/>
+        <attachments/>
+    </purchasing>
+    <applications>
+        <size>0</size>
+    </applications>
+    <security>
+        <data_protection>false</data_protection>
+        <block_level_encryption_capable>false</block_level_encryption_capable>
+        <file_level_encryption_capable>false</file_level_encryption_capable>
+        <passcode_present>false</passcode_present>
+        <passcode_compliant>false</passcode_compliant>
+        <passcode_compliant_with_profile>false</passcode_compliant_with_profile>
+        <passcode_lock_grace_period_enforced>Not Available</passcode_lock_grace_period_enforced>
+        <hardware_encryption>-1</hardware_encryption>
+        <activation_lock_enabled>false</activation_lock_enabled>
+        <jailbreak_detected>Unknown</jailbreak_detected>
+        <lost_mode_enabled>Unsupported OS Versione</lost_mode_enabled>
+        <lost_mode_enforced>false</lost_mode_enforced>
+        <lost_mode_enable_issued_epoch>1572978826094</lost_mode_enable_issued_epoch>
+        <lost_mode_enable_issued_utc>2019-11-05T18:33:46.094+0000</lost_mode_enable_issued_utc>
+        <lost_mode_message/>
+        <lost_mode_phone/>
+        <lost_mode_footnote/>
+        <lost_location_epoch>1712944906086</lost_location_epoch>
+        <lost_location_utc>2024-04-12T18:01:46.086+0000</lost_location_utc>
+        <lost_location_latitude>0.0</lost_location_latitude>
+        <lost_location_longitude>0.0</lost_location_longitude>
+        <lost_location_altitude>-1.0</lost_location_altitude>
+        <lost_location_speed>-1.0</lost_location_speed>
+        <lost_location_course>-1.0</lost_location_course>
+        <lost_location_horizontal_accuracy>-1.0</lost_location_horizontal_accuracy>
+        <lost_location_vertical_accuracy>-1.0</lost_location_vertical_accuracy>
+    </security>
+    <network>
+        <home_carrier_network/>
+        <cellular_technology>None</cellular_technology>
+        <voice_roaming_enabled>Not Available</voice_roaming_enabled>
+        <imei/>
+        <iccid/>
+        <meid/>
+        <current_carrier_network/>
+        <carrier_settings_version/>
+        <current_mobile_country_code/>
+        <current_mobile_network_code/>
+        <home_mobile_country_code/>
+        <home_mobile_network_code/>
+        <data_roaming_enabled>false</data_roaming_enabled>
+        <roaming>false</roaming>
+        <phone_number/>
+    </network>
+    <certificates>
+        <size>0</size>
+    </certificates>
+    <configuration_profiles>
+        <size>0</size>
+    </configuration_profiles>
+    <provisioning_profiles>
+        <size>0</size>
+    </provisioning_profiles>
+    <mobile_device_groups>
+        <size>2</size>
+        <mobile_device_group>
+            <id>1</id>
+            <name>All Managed iPads</name>
+        </mobile_device_group>
+        <mobile_device_group>
+            <id>4</id>
+            <name>Lost Devices</name>
+        </mobile_device_group>
+    </mobile_device_groups>
+    <extension_attributes>
+        <extension_attribute>
+            <id>1</id>
+            <name>Staff Device</name>
+            <type>String</type>
+            <multi_value>false</multi_value>
+            <value/>
+        </extension_attribute>
+    </extension_attributes>
+</mobile_device>

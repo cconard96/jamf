@@ -22,6 +22,7 @@
  */
 
 use GuzzleHttp\Client;
+use GuzzleHttp\ClientTrait;
 
 /**
  * JamfConnection class
@@ -33,7 +34,10 @@ class PluginJamfConnection
 
     private ?string $bearer_token = null;
 
-    private Client $client;
+    /**
+     * @var ClientTrait
+     */
+    protected $client;
 
     /**
      * Load connection details from the DB and store them in the $config array.
@@ -189,8 +193,16 @@ class PluginJamfConnection
         }
     }
 
-    public function getClient(): Client
+    /**
+     * @return ClientTrait
+     */
+    public function getClient()
     {
+        /**
+         * @var array $CFG_GLPI
+         */
+        global $CFG_GLPI;
+
         if (!isset($this->client)) {
             if ($this->bearer_token === null) {
                 $this->fetchBearerToken();
@@ -215,7 +227,6 @@ class PluginJamfConnection
 
             $this->client = new Client($options);
         }
-
 
         return $this->client;
     }

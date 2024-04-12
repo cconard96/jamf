@@ -33,7 +33,7 @@ class PluginJamfConfig extends CommonDBTM
 
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
     {
-        if (!$withtemplate && $item->getType() === 'Config') {
+        if (!$withtemplate && $item::getType() === Config::class) {
             return _x('plugin_info', 'Jamf plugin', 'jamf');
         }
         return '';
@@ -41,7 +41,6 @@ class PluginJamfConfig extends CommonDBTM
 
     public function showForm($ID = -1, array $options = [])
     {
-        global $CFG_GLPI;
         if (!Session::haveRight('config', UPDATE)) {
             return false;
         }
@@ -51,14 +50,15 @@ class PluginJamfConfig extends CommonDBTM
             'config' => $config,
             'url' => Toolbox::getItemTypeFormURL('Config'),
         ]);
+        return true;
     }
 
     public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
     {
-        if ($item->getType() === 'Config') {
-            $config = new self();
-            $config->showForm();
+        if ($item::getType() === Config::class) {
+            return (new self())->showForm();
         }
+        return false;
     }
 
     public static function undiscloseConfigValue($fields)

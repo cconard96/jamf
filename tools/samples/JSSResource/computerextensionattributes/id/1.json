@@ -1,0 +1,13 @@
+{
+    "computer_extension_attribute": {
+        "id": 1,
+        "name": "TestExtField",
+        "enabled": true,
+        "description": "",
+        "data_type": "String",
+        "input_type": {
+            "type": "Text Field"
+        },
+        "inventory_display": "General"
+    }
+}
