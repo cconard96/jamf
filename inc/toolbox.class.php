@@ -68,7 +68,7 @@ class PluginJamfToolbox
             return '';
         }
         if (!is_a($utc, DateTime::class)) {
-            $utc = new DateTime($utc);
+            $utc = new DateTime($utc, new DateTimeZone('UTC'));
         }
         $mask = 'Y-m-d H:i:s';
 
