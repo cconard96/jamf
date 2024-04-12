@@ -70,7 +70,8 @@ class PluginJamfProfile extends Profile
         echo "<div class='spaced'>";
         $profile = new Profile();
         $profile->getFromDB($profiles_id);
-        if ($openform && ($canedit = Session::haveRightsOr(self::$rightname, [CREATE, UPDATE, PURGE]))) {
+        $canedit = Session::haveRightsOr(self::$rightname, [CREATE, UPDATE, PURGE]);
+        if ($openform && $canedit) {
             echo "<form method='post' action='" . $profile::getFormURL() . "'>";
         }
 

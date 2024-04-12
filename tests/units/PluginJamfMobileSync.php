@@ -23,7 +23,6 @@
 
 namespace tests\units;
 
-use DbTestCase;
 use Phone;
 use PluginJamfAbstractDevice;
 use PluginJamfExtensionAttribute;
@@ -35,7 +34,7 @@ use PluginJamfMobileTestSync;
 use PluginJamfSync;
 use ReflectionClass;
 
-class PluginJamfMobileSync extends DbTestCase {
+class PluginJamfMobileSync extends \AbstractDBTest {
 
     public function testDiscover() {
         global $DB;
@@ -46,7 +45,7 @@ class PluginJamfMobileSync extends DbTestCase {
             'FROM' => PluginJamfImport::getTable()
         ]);
 
-        $this->integer($iterator->count())->isEqualTo(5);
+        $this->assertEquals(6, $iterator->count());
     }
 
     public function testSyncExtensionAttributeDefinitions() {
@@ -60,7 +59,7 @@ class PluginJamfMobileSync extends DbTestCase {
                 'jamf_type' => 'MobileDevice'
             ]
         ]);
-        $this->integer($iterator->count())->isEqualTo(2);
+        $this->assertEquals(1, $iterator->count());
 
         // Make sure syncing again does not cause duplicates
         PluginJamfMobileTestSync::syncExtensionAttributeDefinitions();
@@ -71,7 +70,7 @@ class PluginJamfMobileSync extends DbTestCase {
                 'jamf_type' => 'MobileDevice'
             ]
         ]);
-        $this->integer($iterator->count())->isEqualTo(2);
+        $this->assertEquals(1, $iterator->count());
     }
 
     public function testImportAsComputer() {
@@ -80,33 +79,43 @@ class PluginJamfMobileSync extends DbTestCase {
         // Force sync extension attribute definitions
         PluginJamfMobileTestSync::syncExtensionAttributeDefinitions();
 
-        PluginJamfMobileTestSync::import('Computer', 28, false);
+        PluginJamfMobileTestSync::import('Computer', 5, false);
 
         // Make sure the computer was created
         $iterator = $DB->request([
             'FROM' => \Computer::getTable(),
             'WHERE' => [
-                'name' => 'Device 2'
+                'name' => 'Test iPad 3'
             ]
         ]);
-        $this->integer($iterator->count())->isEqualTo(1);
-        $item = $iterator->next();
+        $this->assertEquals(1, $iterator->count());
+        $item = $iterator->current();
 
         // Make sure the new computer is linked properly
         $link_iterator = $DB->request([
-            'FROM' => PluginJamfMobileDevice::getTable(),
+            'SELECT' => [PluginJamfMobileDevice::getTable() . '.id', 'udid', 'managed', 'supervised', 'activation_lock_enabled', 'lost_mode_enabled'],
+            'FROM' => 'glpi_plugin_jamf_devices',
+            'LEFT JOIN' => [
+                PluginJamfMobileDevice::getTable() => [
+                    'ON' => [
+                        PluginJamfMobileDevice::getTable() => 'glpi_plugin_jamf_devices_id',
+                        'glpi_plugin_jamf_devices' => 'id'
+                    ]
+                ]
+            ],
             'WHERE' => [
                 'itemtype' => 'Computer',
                 'items_id' => $item['id']
             ]
         ]);
-        $this->integer($link_iterator->count())->isEqualTo(1);
-        $link = $link_iterator->next();
-        $this->string($link['udid'])->isEqualTo('ca44c88e60a311e490b812df261f2c7e');
-        $this->integer($link['managed'])->isEqualTo(1);
-        $this->integer($link['supervised'])->isEqualTo(0);
-        $this->integer($link['activation_lock_enabled'])->isEqualTo(1);
-        $this->string($link['lost_mode_enabled'])->isEqualTo('Unsupervised Device');
+        $this->assertEquals(1, $link_iterator->count());
+        $link = $link_iterator->current();
+        $this->assertEquals('1aec6610a9401d2cc47cb55e1a2f7b500ab75864', $link['udid']);
+        $this->assertEquals(1, $link['managed']);
+        $this->assertEquals(1, $link['supervised']);
+        $this->assertEquals(0, $link['activation_lock_enabled']);
+        // No clue why 'Version' is mispelled, but that is how it is directly from Jamf Pro
+        $this->assertEquals('Unsupported OS Versione', $link['lost_mode_enabled']);
 
         $ext_attr_iterator = $DB->request([
             'FROM' => PluginJamfItem_ExtensionAttribute::getTable(),
@@ -115,34 +124,42 @@ class PluginJamfMobileSync extends DbTestCase {
                 'items_id' => $link['id']
             ]
         ]);
-        $this->integer($ext_attr_iterator->count())->isEqualTo(1);
+        $this->assertEquals(1, $ext_attr_iterator->count());
     }
 
     public function testImportAsPhone() {
         global $DB;
-        PluginJamfMobileTestSync::import('Phone', 28, false);
+        PluginJamfMobileTestSync::import('Phone', 5, false);
 
         // Make sure the phone was created
         $iterator = $DB->request([
             'FROM' => Phone::getTable(),
             'WHERE' => [
-                'name' => 'Device 2'
+                'name' => 'Test iPad 3'
             ]
         ]);
-        $this->integer($iterator->count())->isEqualTo(1);
-        $item = $iterator->next();
+        $this->assertEquals(1, $iterator->count());
+        $item = $iterator->current();
 
         // Make sure the new phone is linked properly
         $link_iterator = $DB->request([
-            'FROM' => PluginJamfMobileDevice::getTable(),
+            'FROM' => 'glpi_plugin_jamf_devices',
+            'LEFT JOIN' => [
+                PluginJamfMobileDevice::getTable() => [
+                    'ON' => [
+                        PluginJamfMobileDevice::getTable() => 'id',
+                        'glpi_plugin_jamf_devices' => 'jamf_items_id'
+                    ]
+                ]
+            ],
             'WHERE' => [
                 'itemtype' => 'Phone',
                 'items_id' => $item['id']
             ]
         ]);
-        $this->integer($link_iterator->count())->isEqualTo(1);
-        $link = $link_iterator->next();
-        $this->integer($link['jamf_items_id'])->isEqualTo(28);
+        $this->assertEquals(1, $link_iterator->count());
+        $link = $link_iterator->current();
+        $this->assertEquals(5, $link['jamf_items_id']);
 
         $ext_iterator = $DB->request([
             'FROM' => PluginJamfExtField::getTable(),
@@ -152,9 +169,9 @@ class PluginJamfMobileSync extends DbTestCase {
                 'name' => 'uuid'
             ]
         ]);
-        $this->integer($ext_iterator->count())->isEqualTo(1);
-        $ext_field = $ext_iterator->next();
-        $this->string($ext_field['value'])->isEqualTo('ca44c88e60a311e490b812df261f2c7e');
+        $this->assertEquals(1, $ext_iterator->count());
+        $ext_field = $ext_iterator->current();
+        $this->assertEquals('1aec6610a9401d2cc47cb55e1a2f7b500ab75864', $ext_field['value']);
     }
 
     public function deviceSyncEnginesProvider() {
@@ -174,8 +191,8 @@ class PluginJamfMobileSync extends DbTestCase {
      */
     public function testGetDeviceSyncEngineItem($device_class, $sync_class) {
         $rdc = new ReflectionClass($device_class);
-        $this->boolean($rdc->getParentClass()->getName() === PluginJamfAbstractDevice::class)->isTrue();
+        $this->assertSame($rdc->getParentClass()->getName(), PluginJamfAbstractDevice::class);
         $rsc = new ReflectionClass($sync_class);
-        $this->boolean($rsc->isSubclassOf(PluginJamfSync::class))->isTrue();
+        $this->assertTrue($rsc->isSubclassOf(PluginJamfSync::class));
     }
 }

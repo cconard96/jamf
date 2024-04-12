@@ -115,7 +115,7 @@ abstract class PluginJamfSync
      * @param CommonDBTM|null $item
      * @param array $data
      */
-    public function __construct(CommonDBTM $item = null, array $data = [])
+    final public function __construct(CommonDBTM $item = null, array $data = [])
     {
         /** @global DBmysql */
         global $DB;

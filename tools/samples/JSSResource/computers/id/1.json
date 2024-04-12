@@ -1,0 +1,243 @@
+{
+    "computer": {
+        "general": {
+            "id": 1,
+            "name": "CConardMBA",
+            "network_adapter_type": "",
+            "mac_address": "",
+            "alt_network_adapter_type": "",
+            "alt_mac_address": "",
+            "ip_address": "",
+            "last_reported_ip": "",
+            "serial_number": "C02Q7KHTGFWF",
+            "udid": "55900BDC-347C-58B1-D249-F32244B11D30",
+            "jamf_version": "",
+            "platform": "Mac",
+            "barcode_1": "",
+            "barcode_2": "",
+            "asset_tag": "",
+            "remote_management": {
+                "managed": false,
+                "management_username": "deprecated",
+                "management_password_sha256": "deprecated"
+            },
+            "supervised": false,
+            "mdm_capable": false,
+            "mdm_capable_users": {},
+            "report_date": "2020-08-21 00:22:01",
+            "report_date_epoch": 1597969321824,
+            "report_date_utc": "2020-08-21T00:22:01.824+0000",
+            "last_contact_time": "",
+            "last_contact_time_epoch": 0,
+            "last_contact_time_utc": "",
+            "initial_entry_date": "2020-06-12",
+            "initial_entry_date_epoch": 1591998456927,
+            "initial_entry_date_utc": "2020-06-12T21:47:36.927+0000",
+            "last_cloud_backup_date_epoch": 0,
+            "last_cloud_backup_date_utc": "",
+            "last_enrolled_date_epoch": 0,
+            "last_enrolled_date_utc": "",
+            "mdm_profile_expiration_epoch": 0,
+            "mdm_profile_expiration_utc": "",
+            "distribution_point": "",
+            "sus": "",
+            "site": {
+                "id": -1,
+                "name": "None"
+            },
+            "itunes_store_account_is_active": false
+        },
+        "location": {
+            "username": "",
+            "realname": "",
+            "real_name": "",
+            "email_address": "",
+            "position": "",
+            "phone": "",
+            "phone_number": "",
+            "department": "",
+            "building": "",
+            "room": ""
+        },
+        "purchasing": {
+            "is_purchased": true,
+            "is_leased": false,
+            "po_number": "",
+            "vendor": "",
+            "applecare_id": "",
+            "purchase_price": "",
+            "purchasing_account": "",
+            "po_date": "",
+            "po_date_epoch": 0,
+            "po_date_utc": "",
+            "warranty_expires": "",
+            "warranty_expires_epoch": 0,
+            "warranty_expires_utc": "",
+            "lease_expires": "",
+            "lease_expires_epoch": 0,
+            "lease_expires_utc": "",
+            "life_expectancy": 0,
+            "purchasing_contact": "",
+            "os_applecare_id": "",
+            "os_maintenance_expires": "",
+            "attachments": []
+        },
+        "peripherals": [],
+        "hardware": {
+            "make": "",
+            "model": "",
+            "model_identifier": "",
+            "os_name": "",
+            "os_version": "",
+            "os_build": "",
+            "software_update_device_id": "",
+            "active_directory_status": "",
+            "service_pack": "",
+            "processor_type": "",
+            "is_apple_silicon": false,
+            "processor_architecture": "",
+            "processor_speed": -1,
+            "processor_speed_mhz": -1,
+            "number_processors": -1,
+            "number_cores": -1,
+            "total_ram": -1,
+            "total_ram_mb": -1,
+            "boot_rom": "",
+            "bus_speed": -1,
+            "bus_speed_mhz": -1,
+            "battery_capacity": 0,
+            "cache_size": 0,
+            "cache_size_kb": 0,
+            "available_ram_slots": 0,
+            "optical_drive": "",
+            "nic_speed": "",
+            "smc_version": "",
+            "ble_capable": false,
+            "supports_ios_app_installs": false,
+            "sip_status": "Not collected",
+            "gatekeeper_status": "Not collected",
+            "xprotect_version": "",
+            "institutional_recovery_key": "Not Present",
+            "disk_encryption_configuration": "",
+            "filevault2_users": [],
+            "storage": [
+                {
+                    "disk": "disk0",
+                    "model": "M4-CT256M4SSD2",
+                    "revision": "040H",
+                    "serial_number": "000000001307092B4094",
+                    "size": 262205,
+                    "drive_capacity_mb": 262205,
+                    "connection_type": "NO",
+                    "smart_status": "Verified",
+                    "partitions": [
+                        {
+                            "name": "Mac (Boot Partition)",
+                            "size": 242281,
+                            "type": "boot",
+                            "partition_capacity_mb": 242281,
+                            "percentage_full": 74,
+                            "available_mb": 179288,
+                            "filevault_status": "Encrypted",
+                            "filevault_percent": 100,
+                            "filevault2_status": "Encrypted",
+                            "filevault2_percent": 100,
+                            "boot_drive_available_mb": 179288,
+                            "lvgUUID": "0DDE4907-633D-4CE7-BA6B-4790018C4A77",
+                            "lvUUID": "77FF93E0-F314-49C8-BA18-DE39A77476AE",
+                            "pvUUID": "08634549-605F-4874-814A-2E6777336A58"
+                        }
+                    ]
+                },
+                {
+                    "disk": "disk1",
+                    "model": "Hitachi HTS725050A9A364",
+                    "revision": "PC4OC70E",
+                    "serial_number": "100726PCK400VLJUKA4J",
+                    "size": 512113,
+                    "drive_capacity_mb": 512113,
+                    "connection_type": "NO",
+                    "smart_status": "Verified",
+                    "partitions": [
+                        {
+                            "name": "Macintosh HD",
+                            "size": 476120,
+                            "type": "other",
+                            "partition_capacity_mb": 476120,
+                            "percentage_full": 88,
+                            "available_mb": 418986,
+                            "filevault_status": "Encrypted",
+                            "filevault_percent": 100,
+                            "filevault2_status": "Encrypted",
+                            "filevault2_percent": 100
+                        }
+                    ]
+                },
+                {
+                    "disk": "disk3",
+                    "model": "",
+                    "revision": "",
+                    "serial_number": "",
+                    "size": 731,
+                    "drive_capacity_mb": 731,
+                    "connection_type": "",
+                    "smart_status": "",
+                    "partitions": [
+                        {
+                            "name": "Parallels Desktop 10 (Boot Partition)",
+                            "size": 731,
+                            "type": "other",
+                            "partition_capacity_mb": 731,
+                            "percentage_full": 77,
+                            "available_mb": 563,
+                            "filevault_status": "Encrypted",
+                            "filevault_percent": 100,
+                            "filevault2_status": "Encrypted",
+                            "filevault2_percent": 100
+                        }
+                    ]
+                }
+            ],
+            "mapped_printers": []
+        },
+        "certificates": [],
+        "security": {
+            "activation_lock": false,
+            "recovery_lock_enabled": false,
+            "secure_boot_level": "unknown",
+            "external_boot_level": "unknown",
+            "firewall_enabled": false
+        },
+        "software": {
+            "unix_executables": [],
+            "licensed_software": [],
+            "installed_by_casper": [],
+            "installed_by_installer_swu": [],
+            "cached_by_casper": [],
+            "available_software_updates": [],
+            "available_updates": [],
+            "running_services": [],
+            "applications": [],
+            "fonts": [],
+            "plugins": []
+        },
+        "extension_attributes": [
+            {
+                "id": 1,
+                "name": "TestExtField",
+                "type": "String",
+                "multi_value": false,
+                "value": "TestExtFieldValue"
+            }
+        ],
+        "groups_accounts": {
+            "computer_group_memberships": [],
+            "local_accounts": [],
+            "user_inventories": {
+                "disable_automatic_login": true
+            }
+        },
+        "iphones": [],
+        "configuration_profiles": []
+    }
+}

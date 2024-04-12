@@ -1,0 +1,16 @@
+{
+    "mobile_device_extension_attribute": {
+        "id": 1,
+        "name": "Staff Device",
+        "description": "",
+        "data_type": "String",
+        "input_type": {
+            "type": "Pop-up Menu",
+            "popup_choices": [
+                "No",
+                "Yes"
+            ]
+        },
+        "inventory_display": "General"
+    }
+}

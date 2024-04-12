@@ -35,6 +35,8 @@ class PluginJamfAPI
      */
     private static $connection;
 
+    protected static $connection_class = PluginJamfConnection::class;
+
     /**
      * Get data from a JSS Classic API endpoint.
      * @param string $endpoint The API endpoint.
@@ -44,10 +46,10 @@ class PluginJamfAPI
      * @throws PluginJamfRateLimitException
      * @since 1.0.0
      */
-    private static function getClassic(string $endpoint, $raw = false, $response_type = 'application/json')
+    protected static function getClassic(string $endpoint, $raw = false, $response_type = 'application/json')
     {
         if (!static::$connection) {
-            static::$connection = new PluginJamfConnection();
+            static::$connection = new static::$connection_class();
         }
         $url = static::$connection->getAPIUrl($endpoint);
         $client = static::$connection->getClient();
@@ -87,10 +89,10 @@ class PluginJamfAPI
      * @return int|bool True if successful, or the HTTP return code if it is not 201.
      * @since 1.1.0
      */
-    private static function addClassic(string $endpoint, string $payload)
+    protected static function addClassic(string $endpoint, string $payload)
     {
         if (!static::$connection) {
-            static::$connection = new PluginJamfConnection();
+            static::$connection = new static::$connection_class();
         }
         $url = (static::$connection)->getAPIUrl($endpoint);
         $client = static::$connection->getClient();
@@ -117,10 +119,10 @@ class PluginJamfAPI
      * @return int|bool True if successful, or the HTTP return code if it is not 201.
      * @since 1.1.0
      */
-    private static function updateClassic(string $endpoint, array $data)
+    protected static function updateClassic(string $endpoint, array $data)
     {
         if (!static::$connection) {
-            static::$connection = new PluginJamfConnection();
+            static::$connection = new static::$connection_class();
         }
         $url = (static::$connection)->getAPIUrl($endpoint);
         $client = static::$connection->getClient();
@@ -147,10 +149,10 @@ class PluginJamfAPI
      * @return int|bool True if successful, or the HTTP return code if it is not 200.
      * @since 1.1.0
      */
-    private static function deleteClassic(string $endpoint)
+    protected static function deleteClassic(string $endpoint)
     {
         if (!static::$connection) {
-            static::$connection = new PluginJamfConnection();
+            static::$connection = new static::$connection_class();
         }
         $url = (static::$connection)->getAPIUrl($endpoint);
         $client = static::$connection->getClient();
@@ -363,7 +365,7 @@ class PluginJamfAPI
     public static function getJamfProVersion(): string
     {
         if (!static::$connection) {
-            static::$connection = new PluginJamfConnection();
+            static::$connection = new static::$connection_class();
         }
         $response = static::$connection->getClient()->get(static::$connection->getAPIUrl('v1/jamf-pro-version', true))->getBody()->getContents();
         return json_decode($response, true)['version'];
@@ -380,8 +382,9 @@ class PluginJamfAPI
      */
     public static function getAllMobileDevices()
     {
+        var_dump((new Exception())->getTraceAsString());ob_flush();
         if (!static::$connection) {
-            static::$connection = new PluginJamfConnection();
+            static::$connection = new static::$connection_class();
         }
         $all_results = [];
 
@@ -419,7 +422,7 @@ class PluginJamfAPI
     public static function getMobileDeviceByID(int $id, bool $detailed = false)
     {
         if (!static::$connection) {
-            static::$connection = new PluginJamfConnection();
+            static::$connection = new static::$connection_class();
         }
         $endpoint = "/v2/mobile-devices/{$id}" . ($detailed ? '/detail' : '');
         $response = static::$connection->getClient()->get(static::$connection->getAPIUrl($endpoint, true));
@@ -435,7 +438,7 @@ class PluginJamfAPI
     public static function getMobileDeviceByUDID(string $udid, string $section = 'general'): ?array
     {
         if (!static::$connection) {
-            static::$connection = new PluginJamfConnection();
+            static::$connection = new static::$connection_class();
         }
         $query_params = [
             'section' => strtoupper($section),
@@ -457,7 +460,7 @@ class PluginJamfAPI
     public static function getAllComputers()
     {
         if (!static::$connection) {
-            static::$connection = new PluginJamfConnection();
+            static::$connection = new static::$connection_class();
         }
         $all_results = [];
 
@@ -489,7 +492,7 @@ class PluginJamfAPI
     public static function getComputerByID(int $id, ?string $section = null): ?array
     {
         if (!static::$connection) {
-            static::$connection = new PluginJamfConnection();
+            static::$connection = new static::$connection_class();
         }
         $endpoint = "/v1/computer-inventory";
         $query_params = [
