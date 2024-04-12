@@ -52,6 +52,5 @@ try {
         }
     }
 } catch (Exception $e) {
-    Toolbox::logError($e->getMessage());
-    return;
+    trigger_error($e->getMessage(), E_USER_ERROR);
 }

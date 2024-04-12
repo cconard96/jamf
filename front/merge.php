@@ -21,6 +21,8 @@
  --------------------------------------------------------------------------
  */
 
+use Glpi\Application\View\TemplateRenderer;
+
 include('../../../inc/includes.php');
 
 $plugin = new Plugin();
@@ -37,11 +39,11 @@ $start = $_GET['start'] ?? 0;
 
 $import = new PluginJamfImport();
 $importcount = countElementsInTable(PluginJamfImport::getTable());
-$pending = $DB->request([
+$pending = iterator_to_array($DB->request([
     'FROM' => PluginJamfImport::getTable(),
     'START' => $start,
     'LIMIT' => $_SESSION['glpilist_limit']
-]);
+]));
 
 $linked_devices = $DB->request([
     'SELECT' => ['jamf_type', 'itemtype', 'items_id'],
@@ -53,97 +55,33 @@ foreach ($linked_devices as $data) {
     $linked[$data['itemtype']][] = $data;
 }
 
-$ajax_url = Plugin::getWebDir('jamf') . '/ajax/merge.php';
-
-Html::printPager($start, $importcount, Plugin::getWebDir('jamf') . '/front/merge.php', '');
-echo "<form>";
-echo "<div class='center'><table id='merge_table' class='table table-striped'>";
-echo "<thead>";
-echo '<tr>';
-echo "<th>" . _x('field', 'Jamf ID', 'jamf') . "</th>";
-echo "<th>" . _x('field', 'Name', 'jamf') . "</th>";
-echo "<th>" . _x('field', 'GLPI Asset Type', 'jamf') . "</th>";
-echo "<th>" . _x('field', 'Jamf Type', 'jamf') . "</th>";
-echo "<th>" . _x('field', 'UDID', 'jamf') . "</th>";
-echo "<th>" . _x('field', 'Discovery Date', 'jamf') . "</th>";
-echo "<th>" . _x('field', 'GLPI Item', 'jamf') . "</th>";
-echo '</tr>';
-echo "</thead><tbody>";
-foreach ($pending as $data) {
-    $rowid = $data['jamf_items_id'];
+foreach ($pending as &$data) {
     $itemtype = $data['type'];
     /** @var CommonDBTM $item */
     $item = new $itemtype();
     $jamftype = ('PluginJamf' . $data['jamf_type']);
-
-    echo "<tr>";
-    echo "<td>{$data['jamf_items_id']}</td>";
-    $jamf_link = Html::link($data['name'], $jamftype::getJamfDeviceURL($data['jamf_items_id']));
-    echo "<td>{$jamf_link}</td>";
-    echo "<td>{$data['type']}</td>";
-    echo "<td>{$data['jamf_type']}</td>";
-    echo "<td>{$data['udid']}</td>";
-    $date_discover = Html::convDateTime($data['date_discover']);
-    echo "<td>{$date_discover}</td><td>";
-    $guess = $item->find([
-        'OR' => [
-            'uuid' => $data['udid'],
-            'name' => $data['name']
-        ]
-    ], [new QueryExpression("CASE WHEN uuid='" . $data['udid'] . "' THEN 0 ELSE 1 END")], 1);
-
-    $params = [
-        'used' => array_column($linked[$itemtype] ?? [], 'items_id')
-    ];
-    if (count($guess)) {
-        $params['value'] = reset($guess)['id'];
+    $guesses = $DB->request([
+        'SELECT' => ['id'],
+        'FROM' => $itemtype::getTable(),
+        'WHERE' => [
+            'OR' => [
+                'uuid' => $data['udid'],
+                'name' => $data['name']
+            ]
+        ],
+        'ORDER' => new QueryExpression("CASE WHEN uuid='" . $data['udid'] . "' THEN 0 ELSE 1 END"),
+        'LIMIT' => 1
+    ]);
+    if (count($guesses)) {
+        $data['guessed_item'] = $guesses->current()['id'];
+    } else {
+        $data['guessed_item'] = 0;
     }
-    $itemtype::dropdown($params);
-    echo "</td></tr>";
 }
-echo "</tbody></table><br>";
 
-echo "<button type='button' class='btn btn-primary' onclick='mergeDevices(); return false;'>" . _x('action', 'Merge', 'jamf') . "</button>";
-echo "</div>";
-$js = <<<JAVASCRIPT
-      function mergeDevices() {
-         const post_data = {};
-         const table = $("#merge_table")[0];
-         const row_count = table.rows.length;
-         for (let i = 1; i < row_count; i++) {
-            const row = table.rows[i];
-            const jamf_id = row.cells[0].innerText;
-            const itemtype = row.cells[2].innerText;
-            const jamf_type = row.cells[3].innerText;
-            const glpi_sel = $(row.cells[6]).find('select')[0];
-            const glpi_id = glpi_sel.value;
-            if (glpi_id && glpi_id > 0) {
-               data = [];
-               post_data[glpi_id] = {'itemtype': itemtype, 'jamf_id': jamf_id, 'jamf_type': jamf_type};
-            }
-         }
-         $.ajax({
-            type: "POST",
-            url: "{$ajax_url}",
-            data: {action: "merge", item_ids: post_data},
-            contentType: 'application/json',
-            beforeSend: () => {
-               $('#loading-overlay').show();
-            },
-            complete: () => {
-               location.reload();
-            }
-         });
-      }
-JAVASCRIPT;
-Html::closeForm();
-Html::printPager($start, $importcount, Plugin::getWebDir('jamf') . '/front/merge.php', '');
-echo Html::scriptBlock($js);
-
-// Create loading indicator
-$position = "position: fixed; top: 0; left: 0; right: 0; bottom: 0;";
-$style = "display: none; {$position} width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 2; cursor: progress;";
-echo "<div id='loading-overlay' style='{$style}'><table class='tab_cadre' style='margin-top: 10%;'>";
-echo "<thead><tr><th class='center'><h3>" . _x('action', 'Merging', 'jamf') . '...' . "</h3></th></tr></thead>";
-echo "</table></div>";
+TemplateRenderer::getInstance()->display('@jamf/merge.html.twig', [
+    'pending' => $pending,
+    'total_count' => $importcount,
+    'linked' => $linked
+]);
 Html::footer();

@@ -21,6 +21,8 @@
  --------------------------------------------------------------------------
  */
 
+use Glpi\Application\View\TemplateRenderer;
+
 include('../../../inc/includes.php');
 
 $plugin = new Plugin();
@@ -35,31 +37,23 @@ global $CFG_GLPI;
 $plugin_dir = Plugin::getWebDir('jamf');
 $links = [];
 if (Session::haveRight('plugin_jamf_mobiledevice', CREATE)) {
-    $links[] = Html::link(_x('menu', 'Import devices', 'jamf'), PluginJamfImport::getSearchURL());
-    $links[] = Html::link(_x('menu', 'Merge existing devices', 'jamf'), "{$plugin_dir}/front/merge.php");
+    $links[] = [
+        'name' => _x('menu', 'Import devices', 'jamf'),
+        'url' => PluginJamfImport::getSearchURL()
+    ];
+    $links[] = [
+        'name' => _x('menu', 'Merge existing devices', 'jamf'),
+        'url' => "{$plugin_dir}/front/merge.php"
+    ];
 }
 if (Session::haveRight('config', UPDATE)) {
-    $links[] = Html::link(_x('action', 'Configure plugin', 'jamf'), Config::getFormURL() . "?forcetab=PluginJamfConfig$1");
+    $links[] = [
+        'name' => _x('menu', 'Configuration', 'jamf'),
+        'url' => Config::getFormURL() . "?forcetab=PluginJamfConfig"
+    ];
 }
 
-if (count($links)) {
-    echo "<div class='center'><table class='tab_cadre'>";
-    echo "<thead><th>" . _x('plugin_info', 'Jamf plugin', 'jamf') . "</th></thead>";
-    echo "<tbody>";
-    foreach ($links as $link) {
-        echo "<tr><td>{$link}</td></tr>";
-    }
-    echo "</tbody></table></div>";
-} else {
-    $msg = _x('error', 'You do not have access to any Jamf plugin items', 'jamf');
-    $submsg = _x('error', 'Please check your profile permissions', 'jamf');
-    echo <<<HTML
-        <div class="text-center">
-            <div class="alert alert-warning" role="alert">
-                <i class="alert-icon ti ti-alert-triangle fa-2x"></i>
-                <p class="alert-title">$msg</p>
-                <p>$submsg</p>
-        </div>
-HTML;
-}
+TemplateRenderer::getInstance()->display('@jamf/menu.html.twig', [
+    'links' => $links
+]);
 Html::footer();

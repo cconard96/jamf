@@ -1,0 +1,137 @@
+{#
+/*
+ * -------------------------------------------------------------------------
+ * JAMF plugin for GLPI
+ * Copyright (C) 2019-2024 by Curtis Conard
+ * https://github.com/cconard96/jamf
+ * -------------------------------------------------------------------------
+ * LICENSE
+ * This file is part of JAMF plugin for GLPI.
+ * JAMF plugin for GLPI is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * JAMF plugin for GLPI is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with JAMF plugin for GLPI. If not, see <http://www.gnu.org/licenses/>.
+ * --------------------------------------------------------------------------
+ */
+#}
+
+<form>
+    {{ include('components/pager.html.twig', {
+        count: total_count,
+        href: '#',
+    }) }}
+    <div class="table-responsive text-center">
+        <table id="import_table" class="table table-striped">
+            <thead>
+                <tr>
+                    <th colspan="7"><h3>{{ _x('form', 'Discovered devices', 'jamf') }}</h3></th>
+                </tr>
+                <tr>
+                    <th>{{ call('Html::getCheckAllAsCheckbox', ['import_table'])|raw }}</th>
+                    <th>{{ _x('field', 'Jamf ID', 'jamf') }}</th>
+                    <th>{{ _x('field', 'Jamf Type', 'jamf') }}</th>
+                    <th>{{ _x('field', 'Name', 'jamf') }}</th>
+                    <th>{{ _x('field', 'Type', 'jamf') }}</th>
+                    <th>{{ _x('field', 'UDID', 'jamf') }}</th>
+                    <th>{{ _x('field', 'Discovery Date', 'jamf') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in pending %}
+                    {% set import_checkbox %}
+                        <input type="checkbox" name="import_{{ data.id }}" class="form-check-input massive_action_checkbox">
+                    {% endset %}
+                    <tr>
+                        <td>{{ import_checkbox }}</td>
+                        <td>{{ data.jamf_items_id }}</td>
+                        <td>{{ data.jamf_type }}</td>
+                        <td>
+                            <a href="{{ call('PluginJamf' ~ data.jamf_type ~ '::getJamfDeviceURL', [data.jamf_items_id]) }}">{{ data.name }}</a>
+                        </td>
+                        <td>{{ data.type }}</td>
+                        <td class="{{ data.udid is empty ? 'font-italic' : '' }}">
+                            {{ data.udid is not empty ? data.udid : _x('message', 'Not collected during discovery', 'jamf') }}
+                        </td>
+                        <td>{{ data.date_discover|formatted_datetime }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% set limitdropdown = include('components/dropdown/limit.html.twig', {
+        href: '#',
+    }) %}
+    <div class="ms-auto d-inline-flex align-items-center d-none d-md-block my-2">
+        {{ __('Show %s entries')|format(limitdropdown)|raw }}
+    </div>
+    <br>
+    <div class="text-center">
+        <button name="import" type="button" class="btn btn-primary" onclick="importDevices();">{{ _x('action', 'Import', 'jamf') }}</button>
+        <button name="discover" type="button" class="btn btn-primary" onclick="discoverNow();">{{ _x('action', 'Discover now', 'jamf') }}</button>
+        <button name="clear" type="button" class="btn btn-danger" onclick="clearPendingImports();">{{ _x('action', 'Clear pending imports', 'jamf') }}</button>
+        <script>
+            function importDevices() {
+                const import_ids = $(':checkbox:checked').filter(':not([name^="_checkall"])').map(function() {
+                    return this.name.replace("import","").substring(1).split('_');
+                }).toArray();
+                $.ajax({
+                    type: "POST",
+                    url: "{{ get_plugin_web_dir('jamf') }}/ajax/import.php",
+                    data: {
+                        action: "import",
+                        import_ids: import_ids
+                    },
+                    contentType: 'application/json',
+                    beforeSend: () => {
+                        $('button[name="import"]').prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>{{ _x('action', 'Importing', 'jamf') }}');
+                        $('button[name="discover"]').prop('disabled', true);
+                        $('button[name="clear"]').prop('disabled', true);
+                    },
+                    complete: () => {
+                        window.location.reload();
+                    }
+                });
+            }
+            function discoverNow() {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ get_plugin_web_dir('jamf') }}/ajax/cron.php",
+                    data: {crontask: "importJamf"},
+                    contentType: 'application/json',
+                    beforeSend: () => {
+                        $('button[name="import"]').prop('disabled', true);
+                        $('button[name="discover"]').prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>{{ _x('action', 'Discovering', 'jamf') }}');
+                        $('button[name="clear"]').prop('disabled', true);
+                    },
+                    complete: () => {
+                        window.location.reload();
+                    }
+                });
+            }
+            function clearPendingImports() {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ get_plugin_web_dir('jamf') }}/ajax/import.php",
+                    data: {
+                        action: "clear"
+                    },
+                    contentType: 'application/json',
+                    beforeSend: () => {
+                        $('button[name="import"]').prop('disabled', true);
+                        $('button[name="discover"]').prop('disabled', true);
+                        $('button[name="clear"]').prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>{{ _x('action', 'Clearing', 'jamf') }}');
+                    },
+                    complete: () => {
+                        window.location.reload();
+                    }
+                });
+            }
+        </script>
+    </div>
+</form>
