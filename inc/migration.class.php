@@ -118,6 +118,7 @@ final class PluginJamfMigration
             'iphone_type',
             'ipad_type',
             'appletv_type',
+            'computer_type',
             'plugin_version'
         ]);
         CronTask::unregister('Jamf');
