@@ -1,9 +1,11 @@
-# /!\ This plugin is looking for contributors /!\
-[See the pinned issue for more information](https://github.com/cconard96/jamf/issues/121)
+# /!\ This plugin has a new home /!\
+To ensure this plugin can continue to be maintained and improved for many years to come, responsibility for the plugin has been transferred to Teclib'.
+Given that this plugin involves the integration of a paid product with GLPI, with a potentially small number of GLPI users wanting this integration, it will be available under the GLPI-Network subscription moving forward.
+This repository will be archived, but remain public.
+If you need assistance with a community version of the plugin, please reach out via the [GLPI community forums](https://forum.glpi-project.org) or the [GLPI Discord server](https://discord.gg/BYQ47ZjWMS).
+The last community release will be version 3.1.1.
 
 # JAMF Plugin for GLPI
-
-[![CodeFactor](https://www.codefactor.io/repository/github/cconard96/jamf/badge/master)](https://www.codefactor.io/repository/github/cconard96/jamf/overview/master)
 
 Syncs data from JAMF Pro to GLPI.
 
@@ -17,11 +19,7 @@ Syncs data from JAMF Pro to GLPI.
 - JSS User account used must have read access to mobile devices at least. Additional access may be required depending on what items are synced (software, etc).
 - The two automatic actions "importJamf' and 'syncJamf" can only be run in CLI/Cron mode due to how long they can take.
 - There is a rule engine used to filter out imported devices. The default import action is to allow the import.
-- iPads and AppleTVs are imported as Computers, while iPhones are imported as Phones.
-
-## Locale Support
-- Contribute to French and Spanish localizations on [POEditor](https://poeditor.com/join/project/BepTgrM7ab).
-- To request new languages, please open a GitHub issue.
+- iPads and AppleTVs are imported as Computers, while iPhones can be imported as Phones or Computers.
 
 ## Version Support
 
