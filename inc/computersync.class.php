@@ -540,6 +540,7 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync
             $imported[] = $data['jamf_items_id'];
         }
         $pending_iterator = $DB->request([
+            'SELECT' => ['jamf_items_id'],
             'FROM' => 'glpi_plugin_jamf_imports',
             'WHERE' => [
                 'jamf_type' => 'Computer'
@@ -547,7 +548,7 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync
         ]);
         $pending_import = [];
         foreach ($pending_iterator as $data) {
-            $pending_import[$data['jamf_items_id']] = $data;
+            $pending_import[] = $data['jamf_items_id'];
         }
 
         $config = Config::getConfigurationValues('plugin:Jamf');
@@ -564,7 +565,7 @@ class PluginJamfComputerSync extends PluginJamfDeviceSync
                         // Some other error
                     }
                 } else {
-                    if (!array_key_exists($jamf_device['id'], $pending_import)) {
+                    if (!in_array((int) $jamf_device['id'], $pending_import, true)) {
                         // Just discovered and cannot auto-import. Save to imports table instead.
                         $DB->insert('glpi_plugin_jamf_imports', [
                             'jamf_type' => 'Computer',

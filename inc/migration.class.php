@@ -605,4 +605,12 @@ final class PluginJamfMigration
         // Change udid column in glpi_plugin_jamf_imports to allow NULL values
         $this->db->queryOrDie('ALTER TABLE `glpi_plugin_jamf_imports` MODIFY `udid` VARCHAR(100) NULL DEFAULT NULL');
     }
+
+    public function apply_3_1_1_migration(): void
+    {
+        // Fix unicity constraint on imports table
+        $this->glpiMigration->dropKey('glpi_plugin_jamf_imports', 'unicity');
+        // Unicity should be on jamf_type (The type in Jamf: Computer/MobileDevice) and jamf_items_id, not jamf_items_id and type (The type of asset in GLPI)
+        $this->glpiMigration->addKey('glpi_plugin_jamf_imports', ['jamf_type', 'jamf_items_id'], 'unicity', 'UNIQUE');
+    }
 }
