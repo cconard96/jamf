@@ -58,7 +58,7 @@
                   {{ fields.passwordField('jsspassword', config.jsspassword|default(null), _x('config', 'JSS Password', 'jamf'), {
                      add_field_attribs: password_set ? {'hidden': 'hidden'} : {},
                   }) }}
-                  {{ fields.dropdownYesNo('jssignorecert', config.jssignorecert|default(true), _x('config', 'Ignore JSS Certificate', 'jamf')) }}
+                  {{ fields.dropdownYesNo('jssignorecert', config.jssignorecert|default(false), _x('config', 'Ignore JSS Certificate', 'jamf')) }}
 
                   {{ fields.largeTitle(_x('form_section', 'Sync Settings', 'jamf'), 'ti ti-server') }}
                   {{ fields.dropdownYesNo('sync_general', config.sync_general|default(false), _x('config', 'Sync General', 'jamf')) }}
