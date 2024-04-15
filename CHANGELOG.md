@@ -1,5 +1,46 @@
 # Jamf Plugin for GLPI Changelog
 
+## [3.1.1]
+
+### Fixes
+
+- Fixed missing API connection checks for some API calls.
+- Fixed missing password config option during plugin installation.
+- Fixed default PMV file path which is used during the plugin installation/v3.0 update.
+- Fixed URL reference in the merge page's pager controls.
+- Fixed select all checkbox on the import page.
+- Fixed some blocking errors when merging devices.
+- Fixed the computer type config option remaining after the plugin is uninstalled.
+- Fixed unicity errors when discovering devices.
+
+### Changed
+
+- Updated included PMV (product model/OS version support) file to the latest version from Apple.
+- Improved the permission error message when accessing the plugin's menu without access to any of the individual plugin pages.
+- Migrated HTML code from `/front` files to Twig.
+- Overhaul of the automatic tests to help ensure a stable release.
+  - Migrated from Atoum to PHPUnit.
+  - Added PHPStan level 1 checks.
+  - Updated the mock data.
+- The config option to ignore the SSL certificate verification is now disabled by default. If you have issues connecting to your Jamf instance over HTTPS, you probably don't have the root certificate installed/trusted for Curl. You should verify this is configured correctly (look up the specific instructions for your OS/distribution).
+- The merge page now ignores deleted and template assets when determining merge candidates.
+
+## [3.1.0]
+
+- The plugin now uses the bearer token authentication with the Jamf API. The plugin still uses a standard username and password to get the token though, so there is no change from the point of view of GLPI admins.
+- UUID is now fetched when the plugin discovers computers and this field will also be used when suggesting GLPI assets for merges.
+
+## [3.0.2]
+
+### Fixes
+
+- SQL error when fetching the Jamf device linked to a GLPI asset
+- Several issues related to the classic API connection
+- Several datetime conversion fixes
+- Mobile device sync error message
+- Migration of config options from plugin versions older than 2.0.0
+- Not able to save the config options in the default options section
+
 ## [3.0.1]
 
 ### Fixes
