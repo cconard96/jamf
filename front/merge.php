@@ -67,7 +67,9 @@ foreach ($pending as &$data) {
             'OR' => [
                 'uuid' => $data['udid'],
                 'name' => $data['name']
-            ]
+            ],
+            'is_deleted' => 0,
+            'is_template' => 0
         ],
         'ORDER' => new QueryExpression("CASE WHEN uuid='" . $data['udid'] . "' THEN 0 ELSE 1 END"),
         'LIMIT' => 1
