@@ -1,9 +1,6 @@
 # /!\ This plugin has a new home /!\
 To ensure this plugin can continue to be maintained and improved for many years to come, responsibility for the plugin has been transferred to Teclib'.
-Given that this plugin involves the integration of a paid product with GLPI, with a potentially small number of GLPI users wanting this integration, it will be available under the GLPI-Network subscription moving forward.
-This repository will be archived, but remain public.
-If you need assistance with a community version of the plugin, please reach out via the [GLPI community forums](https://forum.glpi-project.org) or the [GLPI Discord server](https://discord.gg/BYQ47ZjWMS).
-The last community release will be version 3.1.1.
+If you need assistance with this plugin and don't have a GLPI-Network subscription for support, please reach out via the [GLPI community forums](https://forum.glpi-project.org) or the [GLPI Discord server](https://discord.gg/BYQ47ZjWMS).
 
 # JAMF Plugin for GLPI
 
