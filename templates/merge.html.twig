@@ -34,7 +34,8 @@
 <form>
     {{ include('components/pager.html.twig', {
         count: total_count,
-        href: '#',
+        href: get_plugin_web_dir('jamf') ~ '/front/merge.php',
+        start: _get['start']|default(0),
     }) }}
     <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}"/>
     <div class="table-responsive text-center">
@@ -76,7 +77,7 @@
         </table>
     </div>
     {% set limitdropdown = include('components/dropdown/limit.html.twig', {
-        href: '#',
+        href: get_plugin_web_dir('jamf') ~ '/front/merge.php',
     }) %}
     <div class="ms-auto d-inline-flex align-items-center d-none d-md-block my-2">
         {{ __('Show %s entries')|format(limitdropdown)|raw }}
