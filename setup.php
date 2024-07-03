@@ -28,7 +28,7 @@
  * -------------------------------------------------------------------------
  */
 
-define('PLUGIN_JAMF_VERSION', '3.1.1');
+define('PLUGIN_JAMF_VERSION', '3.1.2');
 define('PLUGIN_JAMF_MIN_GLPI', '10.0.0');
 define('PLUGIN_JAMF_MAX_GLPI', '10.1.0');
 
