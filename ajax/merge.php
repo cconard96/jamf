@@ -127,7 +127,7 @@ if ($_REQUEST['action'] === 'merge') {
 
                 // Update merged device and then delete the pending import
                 if ($sync_result) {
-                    $DB->update($plugin_itemtype::getTable(), [
+                    $DB->update('glpi_plugin_jamf_devices', [
                         'import_date' => $_SESSION['glpi_currenttime']
                     ], [
                         'itemtype' => $itemtype,
