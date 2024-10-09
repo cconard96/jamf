@@ -1,7 +1,7 @@
 [main]
 host = https://www.transifex.com
 
-[o:teclib:p:glpi-project-plugin-jamf:r:jamf-pot]
+[o:teclib:p:glpi-plugin-jamf:r:jamf-pot]
 file_filter = locales/<lang>.po
 source_file = locales/jamf.pot
 source_lang = en
