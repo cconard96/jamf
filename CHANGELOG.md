@@ -1,5 +1,11 @@
 # Jamf Plugin for GLPI Changelog
 
+## [UNRELEASED]
+
+### Fixes
+
+- SQL error when merging the Jamf device linked to a GLPI asset
+
 ## [3.1.1]
 
 ### Fixes
