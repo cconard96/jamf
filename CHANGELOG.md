@@ -8,6 +8,27 @@
 - SQL error when adding `Event`
 - Fix `Computer` merge process
 
+## [3.1.2]
+
+### Fixes
+
+- Fix missing password warning during install
+- Fix `url` reference in merge pagers
+- Fix select `all` checkbox on import page
+- Fix some blocking errors when merging
+- Add missing `csrf`
+- Fix `utc` to `local` datetime
+- Fix computer type left after uninstall
+- Fix discovered devices unicity checks
+
+### Changed
+
+- Improve API connection checks
+- Enhance permission error message in menu
+- Migrate front file html to twig
+- Do not ignore certificate by default
+- Limit merge candidates to not deleted or template
+
 ## [3.1.1]
 
 ### Fixes
