@@ -5,6 +5,7 @@
 ### Fixes
 
 - SQL error when merging the Jamf device linked to a GLPI asset
+- SQL error when adding `Event`
 
 ## [3.1.1]
 

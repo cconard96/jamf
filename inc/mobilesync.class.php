@@ -773,7 +773,7 @@ class PluginJamfMobileSync extends PluginJamfDeviceSync
         }
         if ($iterator->count()) {
             // Already imported
-            Event::log(-1, $itemtype, 4, 'Jamf plugin', "Jamf mobile device $jamf_items_id not imported. A {$itemtype::getTypeName(1)} exists with the same uuid.");
+            Event::log(0, $itemtype, 4, 'Jamf plugin', "Jamf mobile device $jamf_items_id not imported. A {$itemtype::getTypeName(1)} exists with the same uuid.");
             return false;
         }
 
