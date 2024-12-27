@@ -496,21 +496,14 @@ class PluginJamfAPI
         return $all_results;
     }
 
-    public static function getComputerByID(int $id, ?string $section = null): ?array
+    public static function getComputerByID(int $id, bool $detailed = false)
     {
         if (!static::$connection) {
             static::$connection = new static::$connection_class();
         }
-        $endpoint = "/v1/computer-inventory";
-        $query_params = [
-            'section' => $section,
-            'filter' => 'id==' . $id
-        ];
-        $response = static::$connection->getClient()->get(static::$connection->getAPIUrl($endpoint, true) . '?' . http_build_query($query_params));
-        $result = json_decode($response->getBody()->getContents(), true);
-        if (isset($result['results']) && count($result['results']) > 0) {
-            return $result['results'][0];
-        }
-        return null;
+        $endpoint = "/v1/computer-inventory" . ($detailed ? '-detail' : '') . "/{$id}";
+        $response = static::$connection->getClient()->get(static::$connection->getAPIUrl($endpoint, true));
+        return json_decode($response->getBody()->getContents(), true);
     }
+
 }

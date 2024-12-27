@@ -77,7 +77,12 @@ if ($_REQUEST['action'] === 'merge') {
                 $plugin_sync_itemtype = 'PluginJamfMobileSync';
             }
 
-            $jamf_item = PluginJamfAPI::getMobileDeviceByID($jamf_id, true);
+            if ($data['jamf_type'] === 'MobileDevice') {
+                $jamf_item = PluginJamfAPI::getMobileDeviceByID($jamf_id, true);
+            } else {
+                $jamf_item = PluginJamfAPI::getComputerByID($jamf_id, true);
+            }
+
             if ($jamf_item === null) {
                 // API error or device no longer exists in Jamf
                 throw new RuntimeException('Jamf API error or item no longer exists!');
@@ -87,11 +92,11 @@ if ($_REQUEST['action'] === 'merge') {
             $rules = new PluginJamfRuleImportCollection();
 
             //WTF is this, Jamf?
-            $os_details = $jamf_item['ios'] ?? $jamf_item['tvos'];
+            $os_details = $jamf_item['ios'] ?? $jamf_item['tvos'] ?? '';
             $ruleinput = [
-                'name' => $jamf_item['name'],
+                'name' => $jamf_item['name'] ?? $jamf_item['general']['name'],
                 'itemtype' => $itemtype,
-                'last_inventory' => $jamf_item['lastInventoryUpdateTimestamp'],
+                'last_inventory' => $jamf_item['lastInventoryUpdateTimestamp'] ?? $jamf_item['general']['lastContactTime'],
                 'managed' => $jamf_item['managed'] ?? $os_details['managed'],
                 'supervised' => $jamf_item['supervised'] ?? $os_details['supervised'],
             ];

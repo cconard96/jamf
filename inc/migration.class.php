@@ -575,7 +575,7 @@ final class PluginJamfMigration
                         }
                     } else if ($device['jamf_type'] === 'Computer') {
                         // We need to query the JSS for the computer's model identifier
-                        $computer = $this->api::getComputerByID($device['jamf_items_id'], 'hardware');
+                        $computer = $this->api::getComputerByID($device['jamf_items_id'], true);
                         if ($computer !== null) {
                             $this->db->update(
                                 'glpi_plugin_jamf_devices',

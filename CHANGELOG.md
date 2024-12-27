@@ -6,6 +6,7 @@
 
 - SQL error when merging the Jamf device linked to a GLPI asset
 - SQL error when adding `Event`
+- Fix `Computer` merge process
 
 ## [3.1.1]
 
