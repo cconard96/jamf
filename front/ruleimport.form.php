@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -37,4 +38,4 @@ if (!$plugin->isActivated('jamf')) {
 
 $rulecollection = new PluginJamfRuleImportCollection();
 
-include(GLPI_ROOT . "/front/rule.common.form.php");
+include(GLPI_ROOT . '/front/rule.common.form.php');

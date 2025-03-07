@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -28,11 +29,11 @@
  * -------------------------------------------------------------------------
  */
 
-include "../../../inc/includes.php";
+include '../../../inc/includes.php';
 
 $plugin = new Plugin();
 if (!$plugin->isActivated('jamf')) {
     Html::displayNotFoundError();
 }
 
-require "../../../front/rule.test.php";
+require '../../../front/rule.test.php';

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -43,7 +44,7 @@ if (!isset($_GET['command'])) {
 }
 
 if (isset($_GET['itemtype'], $_GET['items_id'])) {
-    $device = new ('PluginJamf'.$_GET['itemtype'])();
+    $device = new ('PluginJamf' . $_GET['itemtype'])();
     if (!$device->getFromDB($_GET['items_id'])) {
         throw new RuntimeException('Invalid itemtype/items_id!');
     }

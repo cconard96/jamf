@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -34,7 +35,6 @@
  */
 class PluginJamfDBUtil
 {
-
     public static function dropTable(string $table)
     {
         global $DB;
@@ -56,7 +56,7 @@ class PluginJamfDBUtil
                 _x('error', '%1$s - Error during the drop of the table %2$s - Error is %3$s', 'jamf'),
                 $message,
                 $table,
-                $DB->error()
+                $DB->error(),
             );
             if (isCommandLine()) {
                 throw new RuntimeException($message);
@@ -65,6 +65,7 @@ class PluginJamfDBUtil
             echo $message . "\n";
             die(1);
         }
+
         return $res;
     }
 
@@ -73,6 +74,7 @@ class PluginJamfDBUtil
         global $DB;
 
         $table_name = $DB::quoteName($table);
+
         return $DB->query("TRUNCATE $table_name");
     }
 }

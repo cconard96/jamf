@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -28,7 +29,7 @@
  * -------------------------------------------------------------------------
  */
 
-class PluginJamfApiTest extends PluginJamfAPI {
-
+class PluginJamfApiTest extends PluginJamfAPI
+{
     protected static $connection_class = PluginJamfConnectionTest::class;
 }

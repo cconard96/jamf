@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -55,13 +56,13 @@ if ($_REQUEST['action'] === 'merge') {
     PluginJamfComputerSync::syncExtensionAttributeDefinitions();
     // An array of item IDs is required
     if (isset($_REQUEST['item_ids']) && is_array($_REQUEST['item_ids'])) {
-        $failures = 0;
+        $failures  = 0;
         $successes = 0;
         foreach ($_REQUEST['item_ids'] as $glpi_id => $data) {
             if (!isset($data['jamf_id'], $data['itemtype'])) {
                 continue;
             }
-            $jamf_id = $data['jamf_id'];
+            $jamf_id  = $data['jamf_id'];
             $itemtype = $data['itemtype'];
 
             if (($itemtype !== 'Computer') && ($itemtype !== 'Phone')) {
@@ -93,15 +94,15 @@ if ($_REQUEST['action'] === 'merge') {
 
             //WTF is this, Jamf?
             $os_details = $jamf_item['ios'] ?? $jamf_item['tvos'] ?? '';
-            $ruleinput = [
-                'name' => $jamf_item['name'] ?? $jamf_item['general']['name'],
-                'itemtype' => $itemtype,
+            $ruleinput  = [
+                'name'           => $jamf_item['name'] ?? $jamf_item['general']['name'],
+                'itemtype'       => $itemtype,
                 'last_inventory' => $jamf_item['lastInventoryUpdateTimestamp'] ?? $jamf_item['general']['lastContactTime'],
-                'managed' => $jamf_item['managed'] ?? $os_details['managed'],
-                'supervised' => $jamf_item['supervised'] ?? $os_details['supervised'],
+                'managed'        => $jamf_item['managed']                      ?? $os_details['managed'],
+                'supervised'     => $jamf_item['supervised']                   ?? $os_details['supervised'],
             ];
             $ruleinput = $rules->processAllRules($ruleinput, $ruleinput, ['recursive' => true]);
-            $import = isset($ruleinput['_import']) ? $ruleinput['_import'] : 'NS';
+            $import    = isset($ruleinput['_import']) ? $ruleinput['_import'] : 'NS';
 
             if (isset($ruleinput['_import']) && !$ruleinput['_import']) {
                 // Dropped by rules
@@ -112,17 +113,17 @@ if ($_REQUEST['action'] === 'merge') {
             try {
                 // Partial import
                 $r = $DB->insert('glpi_plugin_jamf_devices', [
-                    'itemtype' => $itemtype,
-                    'items_id' => $glpi_id,
-                    'udid' => $jamf_item['udid'],
-                    'jamf_type' => $data['jamf_type'],
+                    'itemtype'      => $itemtype,
+                    'items_id'      => $glpi_id,
+                    'udid'          => $jamf_item['udid'],
+                    'jamf_type'     => $data['jamf_type'],
                     'jamf_items_id' => $data['jamf_id'],
                 ]);
                 if ($r === false) {
                     throw new \RuntimeException('Failed to import the device data!');
                 }
                 // Link
-                $plugin_item = new $plugin_itemtype();
+                $plugin_item     = new $plugin_itemtype();
                 $plugin_items_id = $plugin_item->add([
                     'glpi_plugin_jamf_devices_id' => $DB->insertId(),
                 ]);
@@ -133,14 +134,14 @@ if ($_REQUEST['action'] === 'merge') {
                 // Update merged device and then delete the pending import
                 if ($sync_result) {
                     $DB->update('glpi_plugin_jamf_devices', [
-                        'import_date' => $_SESSION['glpi_currenttime']
+                        'import_date' => $_SESSION['glpi_currenttime'],
                     ], [
                         'itemtype' => $itemtype,
-                        'items_id' => $glpi_id
+                        'items_id' => $glpi_id,
                     ]);
                     $DB->delete(PluginJamfImport::getTable(), [
-                        'jamf_type' => $data['jamf_type'],
-                        'jamf_items_id' => $jamf_id
+                        'jamf_type'     => $data['jamf_type'],
+                        'jamf_items_id' => $jamf_id,
                     ]);
                     $DB->commit();
                     $successes++;

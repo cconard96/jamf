@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -54,8 +55,8 @@ class PluginJamfConnection
     {
         $jamf_config = Config::getConfigurationValues('plugin:Jamf', [
             'jssserver', 'jssuser', 'jsspassword', 'jssignorecert']);
-        $this->config = $jamf_config;
-        $glpikey = new GLPIKey();
+        $this->config                = $jamf_config;
+        $glpikey                     = new GLPIKey();
         $this->config['jsspassword'] = $glpikey->decrypt($this->config['jsspassword']);
     }
 
@@ -71,11 +72,11 @@ class PluginJamfConnection
         global $DB;
 
         $glpikey = new GLPIKey();
-        $enc = $glpikey->encrypt($jsspassword);
+        $enc     = $glpikey->encrypt($jsspassword);
         Config::setConfigurationValues('plugin:Jamf', [
-            'jssserver' => $jssserver,
-            'jssuser' => $jssuser,
-            'jsspassword' => $enc
+            'jssserver'   => $jssserver,
+            'jssuser'     => $jssuser,
+            'jsspassword' => $enc,
         ]);
     }
 
@@ -90,6 +91,7 @@ class PluginJamfConnection
         if (is_null($version)) {
             $version = PluginJamfAPI::getJamfProVersion();
         }
+
         return $version;
     }
 
@@ -115,7 +117,7 @@ class PluginJamfConnection
 
     public static function getUserAgentString(): string
     {
-        return "Jamf%20Plugin%20for%20GLPI/" . PLUGIN_JAMF_VERSION;
+        return 'Jamf%20Plugin%20for%20GLPI/' . PLUGIN_JAMF_VERSION;
     }
 
     /**
@@ -163,7 +165,7 @@ class PluginJamfConnection
         curl_setopt($curl, CURLOPT_HTTPHEADER, [
             'Authorization: Bearer ' . $this->bearer_token,
             'Content-Type: application/json',
-            'Accept: application/json'
+            'Accept: application/json',
         ]);
     }
 
@@ -218,17 +220,17 @@ class PluginJamfConnection
             $options = [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->bearer_token,
-                    'User-Agent' => self::getUserAgentString(),
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json'
-                ]
+                    'User-Agent'    => self::getUserAgentString(),
+                    'Content-Type'  => 'application/json',
+                    'Accept'        => 'application/json',
+                ],
             ];
             //TODO use Toolbox::getGuzzleClient in GLPI 10.1
-            if (!empty($CFG_GLPI["proxy_name"])) {
-                $proxy_creds      = !empty($CFG_GLPI["proxy_user"])
-                    ? $CFG_GLPI["proxy_user"] . ":" . (new GLPIKey())->decrypt($CFG_GLPI["proxy_passwd"]) . "@"
-                    : "";
-                $proxy_string     = "http://{$proxy_creds}" . $CFG_GLPI['proxy_name'] . ":" . $CFG_GLPI['proxy_port'];
+            if (!empty($CFG_GLPI['proxy_name'])) {
+                $proxy_creds = !empty($CFG_GLPI['proxy_user'])
+                    ? $CFG_GLPI['proxy_user'] . ':' . (new GLPIKey())->decrypt($CFG_GLPI['proxy_passwd']) . '@'
+                    : '';
+                $proxy_string     = "http://{$proxy_creds}" . $CFG_GLPI['proxy_name'] . ':' . $CFG_GLPI['proxy_port'];
                 $options['proxy'] = $proxy_string;
             }
 

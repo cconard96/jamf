@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -36,9 +37,8 @@ use Glpi\Application\View\TemplateRenderer;
  */
 class PluginJamfMobileDevice extends PluginJamfAbstractDevice
 {
-
-    static public $itemtype = 'itemtype';
-    static public $items_id = 'items_id';
+    public static $itemtype  = 'itemtype';
+    public static $items_id  = 'items_id';
     public static $rightname = 'plugin_jamf_mobiledevice';
 
     public static function getTypeName($nb = 1)
@@ -51,10 +51,7 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
      * @param array $params
      * @return void|bool
      */
-    public static function showForComputerOrPhoneMain($params)
-    {
-
-    }
+    public static function showForComputerOrPhoneMain($params) {}
 
     /**
      * Get a direct link to the mobile device on the Jamf server.
@@ -64,6 +61,7 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
     public static function getJamfDeviceURL(int $jamf_id): string
     {
         $config = PluginJamfConfig::getConfig();
+
         return "{$config['jssserver']}/mobileDevices.html?id={$jamf_id}";
     }
 
@@ -78,7 +76,7 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
 
         $DB->delete(self::getTable(), [
             'itemtype' => $item::getType(),
-            'items_id' => $item->getID()
+            'items_id' => $item->getID(),
         ]);
     }
 
@@ -103,29 +101,29 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
         self::purgeItemCommon($item);
         $DB->delete(Item_OperatingSystem::getTable(), [
             'itemtype' => $item::getType(),
-            'items_id' => $item->getID()
+            'items_id' => $item->getID(),
         ]);
     }
 
 
-//   /**
-//    * @param CommonDBTM $item
-//    * @return PluginJamfMobileDevice
-//    */
-//   public static function getJamfItemForGLPIItem(CommonDBTM $item)
-//   {
-//       $mobiledevice = new self();
-//       $matches = $mobiledevice->find([
-//           'itemtype'   => $item::getType(),
-//           'items_id'   => $item->getID()
-//       ], [], 1);
-//       if (count($matches)) {
-//           $id = reset($matches)['id'];
-//           $mobiledevice->getFromDB($id);
-//           return $mobiledevice;
-//       }
-//       return null;
-//   }
+    //   /**
+    //    * @param CommonDBTM $item
+    //    * @return PluginJamfMobileDevice
+    //    */
+    //   public static function getJamfItemForGLPIItem(CommonDBTM $item)
+    //   {
+    //       $mobiledevice = new self();
+    //       $matches = $mobiledevice->find([
+    //           'itemtype'   => $item::getType(),
+    //           'items_id'   => $item->getID()
+    //       ], [], 1);
+    //       if (count($matches)) {
+    //           $id = reset($matches)['id'];
+    //           $mobiledevice->getFromDB($id);
+    //           return $mobiledevice;
+    //       }
+    //       return null;
+    //   }
 
     public static function preUpdatePhone($item)
     {
@@ -137,29 +135,31 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
     public function getGLPIItem()
     {
         $device_data = $this->getJamfDeviceData();
-        $itemtype = $device_data['itemtype'];
-        $item = new $itemtype();
+        $itemtype    = $device_data['itemtype'];
+        $item        = new $itemtype();
         $item->getFromDB($device_data['items_id']);
+
         return $item;
     }
 
     public function getMDMCommands()
     {
-        $device_data = $this->getJamfDeviceData();
+        $device_data    = $this->getJamfDeviceData();
         $commandhistory = PluginJamfAPI::getItemsClassic('mobiledevicehistory', [
-            'id' => $device_data['jamf_items_id'],
-            'subset' => 'ManagementCommands'
+            'id'     => $device_data['jamf_items_id'],
+            'subset' => 'ManagementCommands',
         ]);
+
         return $commandhistory['management_commands'] ?? [
-                'completed' => [],
-                'pending' => [],
-                'failed' => []
-            ];
+            'completed' => [],
+            'pending'   => [],
+            'failed'    => [],
+        ];
     }
 
     public function getSpecificType()
     {
-        $item = $this->getGLPIItem();
+        $item       = $this->getGLPIItem();
         $modelclass = $this->getJamfDeviceData()['itemtype'] . 'Model';
         if ($item->fields[getForeignKeyFieldForItemType($modelclass)] > 0) {
             /** @var CommonDropdown $model */
@@ -177,6 +177,7 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
                     return null;
             }
         }
+
         return null;
     }
 
@@ -186,18 +187,18 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
 
         $cards['plugin_jamf_mobile_lost'] = [
             'widgettype' => ['bigNumber'],
-            'label' => _x('dashboard', 'Jamf Lost Mobile Device Count', 'jamf'),
-            'provider' => 'PluginJamfMobileDevice::cardLostModeProvider'
+            'label'      => _x('dashboard', 'Jamf Lost Mobile Device Count', 'jamf'),
+            'provider'   => 'PluginJamfMobileDevice::cardLostModeProvider',
         ];
         $cards['plugin_jamf_mobile_managed'] = [
             'widgettype' => ['bigNumber'],
-            'label' => _x('dashboard', 'Jamf Managed Mobile Device Count', 'jamf'),
-            'provider' => 'PluginJamfMobileDevice::cardManagedProvider'
+            'label'      => _x('dashboard', 'Jamf Managed Mobile Device Count', 'jamf'),
+            'provider'   => 'PluginJamfMobileDevice::cardManagedProvider',
         ];
         $cards['plugin_jamf_mobile_supervised'] = [
             'widgettype' => ['bigNumber'],
-            'label' => _x('dashboard', 'Jamf Supervised Mobile Device Count', 'jamf'),
-            'provider' => 'PluginJamfMobileDevice::cardSupervisedProvider'
+            'label'      => _x('dashboard', 'Jamf Supervised Mobile Device Count', 'jamf'),
+            'provider'   => 'PluginJamfMobileDevice::cardSupervisedProvider',
         ];
 
         return $cards;
@@ -207,18 +208,18 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
     {
         global $DB;
 
-        $table = self::getTable();
+        $table    = self::getTable();
         $iterator = $DB->request([
             'SELECT' => [
-                'COUNT' => 'lost_mode_enabled as cpt'
+                'COUNT' => 'lost_mode_enabled as cpt',
             ],
-            'FROM' => $table,
+            'FROM'  => $table,
             'WHERE' => ['lost_mode_enabled' => 'Enabled'],
         ]);
 
         return [
-            'label' => _x('dashboard', 'Jamf Lost Mobile Device Count', 'jamf'),
-            'number' => $iterator->current()['cpt']
+            'label'  => _x('dashboard', 'Jamf Lost Mobile Device Count', 'jamf'),
+            'number' => $iterator->current()['cpt'],
         ];
     }
 
@@ -228,15 +229,15 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
 
         $iterator = $DB->request([
             'SELECT' => [
-                'COUNT' => 'managed as cpt'
+                'COUNT' => 'managed as cpt',
             ],
-            'FROM' => 'glpi_plugin_jamf_devices',
+            'FROM'  => 'glpi_plugin_jamf_devices',
             'WHERE' => ['managed' => 1],
         ]);
 
         return [
-            'label' => _x('dashboard', 'Jamf Managed Mobile Device Count', 'jamf'),
-            'number' => $iterator->current()['cpt']
+            'label'  => _x('dashboard', 'Jamf Managed Mobile Device Count', 'jamf'),
+            'number' => $iterator->current()['cpt'],
         ];
     }
 
@@ -246,14 +247,15 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
 
         $iterator = $DB->request([
             'SELECT' => [
-                'COUNT' => 'supervised as cpt'
+                'COUNT' => 'supervised as cpt',
             ],
-            'FROM' => 'glpi_plugin_jamf_devices',
+            'FROM'  => 'glpi_plugin_jamf_devices',
             'WHERE' => ['supervised' => 1],
         ]);
+
         return [
-            'label' => _x('dashboard', 'Jamf Supervised Mobile Device Count', 'jamf'),
-            'number' => $iterator->current()['cpt']
+            'label'  => _x('dashboard', 'Jamf Supervised Mobile Device Count', 'jamf'),
+            'number' => $iterator->current()['cpt'],
         ];
     }
 
@@ -281,7 +283,7 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
         $js = '';
         if ($item->canUpdate()) {
             $ajax_url = Plugin::getWebDir('jamf') . '/ajax/sync.php';
-            $js = <<<JAVASCRIPT
+            $js       = <<<JAVASCRIPT
                function syncDevice(itemtype, items_id) {
                   $.ajax({
                      type: "POST",
@@ -296,66 +298,66 @@ class PluginJamfMobileDevice extends PluginJamfAbstractDevice
 JAVASCRIPT;
         }
         $info = [
-            'general'   => [
+            'general' => [
                 'caption' => _x('form_section', 'Jamf General Information', 'jamf'),
-                'fields'    => [
+                'fields'  => [
                     'import_date' => [
                         'caption' => _x('field', 'Import date', 'jamf'),
-                        'value' => Html::convDateTime($match['import_date']),
+                        'value'   => Html::convDateTime($match['import_date']),
                     ],
                     'sync_date' => [
                         'caption' => _x('field', 'Last sync', 'jamf'),
-                        'value' => Html::convDateTime($match['sync_date']),
+                        'value'   => Html::convDateTime($match['sync_date']),
                     ],
                     'last_inventory' => [
                         'caption' => _x('field', 'Jamf last inventory', 'jamf'),
-                        'value' => PluginJamfToolbox::utcToLocal($match['last_inventory']),
+                        'value'   => PluginJamfToolbox::utcToLocal($match['last_inventory']),
                     ],
                     'entry_date' => [
                         'caption' => _x('field', 'Jamf import date', 'jamf'),
-                        'value' => PluginJamfToolbox::utcToLocal($match['entry_date']),
+                        'value'   => PluginJamfToolbox::utcToLocal($match['entry_date']),
                     ],
                     'enroll_date' => [
                         'caption' => _x('field', 'Enrollment date', 'jamf'),
-                        'value' => PluginJamfToolbox::utcToLocal($match['enroll_date']),
+                        'value'   => PluginJamfToolbox::utcToLocal($match['enroll_date']),
                     ],
                     'shared' => [
                         'caption' => _x('field', 'Shared device', 'jamf'),
-                        'value' => $match['shared'],
+                        'value'   => $match['shared'],
                     ],
                     'supervised' => [
                         'caption' => _x('field', 'Supervised', 'jamf'),
-                        'value' => $getYesNo($match['supervised']),
+                        'value'   => $getYesNo($match['supervised']),
                     ],
                     'managed' => [
                         'caption' => _x('field', 'Managed', 'jamf'),
-                        'value' => $getYesNo($match['managed']),
+                        'value'   => $getYesNo($match['managed']),
                     ],
                     'cloud_backup_enabled' => [
                         'caption' => _x('field', 'Cloud backup enabled', 'jamf'),
-                        'value' => $getYesNo($match['cloud_backup_enabled']),
+                        'value'   => $getYesNo($match['cloud_backup_enabled']),
                     ],
                     'activation_lock_enabled' => [
                         'caption' => _x('field', 'Activation locked', 'jamf'),
-                        'value' => $getYesNo($match['activation_lock_enabled']),
+                        'value'   => $getYesNo($match['activation_lock_enabled']),
                     ],
                 ],
                 'buttons' => [
                     'view_in_jamf' => [
                         'caption' => _x('action', 'View in Jamf', 'jamf'),
-                        'url' => self::getJamfDeviceURL($match['jamf_items_id'])
+                        'url'     => self::getJamfDeviceURL($match['jamf_items_id']),
                     ],
                     'sync' => [
-                        'caption' => _x('action', 'Sync now', 'jamf'),
-                        'on_click' => "syncDevice(\"{$item::getType()}\", {$item->getID()}); return false;"
+                        'caption'  => _x('action', 'Sync now', 'jamf'),
+                        'on_click' => "syncDevice(\"{$item::getType()}\", {$item->getID()}); return false;",
                     ],
                 ],
-                'extra_js'  => $js
+                'extra_js' => $js,
             ],
             'lost_mode' => [
                 'caption' => _x('form_section', 'Jamf Lost Mode Information', 'jamf'),
-                'fields'    => []
-            ]
+                'fields'  => [],
+            ],
         ];
 
         $lost_mode_enabled = $match['lost_mode_enabled'];
@@ -363,50 +365,50 @@ JAVASCRIPT;
             $info['lost_mode']['fields'] = [
                 'lost_mode_enabled' => [
                     'caption' => _x('field', 'Enabled', 'jamf'),
-                    'value' => _x('field', 'Lost mode is not enabled', 'jamf'),
-                ]
+                    'value'   => _x('field', 'Lost mode is not enabled', 'jamf'),
+                ],
             ];
         } else {
-            $lat = $match['lost_location_latitude'];
-            $long = $match['lost_location_longitude'];
+            $lat                         = $match['lost_location_latitude'];
+            $long                        = $match['lost_location_longitude'];
             $info['lost_mode']['fields'] = [
                 'lost_mode_enabled' => [
                     'caption' => _x('field', 'Enabled', 'jamf'),
-                    'value' => $getYesNo($lost_mode_enabled),
+                    'value'   => $getYesNo($lost_mode_enabled),
                 ],
                 'lost_mode_enforced' => [
                     'caption' => _x('field', 'Enforced', 'jamf'),
-                    'value' => $getYesNo($match['lost_mode_enforced']),
+                    'value'   => $getYesNo($match['lost_mode_enforced']),
                 ],
                 'lost_mode_enable_date' => [
                     'caption' => _x('field', 'Enable date', 'jamf'),
-                    'value' => Html::convDateTime($match['lost_mode_enable_date']),
+                    'value'   => Html::convDateTime($match['lost_mode_enable_date']),
                 ],
                 'lost_mode_message' => [
                     'caption' => _x('field', 'Message', 'jamf'),
-                    'value' => $match['lost_mode_message'],
+                    'value'   => $match['lost_mode_message'],
                 ],
                 'lost_mode_phone' => [
                     'caption' => _x('field', 'Phone', 'jamf'),
-                    'value' => $match['lost_mode_phone'],
+                    'value'   => $match['lost_mode_phone'],
                 ],
                 'lost_location' => [
                     'caption' => _x('field', 'GPS', 'jamf'),
-                    'value' => Html::link("$lat, $long", "https://www.google.com/maps/place/$lat,$long", [
-                        'display' => false
-                    ])
+                    'value'   => Html::link("$lat, $long", "https://www.google.com/maps/place/$lat,$long", [
+                        'display' => false,
+                    ]),
                 ],
                 'lost_location_altitude' => [
                     'caption' => _x('field', 'Altitude', 'jamf'),
-                    'value' => $match['lost_location_altitude'],
+                    'value'   => $match['lost_location_altitude'],
                 ],
                 'lost_location_speed' => [
                     'caption' => _x('field', 'Speed', 'jamf'),
-                    'value' => $match['lost_location_speed'],
+                    'value'   => $match['lost_location_speed'],
                 ],
                 'lost_location_date' => [
                     'caption' => _x('field', 'Lost location date'),
-                    'value' => Html::convDateTime($match['lost_location_date']),
+                    'value'   => Html::convDateTime($match['lost_location_date']),
                 ],
             ];
         }

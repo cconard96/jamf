@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -39,9 +40,9 @@ use Glpi\Application\View\TemplateRenderer;
  */
 class PluginJamfUser_JSSAccount extends CommonDBChild
 {
-    static public $itemtype = 'User';
-    static public $items_id = 'users_id';
-    static public $rightname = 'plugin_jamf_jssaccount';
+    public static $itemtype  = 'User';
+    public static $items_id  = 'users_id';
+    public static $rightname = 'plugin_jamf_jssaccount';
 
     public const LINK = 256;
 
@@ -55,8 +56,10 @@ class PluginJamfUser_JSSAccount extends CommonDBChild
         global $DB;
         if ($input['jssaccounts_id'] === 0) {
             $DB->delete(self::getTable(), ['id' => $this->fields['id']]);
+
             return false;
         }
+
         return $input;
     }
 
@@ -65,6 +68,7 @@ class PluginJamfUser_JSSAccount extends CommonDBChild
         if (!self::canView()) {
             return false;
         }
+
         return self::getTypeName(1);
     }
 
@@ -81,6 +85,7 @@ class PluginJamfUser_JSSAccount extends CommonDBChild
         if (!isset($privileges[$this->fields['jssaccounts_id']])) {
             $privileges[$this->fields['jssaccounts_id']] = PluginJamfAPI::getJSSAccountRights($this->fields['jssaccounts_id']);
         }
+
         return $privileges[$this->fields['jssaccounts_id']];
     }
 
@@ -89,21 +94,22 @@ class PluginJamfUser_JSSAccount extends CommonDBChild
         static $map = null;
         if ($map === null) {
             $map = [
-                'accounts' => ['Accounts'],
-                'advancedcomputersearches' => ['Advanced Computer Searches'],
-                'advancedmobiledevicesearches' => ['Advanced Mobile Device Searches'],
-                'advancedusersearches' => ['Advanced User Searches'],
-                'buildings' => ['Buildings'],
-                'categories' => ['Categories'],
-                'classes' => ['Classes'],
-                'departments' => ['Departments'],
-                'mobiledeviceapplications' => ['Mobile Device Applications'],
+                'accounts'                        => ['Accounts'],
+                'advancedcomputersearches'        => ['Advanced Computer Searches'],
+                'advancedmobiledevicesearches'    => ['Advanced Mobile Device Searches'],
+                'advancedusersearches'            => ['Advanced User Searches'],
+                'buildings'                       => ['Buildings'],
+                'categories'                      => ['Categories'],
+                'classes'                         => ['Classes'],
+                'departments'                     => ['Departments'],
+                'mobiledeviceapplications'        => ['Mobile Device Applications'],
                 'mobiledeviceextensionattributes' => ['Mobile Device Extension Attributes'],
-                'mobiledevicegroups' => ['Smart Mobile Device Groups', 'Static Mobile Device Groups'],
-                'mobiledevices' => ['Mobile Devices'],
-                'users' => ['Users'],
+                'mobiledevicegroups'              => ['Smart Mobile Device Groups', 'Static Mobile Device Groups'],
+                'mobiledevices'                   => ['Mobile Devices'],
+                'users'                           => ['Users'],
             ];
         }
+
         return $map;
     }
 
@@ -111,6 +117,7 @@ class PluginJamfUser_JSSAccount extends CommonDBChild
     {
         if ($itemtype == 'mobiledevicecommands') {
             $commands = PluginJamfMDMCommand::getAvailableCommands();
+
             return self::haveJSSRight('jss_actions', $commands[$meta]['jss_right']);
         }
         $map = self::getItemRightMap();
@@ -123,6 +130,7 @@ class PluginJamfUser_JSSAccount extends CommonDBChild
                 return false;
             }
         }
+
         return true;
     }
 
@@ -138,6 +146,7 @@ class PluginJamfUser_JSSAccount extends CommonDBChild
                 return false;
             }
         }
+
         return true;
     }
 
@@ -153,6 +162,7 @@ class PluginJamfUser_JSSAccount extends CommonDBChild
                 return false;
             }
         }
+
         return true;
     }
 
@@ -168,31 +178,34 @@ class PluginJamfUser_JSSAccount extends CommonDBChild
                 return false;
             }
         }
+
         return true;
     }
 
     public static function hasLink()
     {
         $user_jssaccount = new self();
-        $matches = $user_jssaccount->find([
-            'users_id' => Session::getLoginUserID()
+        $matches         = $user_jssaccount->find([
+            'users_id' => Session::getLoginUserID(),
         ]);
+
         return count($matches) > 0;
     }
 
     public static function haveJSSRight($type, $jss_right)
     {
         $user_jssaccount = new self();
-        static $matches = null;
+        static $matches  = null;
 
         if ($matches === null) {
             $matches = $user_jssaccount->find([
-                'users_id' => Session::getLoginUserID()
+                'users_id' => Session::getLoginUserID(),
             ]);
         }
         if (count($matches) === 0) {
             // No JSS account link
             Toolbox::logError(_x('error', 'Attempt to use JSS user rights without a linked account', 'jamf'));
+
             return false;
         }
         $user_jssaccount->getFromDB(reset($matches)['id']);
@@ -201,6 +214,7 @@ class PluginJamfUser_JSSAccount extends CommonDBChild
             //Toolbox::logError("Linked JSS account has no rights of type $type");
             return false;
         }
+
         return in_array($jss_right, $type_rights);
     }
 
@@ -209,7 +223,7 @@ class PluginJamfUser_JSSAccount extends CommonDBChild
         $canedit = self::canUpdate();
 
         $user_jssaccount = new self();
-        $mylink = $user_jssaccount->find(['users_id' => $item->getID()]);
+        $mylink          = $user_jssaccount->find(['users_id' => $item->getID()]);
         if (count($mylink)) {
             $mylink = reset($mylink);
         } else {
@@ -217,7 +231,7 @@ class PluginJamfUser_JSSAccount extends CommonDBChild
         }
 
         $allusers = PluginJamfAPI::getItemsClassic('accounts')['users'];
-        $values = [];
+        $values   = [];
         foreach ($allusers as $user) {
             $values[$user['id']] = $user['name'];
         }
@@ -226,12 +240,12 @@ class PluginJamfUser_JSSAccount extends CommonDBChild
         }
 
         TemplateRenderer::getInstance()->display('@jamf/user_jssaccount.html.twig', [
-            'can_edit' => $canedit,
-            'jssaccounts_id' => $mylink['jssaccounts_id'] ?? null,
+            'can_edit'        => $canedit,
+            'jssaccounts_id'  => $mylink['jssaccounts_id'] ?? null,
             'jssaccount_link' => $mylink ? self::getJSSAccountURL($mylink['jssaccounts_id']) : null,
-            'users_id' => $item->getID(),
-            'url' => self::getFormURL(),
-            'jssaccounts' => $values
+            'users_id'        => $item->getID(),
+            'url'             => self::getFormURL(),
+            'jssaccounts'     => $values,
         ]);
     }
 
@@ -243,6 +257,7 @@ class PluginJamfUser_JSSAccount extends CommonDBChild
     public static function getJSSAccountURL($jssaccount_id)
     {
         $config = PluginJamfConfig::getConfig();
+
         return "{$config['jssserver']}/accounts.html?id={$jssaccount_id}";
     }
 
@@ -250,8 +265,8 @@ class PluginJamfUser_JSSAccount extends CommonDBChild
     {
         if ($interface == 'central') {
             return [
-                READ => __('Read'),
-                UPDATE => __('Update')
+                READ   => __('Read'),
+                UPDATE => __('Update'),
             ];
         }
 

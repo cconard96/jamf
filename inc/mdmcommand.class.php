@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -37,7 +38,6 @@ use Glpi\Application\View\TemplateRenderer;
  */
 class PluginJamfMDMCommand
 {
-
     /**
      * @return array
      */
@@ -48,239 +48,240 @@ class PluginJamfMDMCommand
         if ($allcommands == null) {
             $allcommands = [
                 'UpdateInventory' => [
-                    'name' => _x('mdm_command', 'Update Inventory', 'jamf'),
-                    'icon' => 'fas fa-clipboard-list',
-                    'jss_right' => 'Send Inventory Requests to Mobile Devices',
+                    'name'         => _x('mdm_command', 'Update Inventory', 'jamf'),
+                    'icon'         => 'fas fa-clipboard-list',
+                    'jss_right'    => 'Send Inventory Requests to Mobile Devices',
                     'requirements' => [
                         'devicetypes' => ['mobiledevice'],
-                        'managed' => true
-                    ]
+                        'managed'     => true,
+                    ],
                 ],
                 'BlankPush' => [
-                    'name' => _x('mdm_command', 'Send Blank Push', 'jamf'),
-                    'icon' => 'fas fa-redo',
-                    'icon_color' => '#007af5',
-                    'jss_right' => 'Send Blank Pushes to Mobile Devices',
+                    'name'         => _x('mdm_command', 'Send Blank Push', 'jamf'),
+                    'icon'         => 'fas fa-redo',
+                    'icon_color'   => '#007af5',
+                    'jss_right'    => 'Send Blank Pushes to Mobile Devices',
                     'requirements' => [
-                        'managed' => true
-                    ]
+                        'managed' => true,
+                    ],
                 ],
                 'DeviceName' => [
-                    'name' => _x('mdm_command', 'Device name', 'jamf'),
-                    'icon' => 'fas fa-signature',
+                    'name'      => _x('mdm_command', 'Device name', 'jamf'),
+                    'icon'      => 'fas fa-signature',
                     'jss_right' => 'Send Mobile Device Set Device Name Command',
-                    'params' => [
+                    'params'    => [
                         'device_name' => [
                             'name' => _x('mdm_command_option', 'Device name'),
-                            'type' => 'string'
-                        ]
+                            'type' => 'string',
+                        ],
                     ],
                     'requirements' => [
                         'devicetypes' => ['mobiledevice'],
-                        'managed' => true,
-                        'supervised' => true
-                    ]
+                        'managed'     => true,
+                        'supervised'  => true,
+                    ],
                 ],
                 'DeviceLocation' => [
-                    'name' => _x('mdm_command', 'Update device location', 'jamf'),
-                    'icon' => 'fas fa-search-location',
-                    'jss_right' => 'Send Mobile Device Lost Mode Command',
+                    'name'         => _x('mdm_command', 'Update device location', 'jamf'),
+                    'icon'         => 'fas fa-search-location',
+                    'jss_right'    => 'Send Mobile Device Lost Mode Command',
                     'requirements' => [
                         'devicetypes' => ['mobiledevice'],
-                        'managed' => true,
-                        'supervised' => true,
-                        'lostmode' => true
-                    ]
+                        'managed'     => true,
+                        'supervised'  => true,
+                        'lostmode'    => true,
+                    ],
                 ],
                 'DeviceLock' => [
-                    'name' => _x('mdm_command', 'Lock device', 'jamf'),
-                    'icon' => 'fas fa-lock',
+                    'name'       => _x('mdm_command', 'Lock device', 'jamf'),
+                    'icon'       => 'fas fa-lock',
                     'icon_color' => '#dfac2a',
-                    'jss_right' => 'Send Mobile Device Remote Lock Command',
-                    'confirm' => true,
-                    'params' => [
+                    'jss_right'  => 'Send Mobile Device Remote Lock Command',
+                    'confirm'    => true,
+                    'params'     => [
                         'message' => [
-                            'name' => _x('mdm_command_option', 'Message', 'jamf'),
-                            'type' => 'string',
-                            'min' => 6,
-                            'max' => 6,
-                            'required' => false
+                            'name'     => _x('mdm_command_option', 'Message', 'jamf'),
+                            'type'     => 'string',
+                            'min'      => 6,
+                            'max'      => 6,
+                            'required' => false,
                         ],
                         'phone_number' => [
-                            'name' => _x('mdm_command_option', 'Phone', 'jamf'),
-                            'type' => 'string',
-                            'required' => false
-                        ]
+                            'name'     => _x('mdm_command_option', 'Phone', 'jamf'),
+                            'type'     => 'string',
+                            'required' => false,
+                        ],
                     ],
                     'requirements' => [
                         'devicetypes' => [
                             'ipad' => [
-                                'version_min' => '7.0'
+                                'version_min' => '7.0',
                             ],
                             'iphone' => [
-                                'version_min' => '7.0'
-                            ]
+                                'version_min' => '7.0',
+                            ],
                         ],
-                        'managed' => true,
-                        'supervised' => true
-                    ]
+                        'managed'    => true,
+                        'supervised' => true,
+                    ],
                 ],
                 'DisableLostMode' => [
-                    'name' => _x('mdm_command', 'Disable lost mode', 'jamf'),
-                    'jss_right' => 'Send Mobile Device Lost Mode Command',
-                    'icon' => 'fas fa-map-marked-alt',
+                    'name'       => _x('mdm_command', 'Disable lost mode', 'jamf'),
+                    'jss_right'  => 'Send Mobile Device Lost Mode Command',
+                    'icon'       => 'fas fa-map-marked-alt',
                     'icon_color' => '#d60505',
-                    'params' => [
+                    'params'     => [
                         'device_name' => [
                             'name' => _x('mdm_command_option', 'Device name', 'jamf'),
-                            'type' => 'string'
-                        ]
+                            'type' => 'string',
+                        ],
                     ],
                     'requirements' => [
                         'devicetypes' => ['mobiledevice'],
-                        'managed' => true,
-                        'supervised' => true,
-                        'lostmode' => true
-                    ]
+                        'managed'     => true,
+                        'supervised'  => true,
+                        'lostmode'    => true,
+                    ],
                 ],
                 'EnableLostMode' => [
-                    'name' => _x('mdm_command', 'Enable lost mode', 'jamf'),
-                    'jss_right' => 'Send Mobile Device Lost Mode Command',
-                    'icon' => 'fas fa-map-marked-alt',
+                    'name'       => _x('mdm_command', 'Enable lost mode', 'jamf'),
+                    'jss_right'  => 'Send Mobile Device Lost Mode Command',
+                    'icon'       => 'fas fa-map-marked-alt',
                     'icon_color' => '#009000',
-                    'confirm' => true,
-                    'params' => [
+                    'confirm'    => true,
+                    'params'     => [
                         'message' => [
-                            'name' => _x('mdm_command_option', 'Message', 'jamf'),
-                            'type' => 'string',
-                            'min' => 6,
-                            'max' => 6,
-                            'required' => false
+                            'name'     => _x('mdm_command_option', 'Message', 'jamf'),
+                            'type'     => 'string',
+                            'min'      => 6,
+                            'max'      => 6,
+                            'required' => false,
                         ],
                         'phone_number' => [
-                            'name' => _x('mdm_command_option', 'Phone', 'jamf'),
-                            'type' => 'string',
-                            'required' => false
+                            'name'     => _x('mdm_command_option', 'Phone', 'jamf'),
+                            'type'     => 'string',
+                            'required' => false,
                         ],
                         'lost_mode_footnote' => [
                             'name' => _x('mdm_command_option', 'Footnote', 'jamf'),
-                            'type' => 'string'
-                        ]
+                            'type' => 'string',
+                        ],
                     ],
                     'requirements' => [
                         'devicetypes' => ['mobiledevice'],
-                        'managed' => true,
-                        'supervised' => true,
-                        'lostmode' => false
-                    ]
+                        'managed'     => true,
+                        'supervised'  => true,
+                        'lostmode'    => false,
+                    ],
                 ],
                 'EraseDevice' => [
-                    'name' => _x('mdm_command', 'Erase device', 'jamf'),
-                    'icon' => 'fas fa-eraser',
+                    'name'       => _x('mdm_command', 'Erase device', 'jamf'),
+                    'icon'       => 'fas fa-eraser',
                     'icon_color' => '#e46b6b',
-                    'jss_right' => 'Send Mobile Device Remote Wipe Command',
-                    'confirm' => true,
-                    'params' => [
+                    'jss_right'  => 'Send Mobile Device Remote Wipe Command',
+                    'confirm'    => true,
+                    'params'     => [
                         'preserve_data_plan' => [
                             'name' => _x('mdm_command_option', 'Preserve data plan', 'jamf'),
-                            'type' => 'boolean'
+                            'type' => 'boolean',
                         ],
                         'disallow_proximity_setup' => [
                             'name' => _x('mdm_command_option', 'Disallow proximity setup', 'jamf'),
-                            'type' => 'boolean'
+                            'type' => 'boolean',
                         ],
                         'clear_activation_lock' => [
                             'name' => _x('mdm_command_option', 'Clear activation lock', 'jamf'),
-                            'type' => 'boolean'
-                        ]
+                            'type' => 'boolean',
+                        ],
                     ],
                     'requirements' => [
                         'devicetypes' => ['mobiledevice'],
-                        'managed' => true,
-                        'supervised' => true
-                    ]
+                        'managed'     => true,
+                        'supervised'  => true,
+                    ],
                 ],
                 'PasscodeLockGracePeriod' => [
-                    'name' => _x('mdm_command', 'Password lock grace period', 'jamf'),
-                    'jss_right' => 'Send Update Passcode Lock Grace Period Command',
-                    'icon' => 'fas fa-clock',
+                    'name'       => _x('mdm_command', 'Password lock grace period', 'jamf'),
+                    'jss_right'  => 'Send Update Passcode Lock Grace Period Command',
+                    'icon'       => 'fas fa-clock',
                     'icon_color' => '#00669a',
-                    'params' => [
+                    'params'     => [
                         'passcode_lock_grace_period' => [
                             'name' => _x('mdm_command_option', 'Grace period (seconds)'),
                             'type' => 'number',
-                            'min' => 0,
-                            'max' => 14400
-                        ]
+                            'min'  => 0,
+                            'max'  => 14400,
+                        ],
                     ],
                     'requirements' => [
                         'devicetypes' => ['mobiledevice'],
-                        'supervised' => true
-                    ]
+                        'supervised'  => true,
+                    ],
                 ],
                 'PlayLostModeSound' => [
-                    'name' => _x('mdm_command', 'Play lost mode sound', 'jamf'),
-                    'icon' => 'fas fa-bell',
-                    'icon_color' => '#e7cc88',
-                    'jss_right' => 'Send Mobile Device Lost Mode Command',
+                    'name'         => _x('mdm_command', 'Play lost mode sound', 'jamf'),
+                    'icon'         => 'fas fa-bell',
+                    'icon_color'   => '#e7cc88',
+                    'jss_right'    => 'Send Mobile Device Lost Mode Command',
                     'requirements' => [
                         'devicetypes' => ['mobiledevice'],
-                        'managed' => true,
-                        'supervised' => true,
-                        'lostmode' => true
-                    ]
+                        'managed'     => true,
+                        'supervised'  => true,
+                        'lostmode'    => true,
+                    ],
                 ],
                 'RestartDevice' => [
-                    'name' => _x('mdm_command', 'Restart device', 'jamf'),
-                    'jss_right' => 'Send Mobile Device Restart Device Command',
-                    'icon' => 'fas fa-sync',
-                    'icon_color' => 'green',
-                    'confirm' => true,
+                    'name'         => _x('mdm_command', 'Restart device', 'jamf'),
+                    'jss_right'    => 'Send Mobile Device Restart Device Command',
+                    'icon'         => 'fas fa-sync',
+                    'icon_color'   => 'green',
+                    'confirm'      => true,
                     'requirements' => [
                         'devicetypes' => [], // Empty array = No device type restrictions
-                        'managed' => true,
-                        'supervised' => true
-                    ]
+                        'managed'     => true,
+                        'supervised'  => true,
+                    ],
                 ],
                 'ShutdownDevice' => [
-                    'name' => _x('mdm_command', 'Shutdown device', 'jamf'),
-                    'icon' => 'fas fa-power-off',
-                    'icon_color' => '#d60505',
-                    'jss_right' => 'Send Mobile Device Shut Down Command',
-                    'confirm' => true,
+                    'name'         => _x('mdm_command', 'Shutdown device', 'jamf'),
+                    'icon'         => 'fas fa-power-off',
+                    'icon_color'   => '#d60505',
+                    'jss_right'    => 'Send Mobile Device Shut Down Command',
+                    'confirm'      => true,
                     'requirements' => [
                         'devicetypes' => ['mobiledevice'],
-                        'managed' => true,
-                        'supervised' => true
-                    ]
+                        'managed'     => true,
+                        'supervised'  => true,
+                    ],
                 ],
                 'ScheduleOSUpdate' => [
-                    'name' => _x('mdm_command', 'Schedule OS update', 'jamf'),
-                    'icon' => 'fas fa-arrow-up',
-                    'jss_right' => 'Send Mobile Device Remote Command to Download and Install iOS Update',
-                    'confirm' => true,
+                    'name'         => _x('mdm_command', 'Schedule OS update', 'jamf'),
+                    'icon'         => 'fas fa-arrow-up',
+                    'jss_right'    => 'Send Mobile Device Remote Command to Download and Install iOS Update',
+                    'confirm'      => true,
                     'requirements' => [
                         'devicetypes' => ['mobiledevice'],
-                        'managed' => true,
-                        'supervised' => true
+                        'managed'     => true,
+                        'supervised'  => true,
                     ],
                     'params' => [
                         'install_action' => [
-                            'name' => _x('mdm_command_option', 'Install action', 'jamf'),
-                            'type' => 'dropdown',
+                            'name'   => _x('mdm_command_option', 'Install action', 'jamf'),
+                            'type'   => 'dropdown',
                             'values' => [
                                 '1' => _x('mdm_command_option', 'Download and prompt for install', 'jamf'),
-                                '2' => _x('mdm_command_option', 'Download, install, and restart', 'jamf')
-                            ]
+                                '2' => _x('mdm_command_option', 'Download, install, and restart', 'jamf'),
+                            ],
                         ],
                         'product_version' => [
                             'name' => _x('mdm_command_option', 'Product version', 'jamf'),
                             'type' => 'string',
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ];
         }
+
         return $allcommands;
     }
 
@@ -297,11 +298,13 @@ class PluginJamfMDMCommand
             if (!isset($command_data['params'])) {
                 return null;
             }
+
             return TemplateRenderer::getInstance()->render('@jamf/mdm_command.html.twig', [
-                'command' => $command,
+                'command'      => $command,
                 'command_data' => $command_data,
             ]);
         }
+
         return null;
     }
 

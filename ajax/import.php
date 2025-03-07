@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -56,10 +57,10 @@ if ($_REQUEST['action'] == 'import') {
         // Get data for each item to import
         $toimport = $DB->request([
             'SELECT' => ['type', 'jamf_type', 'jamf_items_id'],
-            'FROM' => PluginJamfImport::getTable(),
-            'WHERE' => [
-                'id' => $_REQUEST['import_ids']
-            ]
+            'FROM'   => PluginJamfImport::getTable(),
+            'WHERE'  => [
+                'id' => $_REQUEST['import_ids'],
+            ],
         ]);
         // Trigger extension attribute definition sync
         PluginJamfMobileSync::syncExtensionAttributeDefinitions();
@@ -75,7 +76,7 @@ if ($_REQUEST['action'] == 'import') {
     } else {
         throw new RuntimeException('Required argument missing!');
     }
-} else if ($_REQUEST['action'] == 'clear') {
+} elseif ($_REQUEST['action'] == 'clear') {
     if (PluginJamfMobileDevice::canCreate() || PluginJamfComputer::canCreate()) {
         PluginJamfImport::clearPendingImports();
     }

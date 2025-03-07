@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -28,11 +29,12 @@
  * -------------------------------------------------------------------------
  */
 
-class PluginJamfComputerTestSync extends PluginJamfComputerSync {
-
+class PluginJamfComputerTestSync extends PluginJamfComputerSync
+{
     protected static $api = PluginJamfApiTest::class;
 
-    public static function sync(string $itemtype, int $items_id, bool $use_transaction = true): bool {
+    public static function sync(string $itemtype, int $items_id, bool $use_transaction = true): bool
+    {
         return parent::sync($itemtype, $items_id, false);
     }
 }

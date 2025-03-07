@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -35,7 +36,6 @@
  */
 class PluginJamfExtensionAttribute extends CommonDBTM
 {
-
     public static function getTypeName($nb = 1)
     {
         return _nx('itemtype', 'Extension attribute', 'Extension attributes', $nb, 'jamf');
@@ -50,6 +50,7 @@ class PluginJamfExtensionAttribute extends CommonDBTM
         }
         $jamf_id = $input['jamf_id'];
         unset($input['jamf_id']);
+
         return $DB->updateOrInsert(self::getTable(), $input, ['jamf_id' => $jamf_id]);
     }
 
@@ -57,20 +58,20 @@ class PluginJamfExtensionAttribute extends CommonDBTM
     {
         global $DB;
 
-        $table = self::getTable();
+        $table    = self::getTable();
         $iterator = $DB->request([
             'SELECT' => ['name'],
-            'FROM' => $table
+            'FROM'   => $table,
         ]);
         $cards = [];
 
         foreach ($iterator as $data) {
-            $slug = strtolower(str_replace(' ', '_', $data['name']));
+            $slug                                            = strtolower(str_replace(' ', '_', $data['name']));
             $cards["plugin_jamf_extensionattribute_{$slug}"] = [
                 'widgettype' => ['halfdonut'],
-                'label' => sprintf(_x('dashboard', 'Jamf Attribute - %s', 'jamf'), $data['name']),
-                'provider' => 'PluginJamfExtensionAttribute::cardProvider',
-                'args' => ['name' => $data['name']]
+                'label'      => sprintf(_x('dashboard', 'Jamf Attribute - %s', 'jamf'), $data['name']),
+                'provider'   => 'PluginJamfExtensionAttribute::cardProvider',
+                'args'       => ['name' => $data['name']],
             ];
         }
 
@@ -82,36 +83,37 @@ class PluginJamfExtensionAttribute extends CommonDBTM
         global $DB;
 
         $rel_table = PluginJamfItem_ExtensionAttribute::getTable();
-        $table = self::getTable();
-        $iterator = $DB->request([
+        $table     = self::getTable();
+        $iterator  = $DB->request([
             'SELECT' => [
                 'value',
-                'COUNT' => "{$rel_table}.id as cpt"
+                'COUNT' => "{$rel_table}.id as cpt",
             ],
             'FROM' => $table,
             'JOIN' => [
                 $rel_table => [
                     'ON' => [
                         $rel_table => 'glpi_plugin_jamf_extensionattributes_id',
-                        $table => 'id'
-                    ]
-                ]
+                        $table     => 'id',
+                    ],
+                ],
             ],
             'WHERE' => ['name' => $name],
-            'GROUP' => "{$rel_table}.value"
+            'GROUP' => "{$rel_table}.value",
         ]);
 
         $card_data = [];
         foreach ($iterator as $data) {
             $card_data[] = [
-                'label' => $data['value'],
+                'label'  => $data['value'],
                 'number' => $data['cpt'],
-                'url' => '#'
+                'url'    => '#',
             ];
         }
+
         return [
             'label' => sprintf(_x('dashboard', 'Jamf Attribute - %s', 'jamf'), $name),
-            'data' => $card_data
+            'data'  => $card_data,
         ];
     }
 }

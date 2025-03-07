@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -37,9 +38,8 @@ use Glpi\Application\View\TemplateRenderer;
  */
 class PluginJamfItem_ExtensionAttribute extends CommonDBChild
 {
-
-    static public $itemtype = 'itemtype';
-    static public $items_id = 'items_id';
+    public static $itemtype = 'itemtype';
+    public static $items_id = 'items_id';
 
     public static function getTypeName($nb = 1)
     {
@@ -57,6 +57,7 @@ class PluginJamfItem_ExtensionAttribute extends CommonDBChild
         if ($jamf_class === null || !$jamf_class::canView()) {
             return false;
         }
+
         return self::createTabEntry(self::getTypeName(2), self::countForJamfItem($jamf_item));
     }
 
@@ -64,7 +65,7 @@ class PluginJamfItem_ExtensionAttribute extends CommonDBChild
     {
         return countElementsInTable(self::getTable(), [
             'itemtype' => $jamf_item::getType(),
-            'items_id' => $jamf_item->getID()
+            'items_id' => $jamf_item->getID(),
         ]);
     }
 
@@ -88,8 +89,9 @@ class PluginJamfItem_ExtensionAttribute extends CommonDBChild
 
         $attributes = $mobiledevice->getExtensionAttributes();
         TemplateRenderer::getInstance()->display('@jamf/ext_attributes.html.twig', [
-            'attributes' => $attributes
+            'attributes' => $attributes,
         ]);
+
         return true;
     }
 }

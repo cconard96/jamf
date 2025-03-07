@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -36,29 +37,31 @@ use PluginJamfExtensionAttribute;
 use PluginJamfImport;
 use PluginJamfItem_ExtensionAttribute;
 
-class PluginJamfComputerSync extends \AbstractDBTest {
-
-    public function testDiscover() {
+class PluginJamfComputerSync extends \AbstractDBTest
+{
+    public function testDiscover()
+    {
         global $DB;
 
         PluginJamfComputerTestSync::discover();
 
         $iterator = $DB->request([
-            'FROM' => PluginJamfImport::getTable()
+            'FROM' => PluginJamfImport::getTable(),
         ]);
         $this->assertEquals(5, $iterator->count());
     }
 
-    public function testSyncExtensionAttributeDefinitions() {
+    public function testSyncExtensionAttributeDefinitions()
+    {
         global $DB;
 
         PluginJamfComputerTestSync::syncExtensionAttributeDefinitions();
 
         $iterator = $DB->request([
-            'FROM' => PluginJamfExtensionAttribute::getTable(),
+            'FROM'  => PluginJamfExtensionAttribute::getTable(),
             'WHERE' => [
-                'jamf_type' => 'Computer'
-            ]
+                'jamf_type' => 'Computer',
+            ],
         ]);
         $this->assertEquals(1, $iterator->count());
 
@@ -66,15 +69,16 @@ class PluginJamfComputerSync extends \AbstractDBTest {
         PluginJamfComputerTestSync::syncExtensionAttributeDefinitions();
 
         $iterator = $DB->request([
-            'FROM' => PluginJamfExtensionAttribute::getTable(),
+            'FROM'  => PluginJamfExtensionAttribute::getTable(),
             'WHERE' => [
-                'jamf_type' => 'Computer'
-            ]
+                'jamf_type' => 'Computer',
+            ],
         ]);
         $this->assertEquals(1, $iterator->count());
     }
 
-    public function testImport() {
+    public function testImport()
+    {
         global $DB;
 
         PluginJamfComputerTestSync::syncExtensionAttributeDefinitions();
@@ -83,41 +87,41 @@ class PluginJamfComputerSync extends \AbstractDBTest {
 
         // Make sure the computer was created
         $iterator = $DB->request([
-            'FROM' => \Computer::getTable(),
+            'FROM'  => \Computer::getTable(),
             'WHERE' => [
-                'name' => 'CConardMBA'
-            ]
+                'name' => 'CConardMBA',
+            ],
         ]);
         $this->assertEquals(1, $iterator->count());
         $item = $iterator->current();
 
         // Make sure the new computer is linked properly
         $link_iterator = $DB->request([
-            'SELECT' => [PluginJamfComputer::getTable() . '.id', 'udid'],
-            'FROM' => 'glpi_plugin_jamf_devices',
+            'SELECT'    => [PluginJamfComputer::getTable() . '.id', 'udid'],
+            'FROM'      => 'glpi_plugin_jamf_devices',
             'LEFT JOIN' => [
                 PluginJamfComputer::getTable() => [
                     'ON' => [
                         PluginJamfComputer::getTable() => 'glpi_plugin_jamf_devices_id',
-                        'glpi_plugin_jamf_devices' => 'id'
-                    ]
-                ]
+                        'glpi_plugin_jamf_devices'     => 'id',
+                    ],
+                ],
             ],
             'WHERE' => [
                 'itemtype' => 'Computer',
-                'items_id' => $item['id']
-            ]
+                'items_id' => $item['id'],
+            ],
         ]);
         $this->assertEquals(1, $link_iterator->count());
         $link = $link_iterator->current();
         $this->assertEquals('55900BDC-347C-58B1-D249-F32244B11D30', $link['udid']);
 
         $ext_attr_iterator = $DB->request([
-            'FROM' => PluginJamfItem_ExtensionAttribute::getTable(),
+            'FROM'  => PluginJamfItem_ExtensionAttribute::getTable(),
             'WHERE' => [
                 'itemtype' => 'PluginJamfComputer',
-                'items_id' => $link['id']
-            ]
+                'items_id' => $link['id'],
+            ],
         ]);
         $this->assertEquals(1, $ext_attr_iterator->count());
     }

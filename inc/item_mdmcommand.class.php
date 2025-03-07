@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -37,8 +38,7 @@ use Glpi\Application\View\TemplateRenderer;
  */
 class PluginJamfItem_MDMCommand extends CommonDBTM
 {
-
-    static public $rightname = 'plugin_jamf_mdmcommand';
+    public static $rightname = 'plugin_jamf_mdmcommand';
 
     public static function getTypeName($nb = 0)
     {
@@ -51,6 +51,7 @@ class PluginJamfItem_MDMCommand extends CommonDBTM
         if ($jamf_class !== PluginJamfMobileDevice::class || !PluginJamfMobileDevice::canView()) {
             return false;
         }
+
         return self::getTypeName(2);
     }
 
@@ -75,15 +76,13 @@ class PluginJamfItem_MDMCommand extends CommonDBTM
                     // Note: Costs are based on the number of DB or API calls. Checks should always be done least to most expensive.
                     // DB call: 1 cost, API call: 2 cost
                     // Check supervised - Cost: 0
-                    if (isset($params['requirements']['supervised']) &&
-                        $params['requirements']['supervised'] != $device_data['supervised']) {
+                    if (isset($params['requirements']['supervised']) && $params['requirements']['supervised'] != $device_data['supervised']) {
                         unset($allcommands[$command]);
                         continue;
                     }
 
                     // Check managed - Cost: 0
-                    if (isset($params['requirements']['managed']) &&
-                        $params['requirements']['managed'] != $device_data['managed']) {
+                    if (isset($params['requirements']['managed']) && $params['requirements']['managed'] != $device_data['managed']) {
                         unset($allcommands[$command]);
                         continue;
                     }
@@ -91,7 +90,7 @@ class PluginJamfItem_MDMCommand extends CommonDBTM
                     // Check lost status - Cost: 0
                     if (isset($params['requirements']['lostmode'])) {
                         $req_value = $params['requirements']['lostmode'];
-                        $value = $mobiledevice->fields['lost_mode_enabled'];
+                        $value     = $mobiledevice->fields['lost_mode_enabled'];
 
                         if ($value !== 'true' && $value !== 'false') {
                             unset($allcommands[$command]);
@@ -110,12 +109,9 @@ class PluginJamfItem_MDMCommand extends CommonDBTM
                     }
 
                     // Test device type requirements - Cost: 2
-                    if (isset($params['requirements']['devicetypes']) && !empty($params['requirements']['devicetypes']) &&
-                        !array_key_exists('mobiledevice', $params['requirements']['devicetypes']) &&
-                        !in_array('mobiledevice', $params['requirements']['devicetypes'], true)) {
+                    if (isset($params['requirements']['devicetypes']) && !empty($params['requirements']['devicetypes']) && !array_key_exists('mobiledevice', $params['requirements']['devicetypes']) && !in_array('mobiledevice', $params['requirements']['devicetypes'], true)) {
                         $specifictype = $mobiledevice->getSpecificType();
-                        if (!array_key_exists($specifictype, $params['requirements']['devicetypes']) &&
-                            !in_array($specifictype, $params['requirements']['devicetypes'], true)) {
+                        if (!array_key_exists($specifictype, $params['requirements']['devicetypes']) && !in_array($specifictype, $params['requirements']['devicetypes'], true)) {
                             unset($allcommands[$command]);
                             continue;
                         }
@@ -129,8 +125,10 @@ class PluginJamfItem_MDMCommand extends CommonDBTM
                 }
             }
             self::applySpecificParams($allcommands, $mobiledevice);
+
             return $allcommands;
         }
+
         return [];
     }
 
@@ -139,7 +137,7 @@ class PluginJamfItem_MDMCommand extends CommonDBTM
         static $data = null;
 
         if ($data === null) {
-            $pmv_file = GLPI_PLUGIN_DOC_DIR.'/jamf/pmv.json';
+            $pmv_file = GLPI_PLUGIN_DOC_DIR . '/jamf/pmv.json';
             if (file_exists($pmv_file)) {
                 $data = json_decode(file_get_contents($pmv_file), true)['AssetSets'];
             } else {
@@ -157,12 +155,10 @@ class PluginJamfItem_MDMCommand extends CommonDBTM
             return [];
         }
         $data['iOS'] = array_filter($data['iOS'], static function ($item) use ($model_identifier) {
-            return $item['ExpirationDate'] > date('Y-m-d') &&
-                in_array($model_identifier, $item['SupportedDevices'], true);
+            return $item['ExpirationDate'] > date('Y-m-d') && in_array($model_identifier, $item['SupportedDevices'], true);
         });
         $data['macOS'] = array_filter($data['macOS'], static function ($item) use ($model_identifier) {
-            return $item['ExpirationDate'] > date('Y-m-d') &&
-                in_array($model_identifier, $item['SupportedDevices'], true);
+            return $item['ExpirationDate'] > date('Y-m-d') && in_array($model_identifier, $item['SupportedDevices'], true);
         });
 
         // Sort so newest updates are first
@@ -175,7 +171,7 @@ class PluginJamfItem_MDMCommand extends CommonDBTM
 
         if (count($data['iOS']) > 0) {
             return array_column($data['iOS'], 'ProductVersion');
-        } else if (count($data['macOS']) > 0) {
+        } elseif (count($data['macOS']) > 0) {
             return array_column($data['macOS'], 'ProductVersion');
         } else {
             return [];
@@ -188,7 +184,7 @@ class PluginJamfItem_MDMCommand extends CommonDBTM
             $applicable_updates = self::getAvailableUpdates($mobiledevice->getJamfDeviceData()['model_identifier']);
             if (count($applicable_updates) > 0) {
                 // Replace product_version plain-text field with a dropdown of versions
-                $commands['ScheduleOSUpdate']['params']['product_version']['type'] = 'dropdown';
+                $commands['ScheduleOSUpdate']['params']['product_version']['type']   = 'dropdown';
                 $commands['ScheduleOSUpdate']['params']['product_version']['values'] = $applicable_updates;
             }
         }
@@ -205,20 +201,21 @@ class PluginJamfItem_MDMCommand extends CommonDBTM
             return false;
         }
 
-        $commands = self::getApplicableCommands($mobiledevice);
+        $commands      = self::getApplicableCommands($mobiledevice);
         $item_commands = $mobiledevice->getMDMCommands();
-        $device_data = $mobiledevice->getJamfDeviceData();
+        $device_data   = $mobiledevice->getJamfDeviceData();
 
         TemplateRenderer::getInstance()->display('@jamf/mdm_commands.html.twig', [
-            'commands' => $commands,
+            'commands'         => $commands,
             'pending_commands' => $item_commands['pending'],
-            'failed_commands' => $item_commands['failed'],
-            'itemtype' => $item->getType(),
-            'items_id' => $item->getID(),
-            'jamf_itemtype' => 'MobileDevice',
-            'jamf_items_id' => $mobiledevice->getID(),
-            'jamf_id' => $device_data['jamf_items_id'],
+            'failed_commands'  => $item_commands['failed'],
+            'itemtype'         => $item->getType(),
+            'items_id'         => $item->getID(),
+            'jamf_itemtype'    => 'MobileDevice',
+            'jamf_items_id'    => $mobiledevice->getID(),
+            'jamf_id'          => $device_data['jamf_items_id'],
         ]);
+
         return true;
     }
 
@@ -227,7 +224,6 @@ class PluginJamfItem_MDMCommand extends CommonDBTM
      */
     public function getRights($interface = 'central')
     {
-
         return [READ => __('Read')];
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -58,15 +59,15 @@ class PluginJamfAPI
         if (!static::$connection) {
             static::$connection = new static::$connection_class();
         }
-        $url = static::$connection->getAPIUrl($endpoint);
+        $url    = static::$connection->getAPIUrl($endpoint);
         $client = static::$connection->getClient();
 
         try {
             $response = $client->get($url, [
                 RequestOptions::HEADERS => [
                     'Content-Type' => 'application/json',
-                    'Accept' => $response_type
-                ]
+                    'Accept'       => $response_type,
+                ],
             ]);
             $httpcode = $response->getStatusCode();
             $response = $response->getBody()->getContents();
@@ -101,21 +102,22 @@ class PluginJamfAPI
         if (!static::$connection) {
             static::$connection = new static::$connection_class();
         }
-        $url = (static::$connection)->getAPIUrl($endpoint);
+        $url    = (static::$connection)->getAPIUrl($endpoint);
         $client = static::$connection->getClient();
 
         try {
             $response = $client->post($url, [
                 RequestOptions::HEADERS => [
                     'Content-Type: application/xml',
-                    'Accept: application/json'
+                    'Accept: application/json',
                 ],
-                RequestOptions::BODY => $payload
+                RequestOptions::BODY => $payload,
             ]);
             $httpcode = $response->getStatusCode();
         } catch (GuzzleHttp\Exception\ClientException $e) {
             return null;
         }
+
         return ($httpcode === 201) ? true : $httpcode;
     }
 
@@ -131,14 +133,14 @@ class PluginJamfAPI
         if (!static::$connection) {
             static::$connection = new static::$connection_class();
         }
-        $url = (static::$connection)->getAPIUrl($endpoint);
+        $url    = (static::$connection)->getAPIUrl($endpoint);
         $client = static::$connection->getClient();
 
         try {
             $response = $client->put($url, [
                 RequestOptions::HEADERS => [
                     'Content-Type: application/xml',
-                    'Accept: application/json'
+                    'Accept: application/json',
                 ],
                 RequestOptions::BODY => $data,
             ]);
@@ -161,7 +163,7 @@ class PluginJamfAPI
         if (!static::$connection) {
             static::$connection = new static::$connection_class();
         }
-        $url = (static::$connection)->getAPIUrl($endpoint);
+        $url    = (static::$connection)->getAPIUrl($endpoint);
         $client = static::$connection->getClient();
 
         try {
@@ -170,6 +172,7 @@ class PluginJamfAPI
         } catch (GuzzleException $e) {
             return null;
         }
+
         return ($httpcode === 200) ? true : $httpcode;
     }
 
@@ -185,6 +188,7 @@ class PluginJamfAPI
         foreach ($params as $key => $value) {
             $param_str = "{$param_str}/{$key}/{$value}";
         }
+
         return $param_str;
     }
 
@@ -202,8 +206,9 @@ class PluginJamfAPI
             return null;
         }
         $param_str = static::getParamStringClassic($params);
-        $endpoint = "$itemtype$param_str";
-        $response = static::getClassic($endpoint);
+        $endpoint  = "$itemtype$param_str";
+        $response  = static::getClassic($endpoint);
+
         // Strip first key (usually like mobile_devices or mobile_device)
         // No other first level keys exist
         return ($response !== null && count($response)) ? reset($response) : null;
@@ -221,16 +226,17 @@ class PluginJamfAPI
     {
         if ($itemtype === 'mobiledevicecommands') {
             $param_str = '/command';
-            $meta = (string)simplexml_load_string($payload)->general->command;
+            $meta      = (string) simplexml_load_string($payload)->general->command;
         } else {
             $param_str = '';
-            $meta = null;
+            $meta      = null;
         }
         if ($user_auth && !PluginJamfUser_JSSAccount::canCreateJSSItem($itemtype, $meta)) {
             return null;
         }
 
         $endpoint = "$itemtype$param_str";
+
         return static::addClassic($endpoint, $payload);
     }
 
@@ -249,7 +255,8 @@ class PluginJamfAPI
             return null;
         }
         $param_str = static::getParamStringClassic($params);
-        $endpoint = "$itemtype$param_str";
+        $endpoint  = "$itemtype$param_str";
+
         return static::updateClassic($endpoint, $fields);
     }
 
@@ -267,13 +274,15 @@ class PluginJamfAPI
             return null;
         }
         $param_str = static::getParamStringClassic($params);
-        $endpoint = "$itemtype$param_str";
+        $endpoint  = "$itemtype$param_str";
+
         return static::deleteClassic($endpoint);
     }
 
     private static function getJSSGroupActionRights($groupid)
     {
         $response = static::getClassic("accounts/groupid/$groupid");
+
         return $response['group']['privileges']['jss_actions'];
     }
 
@@ -283,13 +292,13 @@ class PluginJamfAPI
             return null;
         }
         $response = static::getClassic("accounts/userid/$userid", true, 'application/xml');
-        $account = simplexml_load_string($response);
+        $account  = simplexml_load_string($response);
 
         $access_level = $account->access_level;
-        $rights = [
-            'jss_objects' => [],
-            'jss_actions' => [],
-            'jss_settings' => []
+        $rights       = [
+            'jss_objects'  => [],
+            'jss_actions'  => [],
+            'jss_settings' => [],
         ];
         if ($access_level === 'Group Access') {
             $group_count = count($account->groups->group);
@@ -305,7 +314,7 @@ class PluginJamfAPI
                     }
                 }
                 // Why are jss_actions not included in the group when all other rights are?
-                $action_privileges = static::getJSSGroupActionRights(reset($group->id));
+                $action_privileges     = static::getJSSGroupActionRights(reset($group->id));
                 $rights['jss_actions'] = $action_privileges;
 
                 if (isset($group->privileges->jss_settings)) {
@@ -344,6 +353,7 @@ class PluginJamfAPI
                 }
             }
         }
+
         return $rights;
     }
 
@@ -351,15 +361,18 @@ class PluginJamfAPI
     {
         try {
             static::getItemsClassic('mobiledevices', ['match' => '?name=glpi_conn_test']);
+
             return true;
         } catch (RuntimeException $e) {
             return false;
         }
     }
+
     public static function testProAPIConnection(): bool
     {
         try {
             static::getJamfProVersion();
+
             return true;
         } catch (RuntimeException $e) {
             return false;
@@ -375,6 +388,7 @@ class PluginJamfAPI
             static::$connection = new static::$connection_class();
         }
         $response = static::$connection->getClient()->get(static::$connection->getAPIUrl('v1/jamf-pro-version', true))->getBody()->getContents();
+
         return json_decode($response, true)['version'];
     }
 
@@ -389,31 +403,30 @@ class PluginJamfAPI
      */
     public static function getAllMobileDevices()
     {
-        var_dump((new Exception())->getTraceAsString());ob_flush();
         if (!static::$connection) {
             static::$connection = new static::$connection_class();
         }
         $all_results = [];
 
         $endpoint_base = '/v2/mobile-devices';
-        $query_params = [
-            'page' => 0,
-            'page-size' => 1000
+        $query_params  = [
+            'page'      => 0,
+            'page-size' => 1000,
         ];
-        $client = static::$connection->getClient();
-        $response = $client->get(static::$connection->getAPIUrl($endpoint_base, true) . '?' . http_build_query($query_params));
+        $client           = static::$connection->getClient();
+        $response         = $client->get(static::$connection->getAPIUrl($endpoint_base, true) . '?' . http_build_query($query_params));
         $initial_response = json_decode($response->getBody()->getContents(), true);
-        $total_results = $initial_response['totalCount'];
-        $all_results = array_merge($all_results, $initial_response['results']);
+        $total_results    = $initial_response['totalCount'];
+        $all_results      = array_merge($all_results, $initial_response['results']);
 
         // Do we need to get more pages?
         if ($total_results > 1000) {
             $pages = ceil($total_results / 1000);
             for ($i = 1; $i < $pages; $i++) {
                 $query_params['page'] = $i;
-                $response = $client->get(static::$connection->getAPIUrl($endpoint_base, true) . '?' . http_build_query($query_params));
-                $response = json_decode($response->getBody()->getContents(), true);
-                $all_results = [...$all_results, ...$response['results']];
+                $response             = $client->get(static::$connection->getAPIUrl($endpoint_base, true) . '?' . http_build_query($query_params));
+                $response             = json_decode($response->getBody()->getContents(), true);
+                $all_results          = [...$all_results, ...$response['results']];
             }
         }
 
@@ -433,6 +446,7 @@ class PluginJamfAPI
         }
         $endpoint = "/v2/mobile-devices/{$id}" . ($detailed ? '/detail' : '');
         $response = static::$connection->getClient()->get(static::$connection->getAPIUrl($endpoint, true));
+
         return json_decode($response->getBody()->getContents(), true);
     }
 
@@ -449,14 +463,15 @@ class PluginJamfAPI
         }
         $query_params = [
             'section' => strtoupper($section),
-            'filter' => 'udid=="' . $udid . '"'
+            'filter'  => 'udid=="' . $udid . '"',
         ];
         $endpoint = '/v2/mobile-devices/detail' . '?' . http_build_query($query_params);
         $response = static::$connection->getClient()->get(static::$connection->getAPIUrl($endpoint, true));
-        $result = json_decode($response->getBody()->getContents(), true);
+        $result   = json_decode($response->getBody()->getContents(), true);
         if (isset($result['results']) && count($result['results']) > 0) {
             return $result['results'][0];
         }
+
         return null;
     }
 
@@ -472,24 +487,24 @@ class PluginJamfAPI
         $all_results = [];
 
         $endpoint_base = '/v1/computers-inventory';
-        $query_params = [
-            'page' => 0,
-            'page-size' => 1000
+        $query_params  = [
+            'page'      => 0,
+            'page-size' => 1000,
         ];
-        $client = static::$connection->getClient();
-        $response = $client->get(static::$connection->getAPIUrl($endpoint_base, true) . '?' . http_build_query($query_params));
+        $client           = static::$connection->getClient();
+        $response         = $client->get(static::$connection->getAPIUrl($endpoint_base, true) . '?' . http_build_query($query_params));
         $initial_response = json_decode($response->getBody()->getContents(), true);
-        $total_results = $initial_response['totalCount'];
-        $all_results = array_merge($all_results, $initial_response['results']);
+        $total_results    = $initial_response['totalCount'];
+        $all_results      = array_merge($all_results, $initial_response['results']);
 
         // Do we need to get more pages?
         if ($total_results > 1000) {
             $pages = ceil($total_results / 1000);
             for ($i = 1; $i < $pages; $i++) {
                 $query_params['page'] = $i;
-                $response = $client->get(static::$connection->getAPIUrl($endpoint_base, true) . '?' . http_build_query($query_params));
-                $response = json_decode($response->getBody()->getContents(), true);
-                $all_results = [...$all_results, ...$response['results']];
+                $response             = $client->get(static::$connection->getAPIUrl($endpoint_base, true) . '?' . http_build_query($query_params));
+                $response             = json_decode($response->getBody()->getContents(), true);
+                $all_results          = [...$all_results, ...$response['results']];
             }
         }
 
@@ -501,9 +516,9 @@ class PluginJamfAPI
         if (!static::$connection) {
             static::$connection = new static::$connection_class();
         }
-        $endpoint = "/v1/computer-inventory" . ($detailed ? '-detail' : '') . "/{$id}";
+        $endpoint = '/v1/computer-inventory' . ($detailed ? '-detail' : '') . "/{$id}";
         $response = static::$connection->getClient()->get(static::$connection->getAPIUrl($endpoint, true));
+
         return json_decode($response->getBody()->getContents(), true);
     }
-
 }

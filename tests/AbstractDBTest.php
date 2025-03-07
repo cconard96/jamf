@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -68,27 +69,27 @@ class AbstractDBTest extends TestCase
         $SQLLOGGER->setHandlers([static::$sql_log_handler]);
 
         $default_config = [
-            'autoimport' => 0,
-            'sync_general' => 1,
-            'sync_components' => 1,
-            'sync_financial' => 1,
-            'sync_os' => 1,
-            'sync_software' => 1,
-            'sync_user' => 1,
-            'computer_type' => 0,
-            'ipad_type' => 0,
-            'iphone_type' => 0,
-            'appletv_type' => 0,
+            'autoimport'           => 0,
+            'sync_general'         => 1,
+            'sync_components'      => 1,
+            'sync_financial'       => 1,
+            'sync_os'              => 1,
+            'sync_software'        => 1,
+            'sync_user'            => 1,
+            'computer_type'        => 0,
+            'ipad_type'            => 0,
+            'iphone_type'          => 0,
+            'appletv_type'         => 0,
             'default_manufacturer' => 0,
         ];
         foreach ($default_config as $name => $value) {
             $DB->updateOrInsert('glpi_configs', [
-                'value' => $value,
+                'value'   => $value,
                 'context' => 'plugin:Jamf',
-                'name' => $name,
+                'name'    => $name,
             ], [
                 'context' => 'plugin:Jamf',
-                'name' => $name,
+                'name'    => $name,
             ]);
         }
     }
@@ -104,7 +105,7 @@ class AbstractDBTest extends TestCase
         Session::destroy();
         Session::start();
 
-        $_SESSION['glpi_use_mode'] = Session::NORMAL_MODE;
+        $_SESSION['glpi_use_mode']     = Session::NORMAL_MODE;
         $_SESSION['glpiactive_entity'] = 0;
 
         global $CFG_GLPI;
@@ -123,6 +124,7 @@ class AbstractDBTest extends TestCase
         if (is_null($this->str)) {
             return $this->str = uniqid('str', false);
         }
+
         return $this->str .= 'x';
     }
 
@@ -134,6 +136,7 @@ class AbstractDBTest extends TestCase
         if (is_null($this->int)) {
             return $this->int = random_int(1000, 10000);
         }
+
         return $this->int++;
     }
 
@@ -185,7 +188,7 @@ class AbstractDBTest extends TestCase
     protected function setEntity($entityname, $subtree)
     {
         $entity_id = is_int($entityname) ? $entityname : getItemByTypeName('Entity', $entityname, true);
-        $res = Session::changeActiveEntities($entity_id, $subtree);
+        $res       = Session::changeActiveEntities($entity_id, $subtree);
         $this->assertTrue($res);
     }
 
@@ -210,7 +213,7 @@ class AbstractDBTest extends TestCase
             foreach ($input as $k => $v) {
                 $this->assertEquals($v, $object->fields[$k], "
                 '$k' key current value '{$object->fields[$k]}' (" . gettype($object->fields[$k]) . ")
-                is not equal to '$v' (" . gettype($v) . ")");
+                is not equal to '$v' (" . gettype($v) . ')');
             }
         }
     }
@@ -231,12 +234,12 @@ class AbstractDBTest extends TestCase
             [
                 'TicketFollowup', // Deprecated
                 '/^RuleImportComputer.*/', // Deprecated
-            ]
+            ],
         );
 
         $files_iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(GLPI_ROOT . '/src'),
-            RecursiveIteratorIterator::SELF_FIRST
+            RecursiveIteratorIterator::SELF_FIRST,
         );
 
         $classes = [];
@@ -274,6 +277,7 @@ class AbstractDBTest extends TestCase
                 $classes[] = $classname;
             }
         }
+
         return array_unique($classes);
     }
 
@@ -288,9 +292,9 @@ class AbstractDBTest extends TestCase
      */
     protected function createItem($itemtype, $input, $skip_fields = []): CommonDBTM
     {
-        $item = new $itemtype();
+        $item  = new $itemtype();
         $input = Sanitizer::sanitize($input);
-        $id = $item->add($input);
+        $id    = $item->add($input);
         $this->assertGreaterThan(0, $id, 'ID is not valid');
 
         // Remove special fields
@@ -311,14 +315,14 @@ class AbstractDBTest extends TestCase
      */
     protected function updateItem($itemtype, $id, $input)
     {
-        $item = new $itemtype();
+        $item        = new $itemtype();
         $input['id'] = $id;
-        $input = Sanitizer::sanitize($input);
-        $success = $item->update($input);
+        $input       = Sanitizer::sanitize($input);
+        $success     = $item->update($input);
         $this->assertTrue($success);
 
         // Remove special fields
-        $input = array_filter($input, static fn ($key) => !str_starts_with($key, '_'), ARRAY_FILTER_USE_KEY);
+        $input = array_filter($input, static fn($key) => !str_starts_with($key, '_'), ARRAY_FILTER_USE_KEY);
 
         $this->checkInput($item, $id, $input);
     }

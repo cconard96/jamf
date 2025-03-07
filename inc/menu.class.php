@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -34,7 +35,6 @@
  */
 class PluginJamfMenu extends CommonGLPI
 {
-
     /**
      * Get name of this type by language of the user connected
      *

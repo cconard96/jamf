@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -46,16 +47,18 @@ class PluginJamfConnectionTest extends PluginJamfConnection
                     $endpoint = $request->getUri()->getPath();
                     var_dump($endpoint);
                     // remove query parameters
-                    $endpoint = str_contains($endpoint, '?') ? explode('?', $endpoint)[0] : $endpoint;
-                    $response_type = $request->getHeader('Accept')[0] ?? 'application/json';
-                    $response_ext = $response_type === 'application/xml' ? 'xml' : 'json';
+                    $endpoint       = str_contains($endpoint, '?') ? explode('?', $endpoint)[0] : $endpoint;
+                    $response_type  = $request->getHeader('Accept')[0] ?? 'application/json';
+                    $response_ext   = $response_type === 'application/xml' ? 'xml' : 'json';
                     $mock_file_path = GLPI_ROOT . '/plugins/jamf/tools/samples/' . $endpoint . '.' . $response_ext;
+
                     return new \GuzzleHttp\Psr7\Response(200, [], file_get_contents($mock_file_path));
                 }
 
                 public function request(string $method, $uri, array $options = []): ResponseInterface
                 {
                     $request = new \GuzzleHttp\Psr7\Request($method, $uri, $options['headers'] ?? []);
+
                     return $this->sendRequest($request);
                 }
 

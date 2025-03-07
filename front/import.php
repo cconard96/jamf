@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -37,24 +38,24 @@ if (!$plugin->isActivated('jamf')) {
     Html::displayNotFoundError();
 }
 
-Session::checkRight("plugin_jamf_mobiledevice", CREATE);
+Session::checkRight('plugin_jamf_mobiledevice', CREATE);
 Html::header('Jamf Plugin', '', 'tools', 'PluginJamfMenu', 'import');
 
 global $DB, $CFG_GLPI;
 
 $start = $_GET['start'] ?? 0;
 
-$import = new PluginJamfImport();
+$import      = new PluginJamfImport();
 $importcount = countElementsInTable(PluginJamfImport::getTable());
-$pending = $DB->request([
-    'FROM' => PluginJamfImport::getTable(),
+$pending     = $DB->request([
+    'FROM'  => PluginJamfImport::getTable(),
     'START' => $start,
-    'LIMIT' => $_SESSION['glpilist_limit']
+    'LIMIT' => $_SESSION['glpilist_limit'],
 ]);
 
 TemplateRenderer::getInstance()->display('@jamf/import.html.twig', [
-    'pending' => $pending,
-    'total_count' => $importcount
+    'pending'     => $pending,
+    'total_count' => $importcount,
 ]);
 
 Html::footer();

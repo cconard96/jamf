@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -34,7 +35,6 @@
  */
 abstract class PluginJamfSync
 {
-
     /**
      * The sync task completed successfully.
      */
@@ -130,22 +130,23 @@ abstract class PluginJamfSync
         $this->db = $DB;
         if ($item === null) {
             $this->dummySync = true;
+
             return;
         }
         $this->config = PluginJamfConfig::getConfig();
-        $this->item = $item;
-        $this->data = $data;
-        $jamfitem = static::$jamfplugin_itemtype::getJamfItemForGLPIItem($item);
+        $this->item   = $item;
+        $this->data   = $data;
+        $jamfitem     = static::$jamfplugin_itemtype::getJamfItemForGLPIItem($item);
         //$jamfitem = new static::$jamfplugin_itemtype();
         $this->jamfplugin_device = $jamfitem;
-//      $jamf_match = $jamfitem->find([
-//         'itemtype' => $item::getType(),
-//         'items_id' => $item->getID()], [], 1);
-//      if (count($jamf_match)) {
-//         $jamf_id = reset($jamf_match)['id'];
-//         $jamfitem->getFromDB($jamf_id);
-//         $this->jamfplugin_device = $jamfitem;
-//      }
+        //      $jamf_match = $jamfitem->find([
+        //         'itemtype' => $item::getType(),
+        //         'items_id' => $item->getID()], [], 1);
+        //      if (count($jamf_match)) {
+        //         $jamf_id = reset($jamf_match)['id'];
+        //         $jamfitem->getFromDB($jamf_id);
+        //         $this->jamfplugin_device = $jamfitem;
+        //      }
     }
 
     /**
@@ -160,18 +161,18 @@ abstract class PluginJamfSync
         }
         $this->jamfplugin_item_changes['sync_date'] = $_SESSION['glpi_currenttime'];
         $this->item->update([
-                'id' => $this->item->getID()
-            ] + $this->item_changes);
+            'id' => $this->item->getID(),
+        ] + $this->item_changes);
         foreach ($this->extitem_changes as $key => $value) {
             PluginJamfExtField::setValue($this->item::getType(), $this->item->getID(), $key, $value);
         }
         $this->db->updateOrInsert(static::$jamfplugin_itemtype::getTable(), $this->jamfplugin_item_changes, [
             'itemtype' => $this->item::getType(),
-            'items_id' => $this->item->getID()
+            'items_id' => $this->item->getID(),
         ]);
 
         if ($this->jamfplugin_device === null) {
-            $jamf_item = new static::$jamfplugin_itemtype();
+            $jamf_item  = new static::$jamfplugin_itemtype();
             $jamf_match = $jamf_item->find([
                 'itemtype' => $this->item::getType(),
                 'items_id' => $this->item->getID()], [], 1);
@@ -190,12 +191,13 @@ abstract class PluginJamfSync
                 $this->status[$task] = self::STATUS_ERROR;
             }
         }
+
         return $this->status;
     }
 
     protected function createOrGetItem($itemtype, $criteria, $params)
     {
-        $item = new $itemtype();
+        $item         = new $itemtype();
         $item_matches = $item->find($criteria);
         if (!count($item_matches)) {
             $items_id = $item->add($params);
@@ -203,6 +205,7 @@ abstract class PluginJamfSync
         } else {
             $item->getFromDB(reset($item_matches)['id']);
         }
+
         return $item;
     }
 
@@ -212,17 +215,19 @@ abstract class PluginJamfSync
         $opts = array_replace($opts, $options);
 
         /** @var CommonDBTM $item */
-        $item = new $itemtype();
+        $item         = new $itemtype();
         $item_matches = $item->find($match_criteria);
         if (!count($item_matches)) {
             $items_id = $item->add($state);
             $item->getFromDB($items_id);
+
             return $item;
         }
 
         $match = reset($item_matches);
         $item->getFromDB($match['id']);
         $item->update(['id' => $match['id']] + $state);
+
         return $item;
     }
 
@@ -260,7 +265,7 @@ abstract class PluginJamfSync
     {
         return [
             PluginJamfMobileDevice::class => PluginJamfMobileSync::class,
-            PluginJamfComputer::class => PluginJamfComputerSync::class
+            PluginJamfComputer::class     => PluginJamfComputerSync::class,
         ];
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -38,8 +39,7 @@ if (!defined('GLPI_ROOT')) {
  */
 class PluginJamfProfile extends Profile
 {
-
-    public static $rightname = "config";
+    public static $rightname = 'config';
 
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
     {
@@ -54,6 +54,7 @@ class PluginJamfProfile extends Profile
         } else {
             $jamfprofile->showFormHelpdesk($item->getID());
         }
+
         return true;
     }
 
@@ -85,29 +86,29 @@ class PluginJamfProfile extends Profile
         $rights = [
             [
                 'itemtype' => 'PluginJamfMobileDevice',
-                'label' => PluginJamfMobileDevice::getTypeName(Session::getPluralNumber()),
-                'field' => 'plugin_jamf_mobiledevice'
+                'label'    => PluginJamfMobileDevice::getTypeName(Session::getPluralNumber()),
+                'field'    => 'plugin_jamf_mobiledevice',
             ],
             [
                 'itemtype' => 'PluginJamfComputer',
-                'label' => PluginJamfComputer::getTypeName(Session::getPluralNumber()),
-                'field' => 'plugin_jamf_computer'
+                'label'    => PluginJamfComputer::getTypeName(Session::getPluralNumber()),
+                'field'    => 'plugin_jamf_computer',
             ],
             [
                 'itemtype' => 'PluginJamfRuleImport',
-                'label' => _nx('right', 'Import rule', 'Import rules', Session::getPluralNumber(), 'jamf'),
-                'field' => 'plugin_jamf_ruleimport'
+                'label'    => _nx('right', 'Import rule', 'Import rules', Session::getPluralNumber(), 'jamf'),
+                'field'    => 'plugin_jamf_ruleimport',
             ],
             [
                 'itemtype' => 'PluginJamfUser_JSSAccount',
-                'label' => PluginJamfUser_JSSAccount::getTypeName(Session::getPluralNumber()),
-                'field' => PluginJamfUser_JSSAccount::$rightname
+                'label'    => PluginJamfUser_JSSAccount::getTypeName(Session::getPluralNumber()),
+                'field'    => PluginJamfUser_JSSAccount::$rightname,
             ],
             [
                 'itemtype' => 'PluginJamfItem_MDMCommand',
-                'label' => PluginJamfItem_MDMCommand::getTypeName(Session::getPluralNumber()),
-                'field' => PluginJamfItem_MDMCommand::$rightname
-            ]
+                'label'    => PluginJamfItem_MDMCommand::getTypeName(Session::getPluralNumber()),
+                'field'    => PluginJamfItem_MDMCommand::$rightname,
+            ],
         ];
         $matrix_options['title'] = _x('plugin_info', 'Jamf plugin', 'jamf');
         $profile->displayRightsChoiceMatrix($rights, $matrix_options);
@@ -132,7 +133,7 @@ class PluginJamfProfile extends Profile
      *
      * @return bool|void
      */
-    function showFormHelpdesk($profiles_id = 0, $openform = true, $closeform = true)
+    public function showFormHelpdesk($profiles_id = 0, $openform = true, $closeform = true)
     {
         global $CFG_GLPI;
 
@@ -148,12 +149,12 @@ class PluginJamfProfile extends Profile
         }
 
         $matrix_options = ['canedit' => $canedit,
-            'default_class' => 'tab_bg_2'];
+            'default_class'          => 'tab_bg_2'];
 
         $rights = [['itemtype' => 'PluginJamfMobileDevice',
-            'label' => PluginJamfMobileDevice::getTypeName(Session::getPluralNumber()),
-            'field' => 'plugin_jamf_mobiledevice',
-            'rights' => [READ => __('Read')]]];
+            'label'            => PluginJamfMobileDevice::getTypeName(Session::getPluralNumber()),
+            'field'            => 'plugin_jamf_mobiledevice',
+            'rights'           => [READ => __('Read')]]];
         $matrix_options['title'] = _x('plugin_info', 'Jamf plugin', 'jamf');
         $profile->displayRightsChoiceMatrix($rights, $matrix_options);
 

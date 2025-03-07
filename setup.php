@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -41,28 +42,28 @@ function plugin_init_jamf()
     if (Plugin::isPluginActive('jamf')) {
         $PLUGIN_HOOKS['add_javascript']['jamf'][] = 'js/jamf.js';
         Plugin::registerClass('PluginJamfConfig', ['addtabon' => 'Config']);
-        $PLUGIN_HOOKS['post_item_form']['jamf'] = 'plugin_jamf_showJamfInfoForItem';
+        $PLUGIN_HOOKS['post_item_form']['jamf']           = 'plugin_jamf_showJamfInfoForItem';
         $PLUGIN_HOOKS['pre_item_update']['jamf']['Phone'] = ['PluginJamfMobileDevice', 'preUpdatePhone'];
-        $PLUGIN_HOOKS['undiscloseConfigValue']['jamf'] = [PluginJamfConfig::class, 'undiscloseConfigValue'];
+        $PLUGIN_HOOKS['undiscloseConfigValue']['jamf']    = [PluginJamfConfig::class, 'undiscloseConfigValue'];
         Plugin::registerClass('PluginJamfRuleImportCollection', ['rulecollections_types' => true]);
         Plugin::registerClass('PluginJamfProfile', ['addtabon' => ['Profile']]);
         Plugin::registerClass('PluginJamfItem_ExtensionAttribute', ['addtabon' => [
             'Computer',
-            'Phone'
+            'Phone',
         ]]);
         Plugin::registerClass('PluginJamfItem_MDMCommand', ['addtabon' => [
             'Computer',
-            'Phone'
+            'Phone',
         ]]);
         Plugin::registerClass('PluginJamfUser_JSSAccount', ['addtabon' => ['User']]);
         if (Session::haveRight('plugin_jamf_mobiledevice', READ)) {
             $PLUGIN_HOOKS['menu_toadd']['jamf'] = ['tools' => 'PluginJamfMenu'];
         }
-        $PLUGIN_HOOKS['post_init']['jamf'] = 'plugin_jamf_postinit';
+        $PLUGIN_HOOKS['post_init']['jamf']  = 'plugin_jamf_postinit';
         $PLUGIN_HOOKS['item_purge']['jamf'] = [
             'Computer' => ['PluginJamfAbstractDevice', 'plugin_jamf_purgeComputer'],
-            'Phone' => ['PluginJamfAbstractDevice', 'plugin_jamf_purgePhone'],
-            'Software' => ['PluginJamfSoftware', 'plugin_jamf_purgeSoftware']
+            'Phone'    => ['PluginJamfAbstractDevice', 'plugin_jamf_purgePhone'],
+            'Software' => ['PluginJamfSoftware', 'plugin_jamf_purgeSoftware'],
         ];
 
         // Dashboards
@@ -75,24 +76,24 @@ function plugin_init_jamf()
 function plugin_version_jamf()
 {
     return [
-        'name' => _x('plugin_info', 'JAMF Plugin for GLPI', 'jamf'),
-        'version' => PLUGIN_JAMF_VERSION,
-        'author' => "<a href=\"mailto:contact@teclib.com\">Teclib'</a> & Curtis Conard",
-        'license' => 'GPLv2',
-        'homepage' => 'https://github.com/pluginsGLPI/jamf',
+        'name'         => _x('plugin_info', 'JAMF Plugin for GLPI', 'jamf'),
+        'version'      => PLUGIN_JAMF_VERSION,
+        'author'       => "<a href=\"mailto:contact@teclib.com\">Teclib'</a> & Curtis Conard",
+        'license'      => 'GPLv2',
+        'homepage'     => 'https://github.com/pluginsGLPI/jamf',
         'requirements' => [
             'glpi' => [
                 'min' => PLUGIN_JAMF_MIN_GLPI,
-                'max' => PLUGIN_JAMF_MAX_GLPI
-            ]
-        ]
+                'max' => PLUGIN_JAMF_MAX_GLPI,
+            ],
+        ],
     ];
 }
 
 function plugin_jamf_check_prerequisites()
 {
     if (!method_exists('Plugin', 'checkGlpiVersion')) {
-        $version = preg_replace('/^((\d+\.?)+).*$/', '$1', GLPI_VERSION);
+        $version         = preg_replace('/^((\d+\.?)+).*$/', '$1', GLPI_VERSION);
         $matchMinGlpiReq = version_compare($version, PLUGIN_JAMF_MIN_GLPI, '>=');
         $matchMaxGlpiReq = version_compare($version, PLUGIN_JAMF_MAX_GLPI, '<');
         if (!$matchMinGlpiReq || !$matchMaxGlpiReq) {
@@ -101,11 +102,13 @@ function plugin_jamf_check_prerequisites()
                 [
                     PLUGIN_JAMF_MIN_GLPI,
                     PLUGIN_JAMF_MAX_GLPI,
-                ]
+                ],
             );
+
             return false;
         }
     }
+
     return true;
 }
 

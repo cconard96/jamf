@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -34,7 +35,6 @@
  */
 final class PluginJamfCron extends CommonGLPI
 {
-
     public static function getTypeName($nb = 0)
     {
         return _x('plugin_info', 'Jamf plugin', 'jamf');
@@ -42,7 +42,7 @@ final class PluginJamfCron extends CommonGLPI
 
     public static function cronSyncJamf(CronTask $task)
     {
-        $volume = 0;
+        $volume  = 0;
         $engines = PluginJamfSync::getDeviceSyncEngines();
 
         foreach ($engines as $jamf_class => $engine) {
@@ -56,7 +56,7 @@ final class PluginJamfCron extends CommonGLPI
 
     public static function cronImportJamf(CronTask $task)
     {
-        $volume = 0;
+        $volume  = 0;
         $engines = PluginJamfSync::getDeviceSyncEngines();
 
         foreach ($engines as $jamf_class => $engine) {
@@ -70,18 +70,20 @@ final class PluginJamfCron extends CommonGLPI
 
     public static function cronUpdatePMV(CronTask $task): int
     {
-        $url = 'https://gdmf.apple.com/v2/pmv';
+        $url      = 'https://gdmf.apple.com/v2/pmv';
         $out_file = GLPI_PLUGIN_DOC_DIR . '/jamf/pmv.json';
 
         $json = file_get_contents($url);
         if ($json === false) {
             $task->log(__('Unable to fetch PMV JSON from Apple', 'jamf'));
+
             return 0;
         }
         try {
             $json = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $e) {
             $task->log(__('Retrieved malformed PMV JSON', 'jamf'));
+
             return 0;
         }
         unset($json['PublicAssetSets']);
@@ -89,12 +91,15 @@ final class PluginJamfCron extends CommonGLPI
             $json = json_encode($json, JSON_THROW_ON_ERROR);
         } catch (JsonException $e) {
             $task->log(__('Unable to encode PMV JSON', 'jamf'));
+
             return 0;
         }
         if (file_put_contents($out_file, $json) === false) {
             $task->log(__('Unable to write PMV JSON to file', 'jamf'));
+
             return 0;
         }
+
         return 1;
     }
 }

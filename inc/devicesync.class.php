@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -30,7 +31,6 @@
 
 abstract class PluginJamfDeviceSync extends PluginJamfSync
 {
-
     protected $commondevice_changes = [];
 
     /**
@@ -42,6 +42,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
     protected function syncGeneral(): PluginJamfDeviceSync
     {
         $this->status['syncGeneral'] = self::STATUS_NOT_APPLICABLE;
+
         return $this;
     }
 
@@ -53,6 +54,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
     protected function syncOS(): PluginJamfDeviceSync
     {
         $this->status['syncOS'] = self::STATUS_NOT_APPLICABLE;
+
         return $this;
     }
 
@@ -64,6 +66,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
     protected function syncSoftware(): PluginJamfDeviceSync
     {
         $this->status['syncSoftware'] = self::STATUS_NOT_APPLICABLE;
+
         return $this;
     }
 
@@ -75,6 +78,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
     protected function syncUser(): PluginJamfDeviceSync
     {
         $this->status['syncUser'] = self::STATUS_NOT_APPLICABLE;
+
         return $this;
     }
 
@@ -86,6 +90,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
     protected function syncPurchasing(): PluginJamfDeviceSync
     {
         $this->status['syncPurchasing'] = self::STATUS_NOT_APPLICABLE;
+
         return $this;
     }
 
@@ -97,6 +102,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
     protected function syncExtensionAttributes(): PluginJamfDeviceSync
     {
         $this->status['syncExtensionAttributes'] = self::STATUS_NOT_APPLICABLE;
+
         return $this;
     }
 
@@ -108,6 +114,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
     protected function syncSecurity(): PluginJamfDeviceSync
     {
         $this->status['syncSecurity'] = self::STATUS_NOT_APPLICABLE;
+
         return $this;
     }
 
@@ -119,6 +126,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
     protected function syncNetwork(): PluginJamfDeviceSync
     {
         $this->status['syncNetwork'] = self::STATUS_NOT_APPLICABLE;
+
         return $this;
     }
 
@@ -130,6 +138,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
     protected function syncGeneralJamfPluginItem(): PluginJamfDeviceSync
     {
         $this->status['syncGeneralJamfPluginItem'] = self::STATUS_NOT_APPLICABLE;
+
         return $this;
     }
 
@@ -141,6 +150,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
     protected function syncComponents(): PluginJamfDeviceSync
     {
         $this->status['syncComponents'] = self::STATUS_NOT_APPLICABLE;
+
         return $this;
     }
 
@@ -161,17 +171,17 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
         if ($api_itemtype === null) {
             return;
         }
-        $ext_attr = new PluginJamfExtensionAttribute();
+        $ext_attr       = new PluginJamfExtensionAttribute();
         $all_attributes = static::$api::getItemsClassic($api_itemtype);
         if (is_array($all_attributes)) {
             foreach ($all_attributes as $attribute) {
-                $attr = static::$api::getItemsClassic($api_itemtype, ['id' => $attribute['id']]);
+                $attr  = static::$api::getItemsClassic($api_itemtype, ['id' => $attribute['id']]);
                 $input = [
-                    'jamf_id' => $attr['id'],
-                    'jamf_type' => static::$jamf_itemtype,
-                    'name' => $DB->escape($attr['name']),
+                    'jamf_id'     => $attr['id'],
+                    'jamf_type'   => static::$jamf_itemtype,
+                    'name'        => $DB->escape($attr['name']),
                     'description' => $DB->escape($attr['description']),
-                    'data_type' => $DB->escape($attr['data_type'])
+                    'data_type'   => $DB->escape($attr['data_type']),
                 ];
                 $ext_attr->addOrUpdate($input);
             }
@@ -184,8 +194,8 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
 
         $volume = 0;
 
-        $config = PluginJamfConfig::getConfig();
-        $valid_sync_interval = isset($config['sync_interval']) && !empty($config['sync_interval']) && ((int)$config['sync_interval'] >= 1);
+        $config              = PluginJamfConfig::getConfig();
+        $valid_sync_interval = isset($config['sync_interval']) && !empty($config['sync_interval']) && ((int) $config['sync_interval'] >= 1);
         if (!$valid_sync_interval) {
             $config['sync_interval'] = 8 * 60;
         }
@@ -193,10 +203,10 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
         static::syncExtensionAttributeDefinitions();
         $iterator = $DB->request([
             'SELECT' => ['itemtype', 'items_id'],
-            'FROM' => 'glpi_plugin_jamf_devices',
-            'WHERE' => [
-                new QueryExpression("sync_date < NOW() - INTERVAL {$config['sync_interval']} MINUTE")
-            ]
+            'FROM'   => 'glpi_plugin_jamf_devices',
+            'WHERE'  => [
+                new QueryExpression("sync_date < NOW() - INTERVAL {$config['sync_interval']} MINUTE"),
+            ],
         ]);
         if (!$iterator->count()) {
             return -1;
@@ -211,6 +221,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
                 // Some other error
             }
         }
+
         return $volume;
     }
 
@@ -232,6 +243,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
         if (!$item->getFromDB($items_id)) {
             $itemtype_name = $item::getTypeName(1);
             Toolbox::logError(_x('error', "Attempted to sync non-existent {$itemtype_name} with ID {$items_id}", 'jamf'));
+
             return false;
         }
 
@@ -246,7 +258,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
                 $DB->beginTransaction();
             }
 
-            $sync = new static($item, $data);
+            $sync        = new static($item, $data);
             $sync_result = $sync->syncGeneral()
                 ->syncOS()
                 ->syncSoftware()
@@ -274,12 +286,14 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
             if ($use_transaction) {
                 $DB->commit();
             }
+
             return true;
         } catch (Exception $e) {
             trigger_error($e->getMessage());
             if ($use_transaction) {
                 $DB->rollBack();
             }
+
             return false;
         }
     }
@@ -297,50 +311,50 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
         $this->commondevice_changes['sync_date'] = $_SESSION['glpi_currenttime'];
         // Update GLPI Item
         $this->item->update([
-                'id' => $this->item->getID()
-            ] + $this->item_changes);
+            'id' => $this->item->getID(),
+        ] + $this->item_changes);
         foreach ($this->extitem_changes as $key => $value) {
             PluginJamfExtField::setValue($this->item::getType(), $this->item->getID(), $key, $value);
         }
         // Update or Add Jamf Item
         $this->db->updateOrInsert('glpi_plugin_jamf_devices', $this->commondevice_changes, [
             'itemtype' => $this->item::getType(),
-            'items_id' => $this->item->getID()
+            'items_id' => $this->item->getID(),
         ]);
         $device_id = -1;
         // Get the ID of the synced Jamf Item
         $iterator = $this->db->request([
             'SELECT' => ['id'],
-            'FROM' => 'glpi_plugin_jamf_devices',
-            'WHERE' => [
+            'FROM'   => 'glpi_plugin_jamf_devices',
+            'WHERE'  => [
                 'itemtype' => $this->item::getType(),
-                'items_id' => $this->item->getID()
-            ]
+                'items_id' => $this->item->getID(),
+            ],
         ]);
         if (count($iterator)) {
             $device_id = $iterator->current()['id'];
         }
         $this->db->updateOrInsert(static::$jamfplugin_itemtype::getTable(), $this->jamfplugin_item_changes, [
-            'glpi_plugin_jamf_devices_id' => $device_id
+            'glpi_plugin_jamf_devices_id' => $device_id,
         ]);
 
         if ($this->jamfplugin_device === null || empty($this->jamfplugin_device->fields)) {
-            $jamf_item = new static::$jamfplugin_itemtype();
+            $jamf_item  = new static::$jamfplugin_itemtype();
             $jamf_match = $this->db->request([
                 'SELECT' => ['id'],
-                'FROM' => static::$jamfplugin_itemtype::getTable(),
-                'WHERE' => [
+                'FROM'   => static::$jamfplugin_itemtype::getTable(),
+                'WHERE'  => [
                     'itemtype' => $this->item::getType(),
-                    'items_id' => $this->item->getID()
+                    'items_id' => $this->item->getID(),
                 ],
                 'LEFT JOIN' => [
                     'glpi_plugin_jamf_devices' => [
                         'ON' => [
-                            'glpi_plugin_jamf_devices' => 'id',
-                            static::$jamfplugin_itemtype::getTable() => 'glpi_plugin_jamf_devices_id'
-                        ]
-                    ]
-                ]
+                            'glpi_plugin_jamf_devices'               => 'id',
+                            static::$jamfplugin_itemtype::getTable() => 'glpi_plugin_jamf_devices_id',
+                        ],
+                    ],
+                ],
             ]);
             if (count($jamf_match)) {
                 $jamf_item->getFromDB(reset($jamf_match)['id']);
@@ -363,6 +377,7 @@ abstract class PluginJamfDeviceSync extends PluginJamfSync
         foreach ($deferred as $task) {
             $this->status[$task] = self::STATUS_ERROR;
         }
+
         return $this->status;
     }
 

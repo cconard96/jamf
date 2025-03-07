@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -30,7 +31,6 @@
 
 class PluginJamfToolbox
 {
-
     public static function getHumanReadableTimeDiff($start, $end = null)
     {
         if ($start === null || $start == 'NULL') {
@@ -39,7 +39,7 @@ class PluginJamfToolbox
         if ($end === null) {
             $end = $_SESSION['glpi_currenttime'];
         }
-        $diff = date_diff(date_create($start), date_create($end));
+        $diff     = date_diff(date_create($start), date_create($end));
         $text_arr = [];
         if ($diff->y > 0) {
             $text_arr[] = sprintf('%d Y', $diff->y);
@@ -59,6 +59,7 @@ class PluginJamfToolbox
         if ($diff->s > 0) {
             $text_arr[] = sprintf('%d s', $diff->s);
         }
+
         return implode(' ', $text_arr);
     }
 
@@ -83,15 +84,16 @@ class PluginJamfToolbox
             $format = $_SESSION['glpidate_format'];
         }
         switch ($format) {
-            case 1 : // DD-MM-YYYY
+            case 1: // DD-MM-YYYY
                 $mask = 'd-m-Y H:i:s';
                 break;
-            case 2 : // MM-DD-YYYY
+            case 2: // MM-DD-YYYY
                 $mask = 'm-d-Y H:i:s';
                 break;
         }
         $tz = new DateTimeZone($_SESSION['glpi_tz'] ?? date_default_timezone_get());
         $utc->setTimezone($tz);
+
         return $utc->format($mask);
     }
 }

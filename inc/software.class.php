@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -34,7 +35,6 @@
  */
 class PluginJamfSoftware extends CommonDBTM
 {
-
     public static function getTypeName($nb = 0)
     {
         return Software::getTypeName($nb);
@@ -63,38 +63,39 @@ class PluginJamfSoftware extends CommonDBTM
         global $DB;
 
         $iterator = $DB->request([
-            'SELECT' => [static::getTable() . '.*'],
-            'FROM' => static::getTable(),
+            'SELECT'    => [static::getTable() . '.*'],
+            'FROM'      => static::getTable(),
             'LEFT JOIN' => [
                 Software::getTable() => [
                     'ON' => [
                         Software::getTable() => 'id',
-                        static::getTable() => 'softwares_id'
-                    ]
+                        static::getTable()   => 'softwares_id',
+                    ],
                 ],
                 SoftwareVersion::getTable() => [
                     'ON' => [
-                        Software::getTable() => 'id',
-                        SoftwareVersion::getTable() => 'softwares_id'
-                    ]
+                        Software::getTable()        => 'id',
+                        SoftwareVersion::getTable() => 'softwares_id',
+                    ],
                 ],
                 Item_SoftwareVersion::getTable() => [
                     'ON' => [
-                        SoftwareVersion::getTable() => 'id',
-                        Item_SoftwareVersion::getTable() => 'softwareversions_id'
-                    ]
-                ]
+                        SoftwareVersion::getTable()      => 'id',
+                        Item_SoftwareVersion::getTable() => 'softwareversions_id',
+                    ],
+                ],
             ],
             'WHERE' => [
                 'itemtype' => $item::getType(),
-                'items_id' => $item->getID()
-            ]
+                'items_id' => $item->getID(),
+            ],
         ]);
 
         $result = [];
         foreach ($iterator as $data) {
             $result[] = $data;
         }
+
         return $result;
     }
 }

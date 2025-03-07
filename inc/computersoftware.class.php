@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -28,7 +29,4 @@
  * -------------------------------------------------------------------------
  */
 
-class PluginJamfComputerSoftware extends PluginJamfSoftware
-{
-
-}
+class PluginJamfComputerSoftware extends PluginJamfSoftware {}

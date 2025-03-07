@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -42,25 +43,25 @@ Html::header('Jamf Plugin', '', 'tools', 'PluginJamfMenu', 'import');
 global $CFG_GLPI;
 
 $plugin_dir = Plugin::getWebDir('jamf');
-$links = [];
+$links      = [];
 if (Session::haveRight('plugin_jamf_mobiledevice', CREATE)) {
     $links[] = [
         'name' => _x('menu', 'Import devices', 'jamf'),
-        'url' => PluginJamfImport::getSearchURL()
+        'url'  => PluginJamfImport::getSearchURL(),
     ];
     $links[] = [
         'name' => _x('menu', 'Merge existing devices', 'jamf'),
-        'url' => "{$plugin_dir}/front/merge.php"
+        'url'  => "{$plugin_dir}/front/merge.php",
     ];
 }
 if (Session::haveRight('config', UPDATE)) {
     $links[] = [
         'name' => _x('menu', 'Configuration', 'jamf'),
-        'url' => Config::getFormURL() . "?forcetab=PluginJamfConfig"
+        'url'  => Config::getFormURL() . '?forcetab=PluginJamfConfig',
     ];
 }
 
 TemplateRenderer::getInstance()->display('@jamf/menu.html.twig', [
-    'links' => $links
+    'links' => $links,
 ]);
 Html::footer();

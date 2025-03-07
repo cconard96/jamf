@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -32,13 +33,13 @@ global $CFG_GLPI;
 
 define('GLPI_ROOT', dirname(dirname(dirname(__DIR__))));
 
-if (file_exists("vendor/autoload.php")) {
-    require_once "vendor/autoload.php";
+if (file_exists('vendor/autoload.php')) {
+    require_once 'vendor/autoload.php';
 }
-include GLPI_ROOT . "/inc/includes.php";
+include GLPI_ROOT . '/inc/includes.php';
 //include_once GLPI_ROOT . '/tests/GLPITestCase.php';
 //include_once GLPI_ROOT . '/tests/DbTestCase.php';
-include_once "AbstractDBTest.php";
+include_once 'AbstractDBTest.php';
 
 $plugin = new Plugin();
 $plugin->checkPluginState('jamf');

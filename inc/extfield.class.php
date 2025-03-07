@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -34,14 +35,13 @@
  */
 class PluginJamfExtField extends CommonDBTM
 {
-
     public static function getValue($itemtype, $items_id, $name)
     {
         $ext_field = new self();
-        $match = $ext_field->find([
+        $match     = $ext_field->find([
             'itemtype' => $itemtype,
             'items_id' => $items_id,
-            'name' => $name
+            'name'     => $name,
         ], [], 1);
         if (count($match)) {
             return reset($match)['value'];
@@ -55,11 +55,11 @@ class PluginJamfExtField extends CommonDBTM
         global $DB;
 
         $DB->updateOrInsert(self::getTable(), [
-            'value' => $value
+            'value' => $value,
         ], [
             'itemtype' => $itemtype,
             'items_id' => $items_id,
-            'name' => $name
+            'name'     => $name,
         ]);
     }
 }

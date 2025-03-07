@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * JAMF plugin for GLPI
@@ -34,9 +35,9 @@
  */
 abstract class PluginJamfAbstractDevice extends CommonDBChild
 {
-    static public $itemtype = 'itemtype';
-    static public $items_id = 'items_id';
-    static public $jamftype_name = null;
+    public static $itemtype       = 'itemtype';
+    public static $items_id       = 'items_id';
+    public static $jamftype_name  = null;
     public static $mustBeAttached = false;
 
     /**
@@ -75,10 +76,10 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
         $device = $jamf_item->getJamfDeviceData();
         if (!empty($device)) {
             $DB->delete('glpi_plugin_jamf_devices', [
-                'id' => $device['id']
+                'id' => $device['id'],
             ]);
             $DB->delete($jamf_item::getTable(), [
-                'glpi_plugin_jamf_devices_id' => $device['id']
+                'glpi_plugin_jamf_devices_id' => $device['id'],
             ]);
         }
     }
@@ -105,11 +106,11 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
         static::purgeItemCommon($item);
         $DB->delete(Item_OperatingSystem::getTable(), [
             'itemtype' => $item::getType(),
-            'items_id' => $item->getID()
+            'items_id' => $item->getID(),
         ]);
     }
 
-    static function preUpdatePhone($item)
+    public static function preUpdatePhone($item)
     {
         if (isset($item->input['_plugin_jamf_uuid'])) {
             PluginJamfExtField::setValue($item::getType(), $item->getID(), 'uuid', $item->input['_plugin_jamf_uuid']);
@@ -122,13 +123,13 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
 
         $iterator = $DB->request([
             'SELECT' => [
-                'jamf_type'
+                'jamf_type',
             ],
-            'FROM' => 'glpi_plugin_jamf_devices',
+            'FROM'  => 'glpi_plugin_jamf_devices',
             'WHERE' => [
                 'itemtype' => $itemtype,
-                'items_id' => $items_id
-            ]
+                'items_id' => $items_id,
+            ],
         ]);
         if (count($iterator)) {
             $jamf_type = $iterator->current()['jamf_type'];
@@ -149,7 +150,7 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
         global $DB;
 
         $found_type = static::class;
-        $found_id = null;
+        $found_id   = null;
 
         if (!$limit_to_type) {
             $iterator = $DB->request([
@@ -158,30 +159,30 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
                     static::getTable() . '.id',
                     'itemtype',
                     'items_id',
-                    'glpi_plugin_jamf_devices.jamf_items_id'
+                    'glpi_plugin_jamf_devices.jamf_items_id',
                 ],
-                'FROM' => 'glpi_plugin_jamf_devices',
+                'FROM'      => 'glpi_plugin_jamf_devices',
                 'LEFT JOIN' => [
                     static::getTable() => [
                         'ON' => [
-                            static::getTable() => 'glpi_plugin_jamf_devices_id',
-                            'glpi_plugin_jamf_devices' => 'id'
-                        ]
-                    ]
+                            static::getTable()         => 'glpi_plugin_jamf_devices_id',
+                            'glpi_plugin_jamf_devices' => 'id',
+                        ],
+                    ],
                 ],
                 'WHERE' => [
                     'itemtype' => $item::getType(),
-                    'items_id' => $item->getID()
-                ]
+                    'items_id' => $item->getID(),
+                ],
             ]);
             if (count($iterator)) {
                 $jamf_data = $iterator->current();
                 if ($jamf_data['jamf_type'] === 'Computer') {
                     $found_type = PluginJamfComputer::class;
-                    $found_id = $jamf_data['id'];
-                } else if ($jamf_data['jamf_type'] === 'MobileDevice') {
+                    $found_id   = $jamf_data['id'];
+                } elseif ($jamf_data['jamf_type'] === 'MobileDevice') {
                     $found_type = PluginJamfMobileDevice::class;
-                    $found_id = $jamf_data['id'];
+                    $found_id   = $jamf_data['id'];
                 }
             }
         }
@@ -189,16 +190,19 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
         if ($found_id !== null) {
             $device = new $found_type();
             $device->getFromDB($found_id);
+
             return $device;
         }
+
         return null;
     }
 
     public function getGLPIItem()
     {
         $itemtype = $this->fields['itemtype'];
-        $item = new $itemtype();
+        $item     = new $itemtype();
         $item->getFromDB($this->fields['items_id']);
+
         return $item;
     }
 
@@ -207,12 +211,13 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
         global $DB;
 
         $iterator = $DB->request([
-            'FROM' => 'glpi_plugin_jamf_devices',
-            'WHERE' => ['id' => $this->fields['glpi_plugin_jamf_devices_id']]
+            'FROM'  => 'glpi_plugin_jamf_devices',
+            'WHERE' => ['id' => $this->fields['glpi_plugin_jamf_devices_id']],
         ]);
         if (count($iterator)) {
             return $iterator->current();
         }
+
         return [];
     }
 
@@ -222,32 +227,33 @@ abstract class PluginJamfAbstractDevice extends CommonDBChild
     {
         global $DB;
 
-        $ext_table = PluginJamfExtensionAttribute::getTable();
+        $ext_table      = PluginJamfExtensionAttribute::getTable();
         $item_ext_table = PluginJamfItem_ExtensionAttribute::getTable();
 
         $iterator = $DB->request([
             'SELECT' => [
-                'name', 'data_type', 'value'
+                'name', 'data_type', 'value',
             ],
-            'FROM' => $ext_table,
+            'FROM'      => $ext_table,
             'LEFT JOIN' => [
                 $item_ext_table => [
                     'FKEY' => [
-                        $ext_table => 'id',
-                        $item_ext_table => 'glpi_plugin_jamf_extensionattributes_id'
-                    ]
-                ]
+                        $ext_table      => 'id',
+                        $item_ext_table => 'glpi_plugin_jamf_extensionattributes_id',
+                    ],
+                ],
             ],
             'WHERE' => [
                 $item_ext_table . '.itemtype' => static::getType(),
-                'items_id' => $this->getID()
-            ]
+                'items_id'                    => $this->getID(),
+            ],
         ]);
 
         $attributes = [];
         foreach ($iterator as $data) {
             $attributes[] = $data;
         }
+
         return $attributes;
     }
 }
