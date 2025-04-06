@@ -64,35 +64,46 @@ foreach ($linked_devices as $data) {
     $linked[$data['itemtype']][] = $data;
 }
 
+$supported_glpi_types = [
+    'Computer' => PluginJamfComputerSync::getSupportedGlpiItemtypes(),
+    'MobileDevice' => PluginJamfMobileSync::getSupportedGlpiItemtypes()
+];
+
 foreach ($pending as &$data) {
-    $itemtype = $data['type'];
-    /** @var CommonDBTM $item */
-    $item     = new $itemtype();
-    $jamftype = ('PluginJamf' . $data['jamf_type']);
-    $guesses  = $DB->request([
-        'SELECT' => ['id'],
-        'FROM'   => $itemtype::getTable(),
-        'WHERE'  => [
-            'OR' => [
-                'uuid' => $data['udid'],
-                'name' => Sanitizer::sanitize($data['name']),
+    $queries = [];
+    foreach ($supported_glpi_types[$data['jamf_type']] as $type) {
+        $queries[] = [
+            'SELECT' => [
+                new QueryExpression($DB::quoteValue($type) . ' AS ' . $DB::quoteName('itemtype')),
+                'id'
             ],
-            'is_deleted'  => 0,
-            'is_template' => 0,
-        ],
-        'ORDER' => new QueryExpression("CASE WHEN uuid='" . $data['udid'] . "' THEN 0 ELSE 1 END"),
-        'LIMIT' => 1,
-    ]);
-    if (count($guesses)) {
-        $data['guessed_item'] = $guesses->current()['id'];
-    } else {
-        $data['guessed_item'] = 0;
+            'FROM' => $type::getTable(),
+            'WHERE' => [
+                'OR' => [
+                    'uuid' => $data['udid'],
+                    'name' => Sanitizer::sanitize($data['name'])
+                ],
+                'is_deleted' => 0,
+                'is_template' => 0
+            ],
+            'ORDER' => new QueryExpression("CASE WHEN uuid='" . $data['udid'] . "' THEN 0 ELSE 1 END"),
+            'LIMIT' => 1
+        ];
+    }
+    $guesses = $DB->request(new QueryUnion($queries));
+    $data['guessed_item'] = null;
+    foreach ($guesses as $guess) {
+        $data['guessed_item'][$guess['itemtype']] = $guess['id'];
     }
 }
 
 TemplateRenderer::getInstance()->display('@jamf/merge.html.twig', [
     'pending'     => $pending,
     'total_count' => $importcount,
-    'linked'      => $linked,
+    'linked' => $linked,
+    'supported_glpi_types' => array_map(
+        static fn ($ts) => array_combine($ts, array_map(static fn ($t) => $t::getTypeName(1), $ts)),
+        $supported_glpi_types
+    )
 ]);
 Html::footer();

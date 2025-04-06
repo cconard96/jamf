@@ -2,6 +2,9 @@
 
 ## [UNRELEASED]
 
+### Added
+- Added support to choose importing/merging mobile devices as Computers or Phones
+
 ### Fixes
 
 - SQL error when merging the Jamf device linked to a GLPI asset

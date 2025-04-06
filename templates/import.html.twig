@@ -28,6 +28,7 @@
  * -------------------------------------------------------------------------
  */
 #}
+{% import 'components/form/fields_macros.html.twig' as fields %}
 
 <form>
     {{ include('components/pager.html.twig', {
@@ -57,14 +58,26 @@
                     {% set import_checkbox %}
                         <input type="checkbox" name="import_{{ data.id }}" class="form-check-input massive_action_checkbox">
                     {% endset %}
-                    <tr>
+                    <tr data-import-id="{{ data.id }}">
                         <td>{{ import_checkbox }}</td>
                         <td>{{ data.jamf_items_id }}</td>
                         <td>{{ data.jamf_type }}</td>
                         <td>
                             <a href="{{ call('PluginJamf' ~ data.jamf_type ~ '::getJamfDeviceURL', [data.jamf_items_id]) }}">{{ data.name }}</a>
                         </td>
-                        <td>{{ data.type }}</td>
+                        {% if data.jamf_type == 'MobileDevice' %}
+                            <td>
+                                {{ fields.dropdownArrayField('glpi_type', data.type, {
+                                    'Phone': 'Phone'|itemtype_name,
+                                    'Computer': 'Computer'|itemtype_name,
+                                }, null, {
+                                    no_label: true,
+                                    full_width: true,
+                                }) }}
+                            </td>
+                        {% else %}
+                            <td>{{ data.type|itemtype_name }}</td>
+                        {% endif %}
                         <td class="{{ data.udid is empty ? 'font-italic' : '' }}">
                             {{ data.udid is not empty ? data.udid : _x('message', 'Not collected during discovery', 'jamf') }}
                         </td>
@@ -90,12 +103,19 @@
                 const import_ids = $(':checkbox:checked').filter(':not([name^="_checkall"])').map(function() {
                     return this.name.replace("import","").substring(1).split('_');
                 }).toArray();
+                const itemtype_overrides = {};
+                $('select[name="glpi_type"]').each((i, e) => {
+                    const itemtype = $(e).val();
+                    const id = $(e).closest('tr').attr('data-import-id');
+                    itemtype_overrides[id] = itemtype;
+                });
                 $.ajax({
                     type: "POST",
                     url: "{{ get_plugin_web_dir('jamf') }}/ajax/import.php",
                     data: {
                         action: "import",
-                        import_ids: import_ids
+                        import_ids: import_ids,
+                        itemtype_overrides: itemtype_overrides
                     },
                     contentType: 'application/json',
                     beforeSend: () => {

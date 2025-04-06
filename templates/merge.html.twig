@@ -58,18 +58,31 @@
                         <td>
                             <a href="{{ call('PluginJamf' ~ data.jamf_type ~ '::getJamfDeviceURL', [data.jamf_items_id]) }}">{{ data.name }}</a>
                         </td>
-                        <td>{{ data.type }}</td>
+                        <td>
+                            {% if supported_glpi_types[data.jamf_type]|length > 0 %}
+                                {{ fields.dropdownArrayField('glpi_type', data.type, supported_glpi_types[data.jamf_type], null, {
+                                    no_label: true,
+                                    full_width: true,
+                                }) }}
+                            {% else %}
+                                {{ data.type|itemtype_name }}
+                            {% endif %}
+                        </td>
                         <td>{{ data.jamf_type }}</td>
                         <td class="{{ data.udid is empty ? 'font-italic' : '' }}">
                             {{ data.udid is not empty ? data.udid : _x('message', 'Not collected during discovery', 'jamf') }}
                         </td>
                         <td>{{ data.date_discover|formatted_datetime }}</td>
                         <td>
-                            {{ fields.dropdownField(data.type, 'items_id', data.guessed_item, null, {
-                                no_label: true,
-                                full_width: true,
-                                used: linked[data.type]|default([])|column('items_id')
-                            }) }}
+                            {% for glpi_type in supported_glpi_types[data.jamf_type] %}
+                                <span class="{{ glpi_type != data.type ? 'd-none' : '' }}" data-itemtype="{{ glpi_type }}">
+                                    {{ fields.dropdownField(glpi_type, 'items_id', data.guessed_item[glpi_type], null, {
+                                        no_label: true,
+                                        full_width: true,
+                                        used: linked[glpi_type]|default([])|column('items_id'),
+                                    }) }}
+                                </span>
+                            {% endfor %}
                         </td>
                     </tr>
                 {% endfor %}
@@ -93,12 +106,11 @@
                 for (let i = 1; i < row_count; i++) {
                     const row = table.rows[i];
                     const jamf_id = row.cells[0].innerText;
-                    const itemtype = row.cells[2].innerText;
+                    const itemtype = $(row.cells[2]).find('select')[0].value;
                     const jamf_type = row.cells[3].innerText;
-                    const glpi_sel = $(row.cells[6]).find('select')[0];
+                    const glpi_sel = $(row.cells[6]).find('span[data-itemtype]:not(.d-none) select')[0];
                     const glpi_id = glpi_sel.value;
                     if (glpi_id && glpi_id > 0) {
-                        data = [];
                         post_data[glpi_id] = {'itemtype': itemtype, 'jamf_id': jamf_id, 'jamf_type': jamf_type};
                     }
                 }
@@ -115,6 +127,11 @@
                     }
                 });
             }
+            $('select[name="glpi_type"]').on('change', (e) => {
+                const selection = $(e.target).val();
+                $(e.target).closest('tr').find('span[data-itemtype]').addClass('d-none');
+                $(e.target).closest('tr').find('span[data-itemtype="' + selection + '"]').removeClass('d-none');
+            });
         </script>
     </div>
 </form>

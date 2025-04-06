@@ -56,21 +56,22 @@ if ($_REQUEST['action'] == 'import') {
     if (isset($_REQUEST['import_ids']) && is_array($_REQUEST['import_ids'])) {
         // Get data for each item to import
         $toimport = $DB->request([
-            'SELECT' => ['type', 'jamf_type', 'jamf_items_id'],
-            'FROM'   => PluginJamfImport::getTable(),
-            'WHERE'  => [
-                'id' => $_REQUEST['import_ids'],
-            ],
+            'SELECT' => ['id', 'type', 'jamf_type', 'jamf_items_id'],
+            'FROM' => PluginJamfImport::getTable(),
+            'WHERE' => [
+                'id' => $_REQUEST['import_ids']
+            ]
         ]);
         // Trigger extension attribute definition sync
         PluginJamfMobileSync::syncExtensionAttributeDefinitions();
         PluginJamfComputerSync::syncExtensionAttributeDefinitions();
         // Import the requested device(s)
         foreach ($toimport as $data) {
+            $glpi_itemtype = $_REQUEST['itemtype_overrides'][$data['id']] ?? $data['type'];
             if ($data['jamf_type'] === 'MobileDevice') {
-                PluginJamfMobileSync::import($data['type'], $data['jamf_items_id']);
+                PluginJamfMobileSync::import($glpi_itemtype, $data['jamf_items_id']);
             } else {
-                PluginJamfComputerSync::import($data['type'], $data['jamf_items_id']);
+                PluginJamfComputerSync::import($glpi_itemtype, $data['jamf_items_id']);
             }
         }
     } else {

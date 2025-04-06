@@ -54,6 +54,10 @@ if ($_REQUEST['action'] === 'merge') {
     // Trigger extension attribute definition sync
     PluginJamfMobileSync::syncExtensionAttributeDefinitions();
     PluginJamfComputerSync::syncExtensionAttributeDefinitions();
+    $supported_glpi_types = [
+        'Computer' => PluginJamfComputerSync::getSupportedGlpiItemtypes(),
+        'MobileDevice' => PluginJamfMobileSync::getSupportedGlpiItemtypes()
+    ];
     // An array of item IDs is required
     if (isset($_REQUEST['item_ids']) && is_array($_REQUEST['item_ids'])) {
         $failures  = 0;
@@ -65,7 +69,7 @@ if ($_REQUEST['action'] === 'merge') {
             $jamf_id  = $data['jamf_id'];
             $itemtype = $data['itemtype'];
 
-            if (($itemtype !== 'Computer') && ($itemtype !== 'Phone')) {
+            if (!in_array($itemtype, $supported_glpi_types[$data['jamf_type']])) {
                 // Invalid itemtype for a mobile device
                 throw new RuntimeException('Invalid itemtype!');
             }
