@@ -37,7 +37,7 @@
          <div class="d-flex flex-row flex-wrap flex-xl-nowrap">
             <div class="row flex-row align-items-start flex-grow-1">
                <div class="row flex-row">
-                  {% for name,params in command_data.params %}
+                  {% for name, params in command_data.params %}
                      {% set field_type = params.type|default('') %}
                      {% set display_name = params.name|default(name) %}
                      {% if field_type == 'number' %}

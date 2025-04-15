@@ -33,7 +33,7 @@
 
 {% for section in info %}
    {{ fields.smallTitle(section.caption) }}
-   {% for field_name,field in section.fields %}
+   {% for field_name, field in section.fields %}
       {% set field_content %}
          <span class="form-control-plaintext">{{ field.value }}</span>
       {% endset %}
@@ -41,7 +41,7 @@
    {% endfor %}
    {% if section.buttons is defined %}
       <div class="inventory-info-buttons d-flex justify-content-center">
-         {% for button_name,button in section.buttons %}
+         {% for button_name, button in section.buttons %}
             {% if button.url %}
                <a class="btn btn-outline-secondary {{ loop.index0 != 0 ? 'ms-3' : '' }}" href="{{ button.url }}">{{ button.caption }}</a>
             {% else %}
