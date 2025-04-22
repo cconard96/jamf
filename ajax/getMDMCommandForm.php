@@ -44,7 +44,8 @@ if (!isset($_GET['command'])) {
 }
 
 if (isset($_GET['itemtype'], $_GET['items_id'])) {
-    $device = new ('PluginJamf' . $_GET['itemtype'])();
+    $className = 'PluginJamf' . $_GET['itemtype'];
+    $device = new $className();
     if (!$device->getFromDB($_GET['items_id'])) {
         throw new RuntimeException('Invalid itemtype/items_id!');
     }
